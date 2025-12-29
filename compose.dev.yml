@@ -1,0 +1,5 @@
+services:
+  postgres:
+    environment:
+      POSTGRES_USER: bookwise
+      POSTGRES_PASSWORD: chiendeptrai

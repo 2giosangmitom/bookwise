@@ -1,0 +1,20 @@
+[tools]
+node = "25"
+pnpm = "10"
+prettier = "latest"
+
+[tasks.compose-up-dev]
+description = "Start Docker Compose services for development"
+run = "docker compose -f compose.yml -f compose.dev.yml up postgres redis -d"
+
+[tasks.compose-down]
+description = "Stop Docker Compose services"
+run = "docker compose -f compose.yml -f compose.dev.yml down"
+
+[tasks.format]
+description = "Format code using Prettier"
+run = "prettier --write ."
+
+[tasks.check-format]
+description = "Check code formatting using Prettier"
+run = "prettier --check ."
