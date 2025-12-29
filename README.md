@@ -1,9 +1,5 @@
 # BookWise - A university library management system
 
-![GitHub Last Commit](https://img.shields.io/github/last-commit/2giosangmitom/library-management?style=for-the-badge&logo=github&color=7dc4e4&logoColor=D9E0EE&labelColor=302D41)
-![Codecov](https://img.shields.io/codecov/c/github/2giosangmitom/library-management?style=for-the-badge&logo=codecov&logoColor=F01F7A&labelColor=302D41)
-![GitHub Repo stars](https://img.shields.io/github/stars/2giosangmitom/library-management?style=for-the-badge&logo=apachespark&color=eed49f&logoColor=D9E0EE&labelColor=302D41)
-
 **BookWise** is a library management platform for universities. It covers cataloging, circulation, and staff workflows with clear separation between an API service and a web client.
 
 ## Monorepo layout
