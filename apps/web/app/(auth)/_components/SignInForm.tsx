@@ -7,6 +7,8 @@ import { useState } from 'react';
 import { openNotificationWithIcon } from '@/utils/notification';
 import { signIn } from '@/lib/api/auth';
 import { ApiError } from '@/lib/api/apiClient';
+import { useRouter } from 'next/navigation';
+import useTokenStore from '@/stores/useTokenStore';
 
 // Type for form fields
 type FieldType = {
@@ -18,16 +20,18 @@ export default function SignInForm() {
   const [loading, setLoading] = useState<boolean>(false);
   const [api, contextHolder] = notification.useNotification();
   const [form] = Form.useForm<FieldType>();
+  const setAccessToken = useTokenStore((state) => state.setAccessToken);
+  const router = useRouter();
 
   // Handle form submission
   const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
     try {
       setLoading(true);
       const response = await signIn(values);
+      setAccessToken(response.data.access_token);
       openNotificationWithIcon(api, 'success', 'Success', response.message);
+      router.push('/');
     } catch (error) {
-      console.error('Error during sign in:', error);
-
       if (error instanceof ApiError) {
         openNotificationWithIcon(api, 'error', 'Error', error.message);
       } else {

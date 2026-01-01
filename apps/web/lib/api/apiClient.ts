@@ -1,64 +1,50 @@
-import { useAuthStore } from '@/hooks/useAuthStore';
 import { API_BASE_URL } from '../constants';
-import { refreshToken } from './auth';
+import { RefreshTokenResponse } from './types';
 
 export class ApiError extends Error {
   status: number;
 
-  constructor(status: number, message: string) {
+  constructor(message: string, status: number) {
     super(message);
     this.status = status;
   }
 }
 
-export async function fetchApi<T>(
-  path: string,
-  options?: Partial<{
-    method: string;
-    body: string;
-    includeCredentials: boolean;
-    accessToken: string;
-    tryRefreshToken: boolean;
-    'content-type': string;
-  }>
-): Promise<T> {
-  // Build headers
-  const headers: Record<string, string> = {};
-  if (options?.['content-type']) {
-    headers['Content-Type'] = options['content-type'];
+export async function fetchApi<T>(path: string, options?: Parameters<typeof fetch>[1]): Promise<T> {
+  const response = await fetch(`${API_BASE_URL}${path}`, options);
+  const json = await response.json();
+  if (!response.ok) {
+    throw new ApiError(json.message || 'API request failed', response.status);
   }
-  if (options?.accessToken) {
-    headers['Authorization'] = `Bearer ${options.accessToken}`;
-  }
+  return json;
+}
 
-  const res = await fetch(`${API_BASE_URL}${path}`, {
-    method: options?.method,
-    headers,
-    credentials: options?.includeCredentials ? 'include' : 'same-origin',
-    body: options?.body ? JSON.stringify(options.body) : undefined
-  });
+export async function fetchApiWithAutoRefresh<T>(path: string, options?: Parameters<typeof fetch>[1]): Promise<T> {
+  try {
+    const response = await fetchApi<T>(path, options);
+    return response;
+  } catch (error) {
+    if (error instanceof ApiError && (error.status === 401 || error.status === 403)) {
+      // Attempt to refresh token
+      const refreshResponse = await fetch(`${API_BASE_URL}/auth/refresh-token`, {
+        method: 'POST',
+        credentials: 'include'
+      });
 
-  const json = await res.json();
-
-  if (!res.ok) {
-    if (options?.tryRefreshToken && (res.status === 401 || res.status === 403)) {
-      try {
-        const refreshRes = await refreshToken();
-        const authStore = useAuthStore.getState();
-        authStore.setAccessToken(refreshRes.data.access_token);
-
-        return fetchApi<T>(path, {
+      // If refresh successful, retry original request
+      if (refreshResponse.ok) {
+        const refreshData = (await refreshResponse.json()) as RefreshTokenResponse;
+        // Retry original request with new token
+        const retryResponse = await fetchApi<T>(path, {
           ...options,
-          accessToken: refreshRes.data.access_token,
-          tryRefreshToken: false
-        }); // Retry original request with new token
-      } catch {
-        throw new ApiError(res.status, json.message || 'API request failed');
+          headers: {
+            ...options?.headers,
+            Authorization: `Bearer ${refreshData.data.access_token}`
+          }
+        });
+        return retryResponse;
       }
     }
-
-    throw new ApiError(res.status, json.message || 'API request failed');
+    throw error;
   }
-
-  return json;
 }

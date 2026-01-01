@@ -17,3 +17,14 @@ export type MeResponse = ApiResponse<{
   created_at: string;
   updated_at: string;
 }>;
+
+// Category-related API response types
+export type Category = {
+  category_id: string;
+  name: string;
+  slug: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type GetCategoriesResponse = ApiResponse<Category[]>;

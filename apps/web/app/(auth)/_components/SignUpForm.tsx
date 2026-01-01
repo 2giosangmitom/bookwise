@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { openNotificationWithIcon } from '@/utils/notification';
 import { signUp } from '@/lib/api/auth';
 import { ApiError } from '@/lib/api/apiClient';
+import { useRouter } from 'next/navigation';
 
 // Type for form fields
 type FieldType = {
@@ -19,6 +20,7 @@ export default function SignUpForm() {
   const [loading, setLoading] = useState<boolean>(false);
   const [api, contextHolder] = notification.useNotification();
   const [form] = Form.useForm<FieldType>();
+  const router = useRouter();
 
   // Handle form submission
   const onFinish: FormProps<FieldType>['onFinish'] = async (values) => {
@@ -27,9 +29,8 @@ export default function SignUpForm() {
       const response = await signUp(values);
 
       openNotificationWithIcon(api, 'success', 'Success', response.message);
+      router.push('/signin');
     } catch (error) {
-      console.error('Error during sign up:', error);
-
       if (error instanceof ApiError) {
         openNotificationWithIcon(api, 'error', 'Error', error.message);
       } else {
