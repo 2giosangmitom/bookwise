@@ -3,6 +3,7 @@ import { refreshTokenExpiration } from '@/constants';
 import { nanoid } from 'nanoid';
 import type AuthService from './services';
 import type { PrismaClient } from '@/generated/prisma/client';
+import { httpErrors } from '@fastify/sensible';
 
 export default class AuthController {
   private authService: AuthService;
@@ -101,7 +102,7 @@ export default class AuthController {
         }
       });
     } catch (error) {
-      throw req.server.httpErrors.unauthorized(error instanceof Error ? error.message : 'Invalid refresh token');
+      throw httpErrors.unauthorized(error instanceof Error ? error.message : 'Invalid refresh token');
     }
   }
 
@@ -111,24 +112,23 @@ export default class AuthController {
   ) {
     try {
       const data = await req.jwtVerify<RefreshToken>({ onlyCookie: true });
-
       await this.authService.revokeUserRefreshToken(data.sub, data.jti);
-
-      return reply
-        .clearCookie('refreshToken', {
-          httpOnly: true,
-          path: '/',
-          maxAge: refreshTokenExpiration,
-          sameSite: 'none',
-          secure: true,
-          signed: true
-        })
-        .status(200)
-        .send({
-          message: 'User signed out successfully'
-        });
-    } catch (error) {
-      throw req.server.httpErrors.unauthorized(error instanceof Error ? error.message : 'Invalid refresh token');
+    } catch {
+      // Even if the refresh token is invalid, we still clear the cookie to sign the user out
     }
+
+    return reply
+      .clearCookie('refreshToken', {
+        httpOnly: true,
+        path: '/',
+        maxAge: refreshTokenExpiration,
+        sameSite: 'none',
+        secure: true,
+        signed: true
+      })
+      .status(200)
+      .send({
+        message: 'User signed out successfully'
+      });
   }
 }
