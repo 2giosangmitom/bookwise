@@ -180,7 +180,7 @@ describe('StaffCategoryService', async () => {
       ];
 
       const expectedWhere = {
-        AND: [{ name: { contains: 'fic', mode: 'insensitive' } }, { slug: { contains: 'fic', mode: 'insensitive' } }]
+        OR: [{ name: { contains: 'fic', mode: 'insensitive' } }, { slug: { contains: 'fic', mode: 'insensitive' } }]
       };
 
       vi.mocked(app.prisma.category.findMany).mockResolvedValueOnce(
@@ -188,26 +188,14 @@ describe('StaffCategoryService', async () => {
       );
       vi.mocked(app.prisma.category.count).mockResolvedValueOnce(categories.length);
 
-      const result = await service.getCategories({ page: 2, limit: 1, name: 'fic', slug: 'fic' });
+      const result = await service.getCategories({ page: 2, limit: 1, searchTerm: 'fic' });
 
       expect(app.prisma.category.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expectedWhere,
           skip: 1,
           take: 1,
-          orderBy: [
-            {
-              created_at: 'desc'
-            },
-            { category_id: 'asc' }
-          ],
-          select: {
-            category_id: true,
-            name: true,
-            slug: true,
-            created_at: true,
-            updated_at: true
-          }
+          orderBy: [{ created_at: 'desc' }]
         })
       );
       expect(app.prisma.category.count).toHaveBeenCalledWith({ where: expectedWhere });

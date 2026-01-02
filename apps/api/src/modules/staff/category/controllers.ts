@@ -60,19 +60,21 @@ export default class StaffCategoryController {
     req: FastifyRequestTypeBox<typeof GetCategoriesSchema>,
     reply: FastifyReplyTypeBox<typeof GetCategoriesSchema>
   ) {
-    const page = req.query.page ?? 1;
-    const limit = req.query.limit ?? 100;
+    const query = {
+      limit: req.query.limit ?? 10,
+      page: req.query.page ?? 1,
+      searchTerm: req.query.searchTerm ?? undefined
+    };
 
-    const { categories, total } = await this.categoryService.getCategories({
-      ...req.query,
-      page,
-      limit
-    });
+    const { categories, total } = await this.categoryService.getCategories(query);
 
     return reply.status(200).send({
       message: 'Categories retrieved successfully.',
       meta: {
-        total
+        total,
+        totalOnPage: categories.length,
+        page: query.page,
+        limit: query.limit
       },
       data: categories.map((category) => ({
         category_id: category.category_id,

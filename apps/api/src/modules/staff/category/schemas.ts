@@ -81,15 +81,17 @@ export const GetCategoriesSchema = {
   querystring: Type.Object({
     page: Type.Optional(Type.Number({ minimum: 1 })),
     limit: Type.Optional(Type.Number({ minimum: 1, maximum: 100 })),
-    name: Type.Optional(Type.String()),
-    slug: Type.Optional(Type.String())
+    searchTerm: Type.Optional(Type.String())
   }),
   security: [{ JWT: [] }],
   response: {
     200: Type.Object({
       message: Type.String(),
       meta: Type.Object({
-        total: Type.Number()
+        total: Type.Number(),
+        totalOnPage: Type.Number(),
+        page: Type.Number(),
+        limit: Type.Number()
       }),
       data: Type.Array(
         Type.Object({

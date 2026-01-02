@@ -69,30 +69,22 @@ export default class StaffCategoryService {
     }
   }
 
-  public async getCategories(query: { page: number; limit: number; name?: string; slug?: string }) {
-    const andFilters: Prisma.CategoryWhereInput[] = [];
-
-    if (query.name) {
-      andFilters.push({ name: { contains: query.name, mode: 'insensitive' } });
-    }
-
-    if (query.slug) {
-      andFilters.push({ slug: { contains: query.slug, mode: 'insensitive' } });
-    }
-
-    const where: Prisma.CategoryWhereInput = andFilters.length > 0 ? { AND: andFilters } : {};
+  public async getCategories(query: { page: number; limit: number; searchTerm?: string }) {
+    const where: Prisma.CategoryWhereInput = query.searchTerm
+      ? {
+          OR: [
+            { name: { contains: query.searchTerm, mode: 'insensitive' } },
+            { slug: { contains: query.searchTerm, mode: 'insensitive' } }
+          ]
+        }
+      : {};
 
     const [categories, total] = await Promise.all([
       this.prisma.category.findMany({
         where,
         skip: (query.page - 1) * query.limit,
         take: query.limit,
-        orderBy: [
-          {
-            created_at: 'desc'
-          },
-          { category_id: 'asc' }
-        ],
+        orderBy: [{ created_at: 'desc' }],
         select: {
           category_id: true,
           name: true,
