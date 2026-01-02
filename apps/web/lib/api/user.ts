@@ -7,13 +7,12 @@ export function getMe(accessToken: string | null) {
 
 export function getUsers(
   accessToken: string | null,
-  query?: { page?: number; limit?: number; email?: string; name?: string; role?: 'ADMIN' | 'LIBRARIAN' | 'MEMBER' }
+  query?: { page?: number; limit?: number; searchTerm?: string; role?: 'ADMIN' | 'LIBRARIAN' | 'MEMBER' }
 ) {
   const params = new URLSearchParams();
   if (query?.page) params.append('page', query.page.toString());
   if (query?.limit) params.append('limit', query.limit.toString());
-  if (query?.email) params.append('email', query.email);
-  if (query?.name) params.append('name', query.name);
+  if (query?.searchTerm) params.append('searchTerm', query.searchTerm);
   if (query?.role) params.append('role', query.role);
 
   const queryString = params.toString();

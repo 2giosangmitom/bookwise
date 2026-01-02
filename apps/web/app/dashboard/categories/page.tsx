@@ -45,6 +45,7 @@ export default function CategoriesPage() {
     mutationFn: (categoryId: string) => deleteCategory(accessToken, categoryId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories'] });
+      messageApi.success('Category deleted successfully');
     }
   });
 

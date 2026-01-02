@@ -64,21 +64,19 @@ export default class StaffPublisherService {
   }
 
   public async getPublishers(query: Static<typeof GetPublishersSchema.querystring> & { page: number; limit: number }) {
-    const filters: Prisma.PublisherWhereInput = {};
-
-    if (query.name) {
-      filters.name = { contains: query.name, mode: 'insensitive' };
-    }
-    if (query.website) {
-      filters.website = { contains: query.website, mode: 'insensitive' };
-    }
-    if (query.slug) {
-      filters.slug = { contains: query.slug, mode: 'insensitive' };
-    }
+    const where: Prisma.PublisherWhereInput = query.searchTerm
+      ? {
+          OR: [
+            { name: { contains: query.searchTerm, mode: 'insensitive' } },
+            { website: { contains: query.searchTerm, mode: 'insensitive' } },
+            { slug: { contains: query.searchTerm, mode: 'insensitive' } }
+          ]
+        }
+      : {};
 
     const [publishers, total] = await Promise.all([
       this.prisma.publisher.findMany({
-        where: filters,
+        where,
         skip: (query.page - 1) * query.limit,
         take: query.limit,
         select: {
@@ -91,7 +89,7 @@ export default class StaffPublisherService {
           updated_at: true
         }
       }),
-      this.prisma.publisher.count({ where: filters })
+      this.prisma.publisher.count({ where })
     ]);
 
     return { publishers, total };

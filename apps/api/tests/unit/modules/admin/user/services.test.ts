@@ -8,8 +8,7 @@ import { JWTUtils } from '@/utils/jwt';
 const buildQuery = () => ({
   page: 1,
   limit: 10,
-  email: faker.internet.email(),
-  name: faker.person.fullName(),
+  searchTerm: faker.person.fullName(),
   role: Role.MEMBER
 });
 
@@ -31,8 +30,10 @@ describe('AdminUserService', async () => {
       expect(app.prisma.user.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: expect.objectContaining({
-            email: expect.objectContaining({ contains: query.email, mode: 'insensitive' }),
-            name: expect.objectContaining({ contains: query.name, mode: 'insensitive' }),
+            OR: [
+              { email: { contains: query.searchTerm, mode: 'insensitive' } },
+              { name: { contains: query.searchTerm, mode: 'insensitive' } }
+            ],
             role: query.role
           }),
           skip: (query.page - 1) * query.limit,

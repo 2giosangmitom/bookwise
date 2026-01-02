@@ -49,3 +49,25 @@ export type GetCategoriesResponse = PaginatedResponse<Category>;
 export type CreateCategoryResponse = ApiResponse<Category>;
 export type UpdateCategoryResponse = ApiResponse<Category>;
 export type DeleteCategoryResponse = ApiResponse<Pick<Category, 'category_id' | 'name'>>;
+
+// Publisher-related API response types
+export type Publisher = {
+  publisher_id: string;
+  name: string;
+  website: string;
+  slug: string;
+  image_url: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type GetPublishersResponse = {
+  message: string;
+  data: Publisher[];
+  meta: {
+    totalPages: number;
+  };
+};
+export type CreatePublisherResponse = ApiResponse<Publisher>;
+export type UpdatePublisherResponse = ApiResponse<Publisher>;
+export type DeletePublisherResponse = ApiResponse<Pick<Publisher, 'publisher_id' | 'name'>>;

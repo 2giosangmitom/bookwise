@@ -104,7 +104,7 @@ describe('GET /api/staff/publisher', async () => {
     expect(body.message).toBe('Publishers retrieved successfully');
   });
 
-  it('should filter publishers by name', async () => {
+  it('should filter publishers by searchTerm (name)', async () => {
     const marker = faker.string.alphanumeric(6).toLowerCase();
 
     const created1 = await createPublisherForTest({
@@ -120,7 +120,7 @@ describe('GET /api/staff/publisher', async () => {
       method: 'GET',
       url: '/api/staff/publisher',
       query: {
-        name: 'Penguin'
+        searchTerm: 'Penguin'
       },
       headers: { Authorization: `Bearer ${accessTokens[Role.LIBRARIAN]}` }
     });
@@ -131,7 +131,7 @@ describe('GET /api/staff/publisher', async () => {
     expect(body.data.some((p: { publisher_id: string }) => p.publisher_id === created1.publisher_id)).toBe(true);
   });
 
-  it('should filter publishers by website', async () => {
+  it('should filter publishers by searchTerm (website)', async () => {
     const marker = faker.string.alphanumeric(6).toLowerCase();
 
     const created = await createPublisherForTest({
@@ -145,7 +145,7 @@ describe('GET /api/staff/publisher', async () => {
       method: 'GET',
       url: '/api/staff/publisher',
       query: {
-        website: `penguin-${marker}`
+        searchTerm: `penguin-${marker}`
       },
       headers: { Authorization: `Bearer ${accessTokens[Role.ADMIN]}` }
     });
@@ -156,7 +156,7 @@ describe('GET /api/staff/publisher', async () => {
     expect(body.data.some((p: { publisher_id: string }) => p.publisher_id === created.publisher_id)).toBe(true);
   });
 
-  it('should filter publishers by slug', async () => {
+  it('should filter publishers by searchTerm (slug)', async () => {
     const marker = faker.string.alphanumeric(6).toLowerCase();
 
     const created = await createPublisherForTest({
@@ -170,7 +170,7 @@ describe('GET /api/staff/publisher', async () => {
       method: 'GET',
       url: '/api/staff/publisher',
       query: {
-        slug: `penguin-${marker}`
+        searchTerm: `penguin-${marker}`
       },
       headers: { Authorization: `Bearer ${accessTokens[Role.LIBRARIAN]}` }
     });
@@ -181,38 +181,50 @@ describe('GET /api/staff/publisher', async () => {
     expect(body.data[0].publisher_id).toBe(created.publisher_id);
   });
 
-  it('should combine multiple filters', async () => {
+  it('should use OR matching with searchTerm across name, website, and slug', async () => {
     const marker = faker.string.alphanumeric(6).toLowerCase();
 
-    const created = await createPublisherForTest({
+    const created1 = await createPublisherForTest({
       name: `Penguin ${marker}`,
+      website: `https://example-${marker}.com`,
+      slug: `other-${marker}`
+    });
+    const created2 = await createPublisherForTest({
+      name: `Random ${marker}`,
       website: `https://penguin-${marker}.com`,
+      slug: `random-${marker}`
+    });
+    const created3 = await createPublisherForTest({
+      name: `Another ${marker}`,
+      website: `https://another-${marker}.com`,
       slug: `penguin-${marker}`
     });
     await createPublisherForTest({
-      name: `Penguin Other`,
-      website: `https://other.com`,
-      slug: `other-${marker}`
+      name: `Unrelated ${marker}`,
+      website: `https://unrelated-${marker}.com`,
+      slug: `unrelated-${marker}`
     });
 
     const response = await app.inject({
       method: 'GET',
       url: '/api/staff/publisher',
       query: {
-        name: 'Penguin',
-        website: `penguin-${marker}`,
-        slug: `penguin-${marker}`
+        searchTerm: 'penguin'
       },
       headers: { Authorization: `Bearer ${accessTokens[Role.ADMIN]}` }
     });
 
     expect(response.statusCode).toBe(200);
     const body = response.json();
-    expect(body.data.length).toBeGreaterThan(0);
-    expect(body.data.some((p: { publisher_id: string }) => p.publisher_id === created.publisher_id)).toBe(true);
+    expect(body.data.length).toBeGreaterThanOrEqual(3);
+
+    const foundIds = body.data.map((p: { publisher_id: string }) => p.publisher_id);
+    expect(foundIds).toContain(created1.publisher_id);
+    expect(foundIds).toContain(created2.publisher_id);
+    expect(foundIds).toContain(created3.publisher_id);
   });
 
-  it('should support case-insensitive search', async () => {
+  it('should support case-insensitive search with searchTerm', async () => {
     const marker = faker.string.alphanumeric(6).toLowerCase();
 
     const created = await createPublisherForTest({
@@ -224,7 +236,7 @@ describe('GET /api/staff/publisher', async () => {
       method: 'GET',
       url: '/api/staff/publisher',
       query: {
-        name: 'uppercase'
+        searchTerm: 'uppercase'
       },
       headers: { Authorization: `Bearer ${accessTokens[Role.LIBRARIAN]}` }
     });

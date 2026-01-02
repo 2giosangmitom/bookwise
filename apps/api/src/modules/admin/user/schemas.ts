@@ -19,8 +19,7 @@ export const GetUsersSchema = {
   querystring: Type.Object({
     page: Type.Optional(Type.Number({ minimum: 1 })),
     limit: Type.Optional(Type.Number({ minimum: 1, maximum: 100 })),
-    email: Type.Optional(Type.String()),
-    name: Type.Optional(Type.String()),
+    searchTerm: Type.Optional(Type.String()),
     role: Type.Optional(Type.Enum(Role))
   }),
   response: {

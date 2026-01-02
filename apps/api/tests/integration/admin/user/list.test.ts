@@ -73,17 +73,23 @@ describe('GET /api/admin/user', async () => {
     expect(roles.has(Role.LIBRARIAN)).toBe(true);
   });
 
-  it('should filter users by email substring', async () => {
+  it('should filter users by searchTerm (matches email or name)', async () => {
     const response = await app.inject({
       method: 'GET',
       url: '/api/admin/user',
       headers: { Authorization: `Bearer ${accessTokens[Role.ADMIN]}` },
-      query: { email: 'user1' }
+      query: { searchTerm: 'user1' }
     });
 
     expect(response.statusCode).toBe(200);
     const body = response.json();
 
-    expect(body.data.every((u: { email: string }) => u.email.toLowerCase().includes('user1'))).toBe(true);
+    // searchTerm should match either email OR name
+    expect(
+      body.data.every(
+        (u: { email: string; name: string }) =>
+          u.email.toLowerCase().includes('user1') || u.name.toLowerCase().includes('user1')
+      )
+    ).toBe(true);
   });
 });

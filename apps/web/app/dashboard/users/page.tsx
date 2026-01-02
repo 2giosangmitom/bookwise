@@ -37,24 +37,21 @@ export default function UsersPage() {
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
-  const [searchEmail, setSearchEmail] = useState('');
-  const [searchName, setSearchName] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState<'ADMIN' | 'LIBRARIAN' | 'MEMBER' | undefined>(undefined);
-  const debouncedSearchEmail = useDebounce(searchEmail, 500);
-  const debouncedSearchName = useDebounce(searchName, 500);
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [form] = Form.useForm<UserFormField>();
   const [messageApi, contextHolder] = message.useMessage();
 
   const { data: users, isLoading } = useQuery({
-    queryKey: ['users', page, limit, debouncedSearchEmail, debouncedSearchName, roleFilter],
+    queryKey: ['users', page, limit, debouncedSearchTerm, roleFilter],
     queryFn: (): Promise<GetUsersResponse> =>
       getUsers(accessToken, {
         page,
         limit,
-        email: debouncedSearchEmail || undefined,
-        name: debouncedSearchName || undefined,
+        searchTerm: debouncedSearchTerm || undefined,
         role: roleFilter
       })
   });
@@ -171,17 +168,10 @@ export default function UsersPage() {
             <Flex gap="small" style={{ flex: 1, minWidth: '300px' }}>
               <Input
                 prefix={<SearchOutlined />}
-                placeholder="Search by email"
+                placeholder="Search by email or name"
                 style={{ width: '250px' }}
-                onChange={(e) => setSearchEmail(e.target.value)}
-                value={searchEmail}
-              />
-              <Input
-                prefix={<UserOutlined />}
-                placeholder="Search by name"
-                style={{ width: '250px' }}
-                onChange={(e) => setSearchName(e.target.value)}
-                value={searchName}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                value={searchTerm}
               />
               <Select
                 placeholder="Filter by role"
@@ -198,7 +188,7 @@ export default function UsersPage() {
             </Flex>
           </Flex>
 
-          {isLoading || debouncedSearchEmail !== searchEmail || debouncedSearchName !== searchName ? (
+          {isLoading || debouncedSearchTerm !== searchTerm ? (
             <Table<User> loading columns={columns} bordered />
           ) : (
             <Table<User>

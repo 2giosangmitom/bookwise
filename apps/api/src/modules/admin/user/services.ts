@@ -15,23 +15,22 @@ export default class AdminUserService {
   }
 
   public async getUsers(query: Static<typeof GetUsersSchema.querystring> & { page: number; limit: number }) {
-    const filters: Prisma.UserWhereInput = {};
+    const where: Prisma.UserWhereInput = {};
 
-    if (query.email) {
-      filters.email = { contains: query.email, mode: 'insensitive' };
-    }
-
-    if (query.name) {
-      filters.name = { contains: query.name, mode: 'insensitive' };
+    if (query.searchTerm) {
+      where.OR = [
+        { email: { contains: query.searchTerm, mode: 'insensitive' } },
+        { name: { contains: query.searchTerm, mode: 'insensitive' } }
+      ];
     }
 
     if (query.role) {
-      filters.role = query.role;
+      where.role = query.role;
     }
 
     const [users, total] = await Promise.all([
       this.prisma.user.findMany({
-        where: filters,
+        where,
         skip: (query.page - 1) * query.limit,
         take: query.limit,
         select: {
@@ -43,7 +42,7 @@ export default class AdminUserService {
           updated_at: true
         }
       }),
-      this.prisma.user.count({ where: filters })
+      this.prisma.user.count({ where })
     ]);
 
     return { users, total };

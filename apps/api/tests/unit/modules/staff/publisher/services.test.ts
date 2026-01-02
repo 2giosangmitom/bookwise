@@ -247,44 +247,38 @@ describe('StaffPublisherService', async () => {
       );
     });
 
-    it('should apply name filter correctly', async () => {
-      const query = { page: 1, limit: 10, name: 'penguin', website: undefined, slug: undefined };
+    it('should apply searchTerm filter with OR matching', async () => {
+      const query = { page: 1, limit: 10, searchTerm: 'penguin' };
 
       await service.getPublishers(query);
 
       expect(app.prisma.publisher.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: { name: { contains: 'penguin', mode: 'insensitive' } }
+          where: {
+            OR: [
+              { name: { contains: 'penguin', mode: 'insensitive' } },
+              { website: { contains: 'penguin', mode: 'insensitive' } },
+              { slug: { contains: 'penguin', mode: 'insensitive' } }
+            ]
+          }
         })
       );
     });
 
-    it('should apply website filter correctly', async () => {
-      const query = { page: 1, limit: 10, name: undefined, website: 'penguin.com', slug: undefined };
+    it('should handle empty searchTerm', async () => {
+      const query = { page: 1, limit: 10, searchTerm: undefined };
 
       await service.getPublishers(query);
 
       expect(app.prisma.publisher.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: { website: { contains: 'penguin.com', mode: 'insensitive' } }
+          where: {}
         })
       );
     });
 
-    it('should apply slug filter correctly', async () => {
-      const query = { page: 1, limit: 10, name: undefined, website: undefined, slug: 'penguin-books' };
-
-      await service.getPublishers(query);
-
-      expect(app.prisma.publisher.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: { slug: { contains: 'penguin-books', mode: 'insensitive' } }
-        })
-      );
-    });
-
-    it('should combine multiple filters', async () => {
-      const query = { page: 2, limit: 20, name: 'penguin', website: 'penguin.com', slug: 'penguin-books' };
+    it('should apply pagination with searchTerm', async () => {
+      const query = { page: 2, limit: 20, searchTerm: 'penguin' };
 
       await service.getPublishers(query);
 
@@ -293,16 +287,18 @@ describe('StaffPublisherService', async () => {
           skip: 20,
           take: 20,
           where: {
-            name: { contains: 'penguin', mode: 'insensitive' },
-            website: { contains: 'penguin.com', mode: 'insensitive' },
-            slug: { contains: 'penguin-books', mode: 'insensitive' }
+            OR: [
+              { name: { contains: 'penguin', mode: 'insensitive' } },
+              { website: { contains: 'penguin', mode: 'insensitive' } },
+              { slug: { contains: 'penguin', mode: 'insensitive' } }
+            ]
           }
         })
       );
     });
 
     it('should fetch publishers and count', async () => {
-      const query = { page: 1, limit: 10, name: undefined, website: undefined, slug: undefined };
+      const query = { page: 1, limit: 10, searchTerm: undefined };
 
       vi.mocked(app.prisma.publisher.findMany).mockResolvedValueOnce([]);
       vi.mocked(app.prisma.publisher.count).mockResolvedValueOnce(0);

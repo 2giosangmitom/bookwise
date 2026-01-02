@@ -84,9 +84,7 @@ export const GetPublishersSchema = {
   querystring: Type.Object({
     page: Type.Optional(Type.Number({ minimum: 1 })),
     limit: Type.Optional(Type.Number({ minimum: 1, maximum: 100 })),
-    name: Type.Optional(Type.String()),
-    website: Type.Optional(Type.String()),
-    slug: Type.Optional(Type.String())
+    searchTerm: Type.Optional(Type.String())
   }),
   response: {
     200: Type.Object({
