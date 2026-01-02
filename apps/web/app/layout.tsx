@@ -27,6 +27,7 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: React.PropsWithChildren) {
   // Prefetch user data
   let user: MeResponse['data'] | null;
+  let accessToken: string | null;
   try {
     const refreshResponse = await fetchApi<RefreshTokenResponse>('/auth/refresh-token', {
       method: 'POST',
@@ -34,11 +35,13 @@ export default async function RootLayout({ children }: React.PropsWithChildren) 
         cookie: (await cookies()).toString()
       }
     });
+    accessToken = refreshResponse.data.access_token;
 
-    const fetchUserResponse = await getMe(refreshResponse.data.access_token);
+    const fetchUserResponse = await getMe(accessToken);
     user = fetchUserResponse.data;
   } catch {
     user = null;
+    accessToken = null;
   }
 
   return (
@@ -46,7 +49,9 @@ export default async function RootLayout({ children }: React.PropsWithChildren) 
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <App>
           <QueryProvider>
-            <AuthProvider user={user}>{children}</AuthProvider>
+            <AuthProvider user={user} accessToken={accessToken}>
+              {children}
+            </AuthProvider>
           </QueryProvider>
         </App>
       </body>

@@ -69,12 +69,10 @@ export default class StaffCategoryController {
       limit
     });
 
-    const totalPages = total === 0 ? 0 : Math.ceil(total / limit);
-
     return reply.status(200).send({
       message: 'Categories retrieved successfully.',
       meta: {
-        totalPages
+        total
       },
       data: categories.map((category) => ({
         category_id: category.category_id,

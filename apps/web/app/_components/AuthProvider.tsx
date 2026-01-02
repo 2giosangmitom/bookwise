@@ -2,7 +2,19 @@
 
 import { AuthContext } from '@/contexts/Auth';
 import { MeResponse } from '@/lib/api/types';
+import useTokenStore from '@/stores/useTokenStore';
 
-export default function AuthProvider({ children, user }: React.PropsWithChildren<{ user: MeResponse['data'] | null }>) {
+export default function AuthProvider({
+  children,
+  user,
+  accessToken
+}: React.PropsWithChildren<{ user: MeResponse['data'] | null; accessToken: string | null }>) {
+  const setAccessToken = useTokenStore((state) => state.setAccessToken);
+
+  // Set access token in global store
+  if (accessToken) {
+    setAccessToken(accessToken);
+  }
+
   return <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>;
 }

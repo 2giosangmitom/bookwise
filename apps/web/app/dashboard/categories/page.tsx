@@ -6,6 +6,7 @@ import useTokenStore from '@/stores/useTokenStore';
 import { PlusOutlined, SearchOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import { Button, Card, Flex, Input, Table, Typography, type TableColumnsType } from 'antd';
+import { useState } from 'react';
 
 const { Title, Paragraph } = Typography;
 
@@ -19,20 +20,21 @@ const columns: TableColumnsType<Category> = [
     title: 'Actions',
     dataIndex: 'actions',
     render: () => (
-      <div className="flex gap-2">
+      <Flex gap="small">
         <Button type="default" icon={<EditOutlined />} />
         <Button type="primary" icon={<DeleteOutlined />} danger />
-      </div>
+      </Flex>
     )
   }
 ];
 
 export default function CategoriesPage() {
   const accessToken = useTokenStore((state) => state.accessToken);
+  const [page, setPage] = useState(1);
 
   const { data: categories, isLoading } = useQuery({
-    queryKey: ['categories'],
-    queryFn: (): Promise<GetCategoriesResponse> => getCategories(accessToken)
+    queryKey: ['categories', page],
+    queryFn: (): Promise<GetCategoriesResponse> => getCategories(accessToken, { page })
   });
 
   return (
@@ -55,7 +57,20 @@ export default function CategoriesPage() {
           ) : (
             <div>
               {categories && categories.data.length > 0 ? (
-                <Table<Category> columns={columns} dataSource={categories.data} rowKey="category_id" bordered />
+                <Table<Category>
+                  columns={columns}
+                  dataSource={categories.data}
+                  rowKey="category_id"
+                  bordered
+                  pagination={{
+                    total: categories.meta.total,
+                    showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+                    current: page,
+                    onChange: (page) => {
+                      setPage(page);
+                    }
+                  }}
+                />
               ) : (
                 <div>No categories found.</div>
               )}

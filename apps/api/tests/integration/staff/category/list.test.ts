@@ -107,7 +107,7 @@ describe('GET /api/staff/category', async () => {
     const firstBody = firstPageResponse.json();
 
     expect(firstBody.meta).toEqual({
-      totalPages: 2
+      total: 3
     });
     expect(firstBody.data).toHaveLength(2);
     expect(firstBody.data.every((category: { name: string }) => category.name.toLowerCase().includes(marker))).toBe(
@@ -140,7 +140,7 @@ describe('GET /api/staff/category', async () => {
     const secondBody = secondPageResponse.json();
 
     expect(secondBody.meta).toEqual({
-      totalPages: 2
+      total: 3
     });
     expect(secondBody.data).toHaveLength(1);
     expect(secondBody.data[0].name.toLowerCase()).toContain(marker);

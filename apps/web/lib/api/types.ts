@@ -5,7 +5,7 @@ export type ApiResponse<T> = {
 
 export type PaginatedResponse<T> = ApiResponse<T[]> & {
   meta: {
-    totalPages: number;
+    total: number;
   };
 };
 

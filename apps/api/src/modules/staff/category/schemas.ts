@@ -89,7 +89,7 @@ export const GetCategoriesSchema = {
     200: Type.Object({
       message: Type.String(),
       meta: Type.Object({
-        totalPages: Type.Number()
+        total: Type.Number()
       }),
       data: Type.Array(
         Type.Object({
