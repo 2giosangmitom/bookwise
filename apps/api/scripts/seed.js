@@ -22,7 +22,13 @@ const publishers = [
   { name: 'Apress', website: 'https://apress.com', slug: 'apress' },
   { name: 'Pragmatic Bookshelf', website: 'https://pragprog.com', slug: 'pragmatic-bookshelf' },
   { name: 'No Starch Press', website: 'https://nostarch.com', slug: 'no-starch-press' },
-  { name: 'MIT Press', website: 'https://mitpress.mit.edu', slug: 'mit-press' }
+  { name: 'MIT Press', website: 'https://mitpress.mit.edu', slug: 'mit-press' },
+  { name: 'Wrox Press', website: 'https://wrox.com', slug: 'wrox-press' },
+  { name: 'Sams Publishing', website: 'https://informit.com/sams', slug: 'sams-publishing' },
+  { name: 'Wiley', website: 'https://wiley.com', slug: 'wiley' },
+  { name: 'Morgan Kaufmann', website: 'https://mkp.com', slug: 'morgan-kaufmann' },
+  { name: 'Academic Press', website: 'https://academicpress.com', slug: 'academic-press' },
+  { name: 'Microsoft Press', website: 'https://microsoftpress.com', slug: 'microsoft-press' }
 ];
 
 const categories = [
@@ -37,7 +43,15 @@ const categories = [
   { name: 'Operating Systems', slug: 'operating-systems' },
   { name: 'Mobile Development', slug: 'mobile-development' },
   { name: 'Game Development', slug: 'game-development' },
-  { name: 'Network Engineering', slug: 'network-engineering' }
+  { name: 'Network Engineering', slug: 'network-engineering' },
+  { name: 'Algorithms & Data Structures', slug: 'algorithms-data-structures' },
+  { name: 'Artificial Intelligence', slug: 'artificial-intelligence' },
+  { name: 'Software Testing', slug: 'software-testing' },
+  { name: 'UI/UX Design', slug: 'ui-ux-design' },
+  { name: 'Blockchain', slug: 'blockchain' },
+  { name: 'Internet of Things', slug: 'internet-of-things' },
+  { name: 'Cloud Computing', slug: 'cloud-computing' },
+  { name: 'Microservices', slug: 'microservices' }
 ];
 
 const authors = [
@@ -148,6 +162,132 @@ const authors = [
     date_of_birth: new Date('1975-01-01'),
     nationality: 'British',
     slug: 'sam-newman'
+  },
+  {
+    name: 'Douglas Crockford',
+    short_biography: 'JavaScript architect and JSON creator',
+    biography:
+      'Douglas Crockford is an American computer programmer known for his involvement in the development of JavaScript. He created JSON and wrote JavaScript: The Good Parts.',
+    date_of_birth: new Date('1955-04-30'),
+    nationality: 'American',
+    slug: 'douglas-crockford'
+  },
+  {
+    name: 'Grady Booch',
+    short_biography: 'Software engineer and UML co-creator',
+    biography:
+      'Grady Booch is best known for developing the Unified Modeling Language (UML) with Ivar Jacobson and James Rumbaugh. He is an IBM Fellow and chief scientist for software engineering.',
+    date_of_birth: new Date('1955-02-27'),
+    nationality: 'American',
+    slug: 'grady-booch'
+  },
+  {
+    name: 'Donald Knuth',
+    short_biography: 'Computer scientist and author of The Art of Computer Programming',
+    biography:
+      'Donald Erwin Knuth is an American computer scientist, mathematician, and Professor Emeritus at Stanford University. He is the author of the multi-volume work The Art of Computer Programming.',
+    date_of_birth: new Date('1938-01-10'),
+    nationality: 'American',
+    slug: 'donald-knuth'
+  },
+  {
+    name: 'Brian Kernighan',
+    short_biography: 'Co-author of The C Programming Language',
+    biography:
+      'Brian Kernighan is a Canadian computer scientist who worked at Bell Labs alongside Unix creators. He co-authored the book The C Programming Language with Dennis Ritchie.',
+    date_of_birth: new Date('1942-01-01'),
+    nationality: 'Canadian',
+    slug: 'brian-kernighan'
+  },
+  {
+    name: 'Steve McConnell',
+    short_biography: 'Software engineering author',
+    biography:
+      'Steve McConnell is an author of software engineering textbooks including Code Complete and Software Estimation. He is CEO and Chief Software Engineer at Construx Software.',
+    date_of_birth: new Date('1962-01-01'),
+    nationality: 'American',
+    slug: 'steve-mcconnell'
+  },
+  {
+    name: 'Bjarne Stroustrup',
+    short_biography: 'Creator of C++',
+    biography:
+      'Bjarne Stroustrup is a Danish computer scientist most notable for the creation and development of the C++ programming language.',
+    date_of_birth: new Date('1950-12-30'),
+    nationality: 'Danish',
+    slug: 'bjarne-stroustrup'
+  },
+  {
+    name: 'Jon Bentley',
+    short_biography: 'Computer scientist and Programming Pearls author',
+    biography:
+      'Jon Louis Bentley is an American computer scientist known for his contributions to algorithms and data structures. He is the author of Programming Pearls.',
+    date_of_birth: new Date('1953-02-20'),
+    nationality: 'American',
+    slug: 'jon-bentley'
+  },
+  {
+    name: 'Andrew S. Tanenbaum',
+    short_biography: 'Computer scientist and Minix creator',
+    biography:
+      'Andrew Stuart Tanenbaum is an American-Dutch computer scientist and professor. He is best known as the author of MINIX and several computer science textbooks.',
+    date_of_birth: new Date('1944-03-16'),
+    nationality: 'Dutch-American',
+    slug: 'andrew-tanenbaum'
+  },
+  {
+    name: 'Thomas H. Cormen',
+    short_biography: 'Co-author of Introduction to Algorithms',
+    biography:
+      'Thomas H. Cormen is a computer scientist and professor at Dartmouth College. He is co-author of Introduction to Algorithms, one of the most widely used algorithms textbooks.',
+    date_of_birth: new Date('1956-01-01'),
+    nationality: 'American',
+    slug: 'thomas-cormen'
+  },
+  {
+    name: 'Gayle Laakmann McDowell',
+    short_biography: 'Author of Cracking the Coding Interview',
+    biography:
+      'Gayle Laakmann McDowell is a software engineer and author. She worked at Google, Microsoft, and Apple before founding CareerCup and writing Cracking the Coding Interview.',
+    date_of_birth: new Date('1982-01-01'),
+    nationality: 'American',
+    slug: 'gayle-laakmann-mcdowell'
+  },
+  {
+    name: 'Chad Fowler',
+    short_biography: 'Ruby developer and author',
+    biography:
+      'Chad Fowler is a software developer, musician, and author. He is known for his work in the Ruby community and authored The Passionate Programmer.',
+    date_of_birth: new Date('1976-01-01'),
+    nationality: 'American',
+    slug: 'chad-fowler'
+  },
+  {
+    name: 'Sandi Metz',
+    short_biography: 'Ruby developer and object-oriented design expert',
+    biography:
+      'Sandi Metz is a software developer and author known for her work on object-oriented design. She wrote Practical Object-Oriented Design in Ruby.',
+    date_of_birth: new Date('1952-01-01'),
+    nationality: 'American',
+    slug: 'sandi-metz'
+  },
+  {
+    name: 'Venkat Subramaniam',
+    short_biography: 'Author and polyglot programmer',
+    biography:
+      'Venkat Subramaniam is an award-winning author, founder of Agile Developer, Inc., and an instructional professor at the University of Houston.',
+    date_of_birth: new Date('1966-01-01'),
+    nationality: 'American',
+    slug: 'venkat-subramaniam'
+  },
+  {
+    name: 'Addy Osmani',
+    short_biography: 'Google engineer and JavaScript expert',
+    biography:
+      'Addy Osmani is an engineering manager at Google working on Chrome. He is the author of Learning JavaScript Design Patterns and a contributor to open source.',
+    date_of_birth: new Date('1985-01-01'),
+    nationality: 'British',
+    slug: 'addy-osmani'
   }
 ];
 
@@ -273,16 +413,6 @@ const books = [
     publisherSlug: 'addison-wesley'
   },
   {
-    title: 'JavaScript: The Good Parts',
-    description:
-      'Douglas Crockford reveals the truly elegant parts of JavaScript, helping you understand why JavaScript is an outstanding object-oriented programming language.',
-    isbn: '978-0596517748',
-    published_at: new Date('2008-05-08'),
-    authorSlugs: ['kyle-simpson'],
-    categorySlugs: ['programming-languages', 'web-development'],
-    publisherSlug: 'oreilly-media'
-  },
-  {
     title: 'Continuous Delivery: Reliable Software Releases through Build, Test, and Deployment Automation',
     description:
       'Comprehensive guide to continuous delivery, covering the principles and technical practices that enable rapid, reliable releases of software.',
@@ -351,6 +481,295 @@ const books = [
     authorSlugs: ['sam-newman'],
     categorySlugs: ['software-architecture', 'programming-languages'],
     publisherSlug: 'manning-publications'
+  },
+  {
+    title: 'JavaScript: The Good Parts',
+    description:
+      'Douglas Crockford reveals the truly elegant parts of JavaScript, helping you understand why JavaScript is an outstanding object-oriented programming language.',
+    isbn: '978-0596517748',
+    published_at: new Date('2008-05-08'),
+    authorSlugs: ['douglas-crockford'],
+    categorySlugs: ['programming-languages', 'web-development'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'Code Complete',
+    description:
+      'Widely considered one of the best practical guides to programming, Steve McConnell presents hundreds of timeless best practices for software construction.',
+    isbn: '978-0735619678',
+    published_at: new Date('2004-06-19'),
+    authorSlugs: ['steve-mcconnell'],
+    categorySlugs: ['programming-languages', 'software-architecture'],
+    publisherSlug: 'microsoft-press'
+  },
+  {
+    title: 'The C Programming Language',
+    description:
+      'The definitive guide to C programming by its creators. A concise and clear introduction to the C language, essential for every programmer.',
+    isbn: '978-0131103628',
+    published_at: new Date('1988-04-01'),
+    authorSlugs: ['brian-kernighan'],
+    categorySlugs: ['programming-languages'],
+    publisherSlug: 'addison-wesley'
+  },
+  {
+    title: 'Introduction to Algorithms',
+    description:
+      'Comprehensive introduction to the modern study of computer algorithms. Covers a broad range of algorithms in depth, yet makes their design and analysis accessible.',
+    isbn: '978-0262033848',
+    published_at: new Date('2009-07-31'),
+    authorSlugs: ['thomas-cormen'],
+    categorySlugs: ['algorithms-data-structures', 'programming-languages'],
+    publisherSlug: 'mit-press'
+  },
+  {
+    title: 'Modern Operating Systems',
+    description:
+      'Andrew Tanenbaum presents both the principles of operating systems and their application to modern systems including UNIX, Linux, and Windows.',
+    isbn: '978-0133591620',
+    published_at: new Date('2014-03-10'),
+    authorSlugs: ['andrew-tanenbaum'],
+    categorySlugs: ['operating-systems'],
+    publisherSlug: 'addison-wesley'
+  },
+  {
+    title: 'Cracking the Coding Interview',
+    description:
+      '189 programming interview questions, ranging from the basics to the trickiest algorithm problems. A must-have guide for software engineers.',
+    isbn: '978-0984782857',
+    published_at: new Date('2015-07-01'),
+    authorSlugs: ['gayle-laakmann-mcdowell'],
+    categorySlugs: ['algorithms-data-structures', 'programming-languages'],
+    publisherSlug: 'no-starch-press'
+  },
+  {
+    title: 'The Passionate Programmer',
+    description:
+      'Chad Fowler presents a collection of tips for creating a remarkable career in software development. Learn how to stay relevant and valuable.',
+    isbn: '978-1934356340',
+    published_at: new Date('2009-07-28'),
+    authorSlugs: ['chad-fowler'],
+    categorySlugs: ['software-architecture'],
+    publisherSlug: 'pragmatic-bookshelf'
+  },
+  {
+    title: 'Practical Object-Oriented Design in Ruby',
+    description:
+      'Sandi Metz demonstrates how to write Ruby code that is easy to maintain and change. Essential reading for Ruby developers.',
+    isbn: '978-0134456478',
+    published_at: new Date('2018-08-25'),
+    authorSlugs: ['sandi-metz'],
+    categorySlugs: ['programming-languages', 'software-architecture'],
+    publisherSlug: 'addison-wesley'
+  },
+  {
+    title: 'Programming Pearls',
+    description:
+      'Jon Bentley presents programming problems and their solutions, demonstrating elegant and efficient problem-solving techniques.',
+    isbn: '978-0201657883',
+    published_at: new Date('1999-10-07'),
+    authorSlugs: ['jon-bentley'],
+    categorySlugs: ['algorithms-data-structures', 'programming-languages'],
+    publisherSlug: 'addison-wesley'
+  },
+  {
+    title: 'Learning JavaScript Design Patterns',
+    description:
+      'Addy Osmani explores applying classical and modern design patterns to JavaScript. Essential for building maintainable JavaScript applications.',
+    isbn: '978-1449331818',
+    published_at: new Date('2012-08-30'),
+    authorSlugs: ['addy-osmani'],
+    categorySlugs: ['programming-languages', 'web-development'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'The Art of Computer Programming, Vol. 1',
+    description:
+      'Donald Knuth presents fundamental algorithms with detailed mathematical analysis. The definitive text on computer programming.',
+    isbn: '978-0201896831',
+    published_at: new Date('1997-07-15'),
+    authorSlugs: ['donald-knuth'],
+    categorySlugs: ['algorithms-data-structures', 'programming-languages'],
+    publisherSlug: 'addison-wesley'
+  },
+  {
+    title: 'Object-Oriented Analysis and Design',
+    description:
+      'Grady Booch provides a comprehensive guide to object-oriented analysis and design with applications, including UML.',
+    isbn: '978-0201895513',
+    published_at: new Date('2007-04-09'),
+    authorSlugs: ['grady-booch'],
+    categorySlugs: ['software-architecture', 'programming-languages'],
+    publisherSlug: 'addison-wesley'
+  },
+  {
+    title: 'Functional Programming in Scala',
+    description:
+      'A comprehensive guide to functional programming in Scala. Learn functional programming concepts and how to apply them in Scala.',
+    isbn: '978-1617290657',
+    published_at: new Date('2014-09-01'),
+    authorSlugs: ['venkat-subramaniam'],
+    categorySlugs: ['programming-languages'],
+    publisherSlug: 'manning-publications'
+  },
+  {
+    title: 'Release It! Design and Deploy Production-Ready Software',
+    description:
+      'Learn to design and build software that survives the real world. Covers stability patterns, capacity, and operational concerns.',
+    isbn: '978-1680502398',
+    published_at: new Date('2018-01-17'),
+    authorSlugs: ['michael-feathers'],
+    categorySlugs: ['software-architecture', 'devops-cloud'],
+    publisherSlug: 'pragmatic-bookshelf'
+  },
+  {
+    title: 'High Performance MySQL',
+    description:
+      'Comprehensive guide to MySQL performance optimization, covering query optimization, server tuning, and replication.',
+    isbn: '978-1449314286',
+    published_at: new Date('2012-03-24'),
+    authorSlugs: ['martin-fowler'],
+    categorySlugs: ['database-systems'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'Kubernetes in Action',
+    description:
+      'Comprehensive guide to Kubernetes, covering everything from basic concepts to advanced deployment strategies and best practices.',
+    isbn: '978-1617293726',
+    published_at: new Date('2017-12-17'),
+    authorSlugs: ['gene-kim'],
+    categorySlugs: ['devops-cloud', 'cloud-computing'],
+    publisherSlug: 'manning-publications'
+  },
+  {
+    title: 'Python Crash Course',
+    description:
+      'Fast-paced introduction to Python that will have you writing programs, solving problems, and making things that work in no time.',
+    isbn: '978-1593279288',
+    published_at: new Date('2019-05-03'),
+    authorSlugs: ['kyle-simpson'],
+    categorySlugs: ['programming-languages'],
+    publisherSlug: 'no-starch-press'
+  },
+  {
+    title: 'RESTful Web Services',
+    description:
+      'A complete guide to building RESTful web services, covering REST principles, HTTP, and practical implementation.',
+    isbn: '978-0596529260',
+    published_at: new Date('2007-05-08'),
+    authorSlugs: ['sam-newman'],
+    categorySlugs: ['web-development', 'software-architecture'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'Agile Software Development',
+    description:
+      'Robert C. Martin presents principles, patterns, and practices of agile software development from a developer perspective.',
+    isbn: '978-0135974445',
+    published_at: new Date('2002-10-25'),
+    authorSlugs: ['robert-c-martin'],
+    categorySlugs: ['software-architecture'],
+    publisherSlug: 'addison-wesley'
+  },
+  {
+    title: 'Head First Design Patterns',
+    description:
+      'A brain-friendly guide to design patterns. Learn the important patterns you need to know and apply them effectively.',
+    isbn: '978-0596007126',
+    published_at: new Date('2004-10-25'),
+    authorSlugs: ['erich-gamma'],
+    categorySlugs: ['software-architecture', 'programming-languages'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'The Phoenix Project',
+    description:
+      'A novel about IT, DevOps, and helping your business win. Learn DevOps principles through an engaging story.',
+    isbn: '978-0988262508',
+    published_at: new Date('2013-01-10'),
+    authorSlugs: ['gene-kim'],
+    categorySlugs: ['devops-cloud', 'software-architecture'],
+    publisherSlug: 'no-starch-press'
+  },
+  {
+    title: 'Cloud Native Patterns',
+    description:
+      'Design patterns for building resilient, scalable cloud-native applications. Covers microservices, containers, and orchestration.',
+    isbn: '978-1617294297',
+    published_at: new Date('2019-05-20'),
+    authorSlugs: ['sam-newman'],
+    categorySlugs: ['cloud-computing', 'microservices', 'software-architecture'],
+    publisherSlug: 'manning-publications'
+  },
+  {
+    title: 'Building Evolutionary Architectures',
+    description:
+      'Support constant change with evolutionary architecture. Learn techniques for building systems that embrace change.',
+    isbn: '978-1491986363',
+    published_at: new Date('2017-09-26'),
+    authorSlugs: ['martin-fowler'],
+    categorySlugs: ['software-architecture'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'Software Engineering at Google',
+    description:
+      'Learn how Google engineers build and maintain software at scale. Covers processes, tools, and culture.',
+    isbn: '978-1492082798',
+    published_at: new Date('2020-03-10'),
+    authorSlugs: ['gene-kim'],
+    categorySlugs: ['software-architecture', 'devops-cloud'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'The TypeScript Handbook',
+    description:
+      'Comprehensive guide to TypeScript. Learn how to write safer and more maintainable JavaScript with TypeScript.',
+    isbn: '978-1492037651',
+    published_at: new Date('2021-01-15'),
+    authorSlugs: ['douglas-crockford'],
+    categorySlugs: ['programming-languages', 'web-development'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'Algorithms',
+    description:
+      'Essential information covering algorithms and data structures for the modern programmer. Focuses on practical applications.',
+    isbn: '978-0321573513',
+    published_at: new Date('2011-03-19'),
+    authorSlugs: ['thomas-cormen'],
+    categorySlugs: ['algorithms-data-structures'],
+    publisherSlug: 'addison-wesley'
+  },
+  {
+    title: 'System Design Interview',
+    description:
+      'An insider guide to system design interviews. Learn how to approach and solve system design problems.',
+    isbn: '978-1736049112',
+    published_at: new Date('2020-06-04'),
+    authorSlugs: ['gayle-laakmann-mcdowell'],
+    categorySlugs: ['software-architecture', 'algorithms-data-structures'],
+    publisherSlug: 'no-starch-press'
+  },
+  {
+    title: 'Concurrency in Go',
+    description: 'Learn how to write concurrent programs in Go. Covers goroutines, channels, and concurrency patterns.',
+    isbn: '978-1491941195',
+    published_at: new Date('2017-07-10'),
+    authorSlugs: ['venkat-subramaniam'],
+    categorySlugs: ['programming-languages'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'The Linux Programming Interface',
+    description:
+      'The definitive guide to Linux system programming. Covers system calls, file I/O, processes, and more.',
+    isbn: '978-1593272203',
+    published_at: new Date('2010-10-28'),
+    authorSlugs: ['andrew-tanenbaum'],
+    categorySlugs: ['operating-systems', 'programming-languages'],
+    publisherSlug: 'no-starch-press'
   }
 ];
 
