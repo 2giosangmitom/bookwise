@@ -34,3 +34,6 @@ export type Category = {
 };
 
 export type GetCategoriesResponse = PaginatedResponse<Category>;
+export type CreateCategoryResponse = ApiResponse<Category>;
+export type UpdateCategoryResponse = ApiResponse<Category>;
+export type DeleteCategoryResponse = ApiResponse<Pick<Category, 'category_id' | 'name'>>;

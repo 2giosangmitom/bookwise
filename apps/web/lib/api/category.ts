@@ -1,5 +1,5 @@
 import { fetchApiWithAutoRefresh } from './apiClient';
-import { GetCategoriesResponse } from './types';
+import { GetCategoriesResponse, DeleteCategoryResponse } from './types';
 
 export function getCategories(accessToken: string | null, query?: { page: number }) {
   return fetchApiWithAutoRefresh<GetCategoriesResponse>(
@@ -9,4 +9,30 @@ export function getCategories(accessToken: string | null, query?: { page: number
       method: 'GET'
     }
   );
+}
+
+export function deleteCategory(accessToken: string | null, categoryId: string) {
+  return fetchApiWithAutoRefresh<DeleteCategoryResponse>(`/staff/category/${categoryId}`, accessToken, {
+    method: 'DELETE'
+  });
+}
+
+export function createCategory(accessToken: string | null, data: { name: string; slug: string }) {
+  return fetchApiWithAutoRefresh<GetCategoriesResponse>(`/staff/category`, accessToken, {
+    method: 'POST',
+    body: JSON.stringify(data),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+}
+
+export function updateCategory(accessToken: string | null, categoryId: string, data: { name: string; slug: string }) {
+  return fetchApiWithAutoRefresh<GetCategoriesResponse>(`/staff/category/${categoryId}`, accessToken, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
 }
