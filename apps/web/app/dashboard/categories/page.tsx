@@ -177,7 +177,10 @@ export default function CategoriesPage() {
               prefix={<SearchOutlined />}
               placeholder="Search categories"
               style={{ width: '25%' }}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setPage(1);
+              }}
             />
             <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateModalOpen(true)}>
               Add Category

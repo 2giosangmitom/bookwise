@@ -48,7 +48,7 @@ describe('GET /api/admin/user', async () => {
 
     expect(body).toHaveProperty('message');
     expect(body).toHaveProperty('meta');
-    expect(body.meta).toHaveProperty('totalPages');
+    expect(body.meta).toHaveProperty('total');
     expect(Array.isArray(body.data)).toBe(true);
     expect(body.data.length).toBeGreaterThan(0);
     expect(body.data[0]).toHaveProperty('user_id');

@@ -18,11 +18,9 @@ export default class AdminUserController {
       limit: req.query.limit ?? 100
     });
 
-    const totalPages = Math.ceil(total / (req.query.limit ?? 100));
-
     return reply.status(200).send({
       message: 'Users retrieved successfully',
-      meta: { totalPages },
+      meta: { total },
       data: users.map((user) => ({
         ...user,
         created_at: user.created_at.toISOString(),

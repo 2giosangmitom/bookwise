@@ -69,12 +69,11 @@ export default class StaffPublisherController {
       page: req.query.page ?? 1,
       limit: req.query.limit ?? 100
     });
-    const totalPages = Math.ceil(total / (req.query.limit ?? 100));
 
     return reply.status(200).send({
       message: 'Publishers retrieved successfully',
       meta: {
-        totalPages
+        total
       },
       data: publishers.map((publisher) => ({
         ...publisher,

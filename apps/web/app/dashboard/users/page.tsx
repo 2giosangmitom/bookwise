@@ -3,7 +3,7 @@
 import { getUsers, updateUser } from '@/lib/api/user';
 import { User, GetUsersResponse } from '@/lib/api/types';
 import useTokenStore from '@/stores/useTokenStore';
-import { SearchOutlined, UserOutlined, EditOutlined } from '@ant-design/icons';
+import { SearchOutlined, EditOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDebounce } from '@uidotdev/usehooks';
 import {
@@ -198,7 +198,7 @@ export default function UsersPage() {
               bordered
               scroll={{ x: 'max-content' }}
               pagination={{
-                total: users ? users.meta.totalPages * limit : 0,
+                total: users?.meta.total,
                 pageSize: limit,
                 showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
                 current: page,

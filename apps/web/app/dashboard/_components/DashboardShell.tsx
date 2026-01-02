@@ -3,7 +3,6 @@
 import { useAuthContext } from '@/contexts/Auth';
 import {
   BookOutlined,
-  CopyOutlined,
   DashboardOutlined,
   LogoutOutlined,
   ShopOutlined,
@@ -40,13 +39,6 @@ const navItems: NavItem[] = [
     label: 'Books',
     href: '/dashboard/books',
     icon: <BookOutlined />,
-    roles: ['ADMIN', 'LIBRARIAN']
-  },
-  {
-    key: 'book-copies',
-    label: 'Book Copies',
-    href: '/dashboard/book-copies',
-    icon: <CopyOutlined />,
     roles: ['ADMIN', 'LIBRARIAN']
   },
   {

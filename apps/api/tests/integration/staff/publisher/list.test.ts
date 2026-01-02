@@ -100,7 +100,7 @@ describe('GET /api/staff/publisher', async () => {
     expect(response.statusCode).toBe(200);
     const body = response.json();
     expect(body.data).toHaveLength(2);
-    expect(body.meta.totalPages).toBeGreaterThanOrEqual(2);
+    expect(body.meta.total).toBeGreaterThanOrEqual(2);
     expect(body.message).toBe('Publishers retrieved successfully');
   });
 
@@ -262,7 +262,7 @@ describe('GET /api/staff/publisher', async () => {
     expect(body).toHaveProperty('message');
     expect(body).toHaveProperty('meta');
     expect(body).toHaveProperty('data');
-    expect(body.meta).toHaveProperty('totalPages');
+    expect(body.meta).toHaveProperty('total');
     expect(Array.isArray(body.data)).toBe(true);
 
     if (body.data.length > 0) {

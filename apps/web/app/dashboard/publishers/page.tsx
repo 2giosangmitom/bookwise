@@ -240,7 +240,7 @@ export default function PublishersPage() {
                   bordered
                   scroll={{ x: 'max-content' }}
                   pagination={{
-                    total: publishers ? publishers.meta.totalPages * 10 : 0,
+                    total: publishers?.meta.total,
                     showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
                     current: page,
                     onChange: (page) => {

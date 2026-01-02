@@ -30,7 +30,7 @@ export type GetUsersResponse = {
   message: string;
   data: User[];
   meta: {
-    totalPages: number;
+    total: number;
   };
 };
 
@@ -65,7 +65,7 @@ export type GetPublishersResponse = {
   message: string;
   data: Publisher[];
   meta: {
-    totalPages: number;
+    total: number;
   };
 };
 export type CreatePublisherResponse = ApiResponse<Publisher>;
