@@ -50,6 +50,37 @@ export type CreateCategoryResponse = ApiResponse<Category>;
 export type UpdateCategoryResponse = ApiResponse<Category>;
 export type DeleteCategoryResponse = ApiResponse<Pick<Category, 'category_id' | 'name'>>;
 
+// Author-related API response types
+export type Author = {
+  author_id: string;
+  name: string;
+  short_biography: string;
+  biography: string;
+  date_of_birth: string | null;
+  date_of_death: string | null;
+  nationality: string | null;
+  image_url: string | null;
+  slug: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type GetAuthorsResponse = {
+  message: string;
+  data: {
+    meta: {
+      total: number;
+      page: number;
+      limit: number;
+    };
+    items: Author[];
+  };
+};
+
+export type CreateAuthorResponse = ApiResponse<Author>;
+export type UpdateAuthorResponse = ApiResponse<Author>;
+export type DeleteAuthorResponse = ApiResponse<Pick<Author, 'author_id' | 'name'>>;
+
 // Publisher-related API response types
 export type Publisher = {
   publisher_id: string;

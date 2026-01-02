@@ -297,9 +297,8 @@ describe('StaffAuthorService', async () => {
   });
 
   describe('findAuthors', () => {
-    it('should query authors with filters, pagination, and sorting', async () => {
-      const search = faker.person.lastName();
-      const nationality = faker.location.country();
+    it('should query authors with filters and pagination', async () => {
+      const searchTerm = faker.person.lastName();
       const authors = Array.from({ length: 2 }, () => ({
         author_id: faker.string.uuid(),
         name: faker.person.fullName(),
@@ -307,7 +306,7 @@ describe('StaffAuthorService', async () => {
         biography: faker.lorem.paragraphs(2),
         date_of_birth: faker.date.past(),
         date_of_death: null,
-        nationality,
+        nationality: faker.location.country(),
         image_url: null,
         slug: faker.lorem.slug(),
         created_at: faker.date.anytime(),
@@ -317,22 +316,23 @@ describe('StaffAuthorService', async () => {
       vi.mocked(app.prisma.author.findMany).mockResolvedValueOnce(authors);
       vi.mocked(app.prisma.author.count).mockResolvedValueOnce(11);
 
-      const result = await staffAuthorService.findAuthors(
-        { page: 2, limit: 5 },
-        { search, nationality, isAlive: true },
-        { sortBy: 'updated_at', order: 'desc' }
-      );
+      const result = await staffAuthorService.findAuthors({ page: 2, limit: 5 }, { searchTerm, isAlive: true });
 
       expect(app.prisma.author.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: {
             AND: [
-              { name: { contains: search, mode: 'insensitive' } },
-              { nationality: { equals: nationality, mode: 'insensitive' } },
+              {
+                OR: [
+                  { name: { contains: searchTerm, mode: 'insensitive' } },
+                  { nationality: { contains: searchTerm, mode: 'insensitive' } },
+                  { slug: { contains: searchTerm, mode: 'insensitive' } }
+                ]
+              },
               { date_of_death: null }
             ]
           },
-          orderBy: [{ updated_at: 'desc' }, { author_id: 'asc' }],
+          orderBy: [{ created_at: 'desc' }, { author_id: 'asc' }],
           skip: 5,
           take: 5
         })
@@ -340,8 +340,13 @@ describe('StaffAuthorService', async () => {
       expect(app.prisma.author.count).toHaveBeenCalledWith({
         where: {
           AND: [
-            { name: { contains: search, mode: 'insensitive' } },
-            { nationality: { equals: nationality, mode: 'insensitive' } },
+            {
+              OR: [
+                { name: { contains: searchTerm, mode: 'insensitive' } },
+                { nationality: { contains: searchTerm, mode: 'insensitive' } },
+                { slug: { contains: searchTerm, mode: 'insensitive' } }
+              ]
+            },
             { date_of_death: null }
           ]
         }
@@ -351,8 +356,7 @@ describe('StaffAuthorService', async () => {
         meta: {
           total: 11,
           page: 2,
-          limit: 5,
-          totalPages: 3
+          limit: 5
         },
         data: authors
       });
@@ -364,11 +368,7 @@ describe('StaffAuthorService', async () => {
       vi.mocked(app.prisma.author.findMany).mockResolvedValueOnce(authors);
       vi.mocked(app.prisma.author.count).mockResolvedValueOnce(0);
 
-      const result = await staffAuthorService.findAuthors(
-        { page: 1, limit: 10 },
-        { isAlive: false },
-        { sortBy: 'name', order: 'asc' }
-      );
+      const result = await staffAuthorService.findAuthors({ page: 1, limit: 10 }, { isAlive: false });
 
       const [findManyArgs] = vi.mocked(app.prisma.author.findMany).mock.calls.at(-1) ?? [];
 
@@ -376,7 +376,7 @@ describe('StaffAuthorService', async () => {
         where: {
           AND: [{ date_of_death: { not: null } }]
         },
-        orderBy: [{ name: 'asc' }, { author_id: 'asc' }],
+        orderBy: [{ created_at: 'desc' }, { author_id: 'asc' }],
         skip: 0,
         take: 10
       });
@@ -385,8 +385,7 @@ describe('StaffAuthorService', async () => {
         meta: {
           total: 0,
           page: 1,
-          limit: 10,
-          totalPages: 0
+          limit: 10
         },
         data: []
       });

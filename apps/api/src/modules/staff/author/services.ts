@@ -91,28 +91,21 @@ export default class StaffAuthorService {
   public async findAuthors(
     paginationOpts: { page: number; limit: number },
     filterOpts: {
-      search?: string;
-      nationality?: string;
+      searchTerm?: string;
       isAlive?: boolean;
-    } = {},
-    sortOpts: {
-      sortBy: 'name' | 'created_at' | 'updated_at';
-      order: 'asc' | 'desc';
-    } = { sortBy: 'name', order: 'asc' }
+    } = {}
   ) {
     const { page, limit } = paginationOpts;
 
     const andFilters: Prisma.AuthorWhereInput[] = [];
 
-    if (filterOpts.search) {
+    if (filterOpts.searchTerm) {
       andFilters.push({
-        name: { contains: filterOpts.search, mode: 'insensitive' }
-      });
-    }
-
-    if (filterOpts.nationality) {
-      andFilters.push({
-        nationality: { equals: filterOpts.nationality, mode: 'insensitive' }
+        OR: [
+          { name: { contains: filterOpts.searchTerm, mode: 'insensitive' } },
+          { nationality: { contains: filterOpts.searchTerm, mode: 'insensitive' } },
+          { slug: { contains: filterOpts.searchTerm, mode: 'insensitive' } }
+        ]
       });
     }
 
@@ -124,16 +117,7 @@ export default class StaffAuthorService {
 
     const where: Prisma.AuthorWhereInput = andFilters.length > 0 ? { AND: andFilters } : {};
 
-    const sortFieldMap = {
-      name: 'name',
-      created_at: 'created_at',
-      updated_at: 'updated_at'
-    } as const;
-
-    const orderBy: Prisma.AuthorOrderByWithRelationInput[] = [
-      { [sortFieldMap[sortOpts.sortBy]]: sortOpts.order } as Prisma.AuthorOrderByWithRelationInput,
-      { author_id: 'asc' }
-    ];
+    const orderBy: Prisma.AuthorOrderByWithRelationInput[] = [{ created_at: 'desc' }, { author_id: 'asc' }];
 
     const [authors, total] = await Promise.all([
       this.prisma.author.findMany({
@@ -158,14 +142,11 @@ export default class StaffAuthorService {
       this.prisma.author.count({ where })
     ]);
 
-    const totalPages = total === 0 ? 0 : Math.ceil(total / limit);
-
     return {
       meta: {
         total,
         page,
-        limit,
-        totalPages
+        limit
       },
       data: authors
     };

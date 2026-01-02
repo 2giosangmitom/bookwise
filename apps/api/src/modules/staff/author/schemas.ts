@@ -89,14 +89,11 @@ export const UpdateAuthorSchema = {
 
 export const GetAuthorsSchema = {
   summary: 'Get authors',
-  description: 'Retrieve authors with pagination, filtering and sorting.',
+  description: 'Retrieve authors with pagination and filtering.',
   querystring: Type.Object({
-    page: Type.Optional(Type.Integer({ minimum: 1 })),
-    limit: Type.Optional(Type.Integer({ minimum: 1, maximum: 50 })),
-    search: Type.Optional(Type.String({ minLength: 1, maxLength: 100 })),
-    nationality: Type.Optional(Type.String({ minLength: 1, maxLength: 100 })),
-    sort_by: Type.Optional(Type.Enum(['name', 'created_at', 'updated_at'])),
-    order: Type.Optional(Type.Enum(['asc', 'desc'])),
+    page: Type.Optional(Type.Number({ minimum: 1 })),
+    limit: Type.Optional(Type.Number({ minimum: 1, maximum: 100 })),
+    searchTerm: Type.Optional(Type.String()),
     is_alive: Type.Optional(Type.Boolean())
   }),
   security: [{ JWT: [] }],
@@ -105,10 +102,9 @@ export const GetAuthorsSchema = {
       message: Type.String(),
       data: Type.Object({
         meta: Type.Object({
-          total: Type.Integer({ minimum: 0 }),
-          page: Type.Integer({ minimum: 1 }),
-          limit: Type.Integer({ minimum: 1 }),
-          totalPages: Type.Integer({ minimum: 0 })
+          total: Type.Number({ minimum: 0 }),
+          page: Type.Number({ minimum: 1 }),
+          limit: Type.Number({ minimum: 1 })
         }),
         items: Type.Array(AuthorEntitySchema)
       })

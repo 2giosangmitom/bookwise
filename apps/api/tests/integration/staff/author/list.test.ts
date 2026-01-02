@@ -105,7 +105,7 @@ describe('GET /api/staff/author', async () => {
       method: 'GET',
       url: '/api/staff/author',
       query: {
-        search: marker
+        searchTerm: marker
       },
       headers: {
         Authorization: `Bearer ${accessTokens[Role.ADMIN]}`
@@ -119,8 +119,7 @@ describe('GET /api/staff/author', async () => {
       expect.objectContaining({
         page: 1,
         limit: 10,
-        total: 3,
-        totalPages: 1
+        total: 3
       })
     );
     expect(body.data.items).toHaveLength(3);
@@ -146,7 +145,7 @@ describe('GET /api/staff/author', async () => {
       method: 'GET',
       url: '/api/staff/author',
       query: {
-        search: marker,
+        searchTerm: marker,
         is_alive: 'true'
       },
       headers: {
@@ -166,7 +165,7 @@ describe('GET /api/staff/author', async () => {
       method: 'GET',
       url: '/api/staff/author',
       query: {
-        search: marker,
+        searchTerm: marker,
         is_alive: 'false'
       },
       headers: {
@@ -182,8 +181,8 @@ describe('GET /api/staff/author', async () => {
     expect(deceasedBody.data.items[0].date_of_death).not.toBeNull();
   });
 
-  it('should support sorting and pagination', async () => {
-    const marker = `sort-${faker.string.alphanumeric(8).toLowerCase()}`;
+  it('should support pagination', async () => {
+    const marker = `pagination-${faker.string.alphanumeric(8).toLowerCase()}`;
     const names = ['Alpha', 'Bravo', 'Charlie'];
 
     for (const name of names) {
@@ -193,31 +192,11 @@ describe('GET /api/staff/author', async () => {
       });
     }
 
-    const descResponse = await app.inject({
-      method: 'GET',
-      url: '/api/staff/author',
-      query: {
-        search: marker,
-        sort_by: 'name',
-        order: 'desc'
-      },
-      headers: {
-        Authorization: `Bearer ${accessTokens[Role.LIBRARIAN]}`
-      }
-    });
-
-    expect(descResponse.statusCode).toBe(200);
-    const descBody = descResponse.json();
-
-    expect(descBody.data.items[0].name).toBe(`${marker}-Charlie`);
-
     const paginatedResponse = await app.inject({
       method: 'GET',
       url: '/api/staff/author',
       query: {
-        search: marker,
-        sort_by: 'name',
-        order: 'asc',
+        searchTerm: marker,
         page: '2',
         limit: '2'
       },
@@ -233,11 +212,9 @@ describe('GET /api/staff/author', async () => {
       expect.objectContaining({
         page: 2,
         limit: 2,
-        total: 3,
-        totalPages: 2
+        total: 3
       })
     );
     expect(paginatedBody.data.items).toHaveLength(1);
-    expect(paginatedBody.data.items[0].name).toBe(`${marker}-Charlie`);
   });
 });

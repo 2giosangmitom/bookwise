@@ -34,18 +34,13 @@ export default class StaffAuthorController {
     req: FastifyRequestTypeBox<typeof GetAuthorsSchema>,
     reply: FastifyReplyTypeBox<typeof GetAuthorsSchema>
   ) {
-    const { page = 1, limit = 10, search, nationality, sort_by = 'name', order = 'asc', is_alive } = req.query;
+    const { page = 1, limit = 10, searchTerm, is_alive } = req.query;
 
     const { data: authors, meta } = await this.staffAuthorService.findAuthors(
       { page, limit },
       {
-        search,
-        nationality,
+        searchTerm,
         isAlive: is_alive
-      },
-      {
-        sortBy: sort_by,
-        order
       }
     );
 
