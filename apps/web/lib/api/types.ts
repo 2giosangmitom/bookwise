@@ -15,14 +15,26 @@ export type SignUpResponse = ApiResponse<{ user_id: string }>;
 export type RefreshTokenResponse = ApiResponse<{ access_token: string }>;
 
 // User-related API response types
-export type MeResponse = ApiResponse<{
+export type User = {
   user_id: string;
   name: string;
   email: string;
   role: 'ADMIN' | 'LIBRARIAN' | 'MEMBER';
   created_at: string;
   updated_at: string;
-}>;
+};
+
+export type MeResponse = ApiResponse<User>;
+
+export type GetUsersResponse = {
+  message: string;
+  data: User[];
+  meta: {
+    totalPages: number;
+  };
+};
+
+export type UpdateUserResponse = ApiResponse<User>;
 
 // Category-related API response types
 export type Category = {

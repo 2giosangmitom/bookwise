@@ -87,7 +87,7 @@ export async function buildMockFastify() {
           del: vi.fn(),
           sadd: vi.fn(),
           srem: vi.fn(),
-          smembers: vi.fn(),
+          smembers: vi.fn().mockResolvedValue([]),
           exists: vi.fn(),
           pipeline: vi.fn().mockReturnValue({
             set: vi.fn().mockReturnThis(),

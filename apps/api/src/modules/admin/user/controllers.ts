@@ -1,5 +1,5 @@
 import AdminUserService from './services';
-import { GetUsersSchema } from './schemas';
+import { GetUsersSchema, UpdateUserSchema } from './schemas';
 
 export default class AdminUserController {
   private adminUserService: AdminUserService;
@@ -28,6 +28,25 @@ export default class AdminUserController {
         created_at: user.created_at.toISOString(),
         updated_at: user.updated_at.toISOString()
       }))
+    });
+  }
+
+  public async updateUser(
+    req: FastifyRequestTypeBox<typeof UpdateUserSchema>,
+    reply: FastifyReplyTypeBox<typeof UpdateUserSchema>
+  ) {
+    const { userId } = req.params;
+    const data = req.body;
+
+    const updatedUser = await this.adminUserService.updateUser(userId, data);
+
+    return reply.status(200).send({
+      message: 'User updated successfully',
+      data: {
+        ...updatedUser,
+        created_at: updatedUser.created_at.toISOString(),
+        updated_at: updatedUser.updated_at.toISOString()
+      }
     });
   }
 }

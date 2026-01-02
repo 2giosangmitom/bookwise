@@ -72,6 +72,29 @@ export class JWTUtils {
     await pipeline.exec();
   }
 
+  public async revokeAllUserTokens(userId: string) {
+    const pipeline = this.redisClient.pipeline();
+
+    // Get all refresh tokens for the user
+    const refreshTokensSetKey = `user_refresh_tokens:${userId}`;
+    const refreshTokenIds = await this.redisClient.smembers(refreshTokensSetKey);
+
+    // Delete only access tokens (not refresh tokens)
+    // Access tokens contain role data, refresh tokens don't
+    for (const refreshTokenId of refreshTokenIds) {
+      // Delete all access tokens for this refresh token
+      const accessTokensSetKey = `user_access_tokens:${userId}:${refreshTokenId}`;
+      const accessTokenIds = await this.redisClient.smembers(accessTokensSetKey);
+      accessTokenIds.forEach((accessTokenId) => {
+        const accessTokenKey = `access_token:${accessTokenId}`;
+        pipeline.del(accessTokenKey);
+      });
+      pipeline.del(accessTokensSetKey);
+    }
+
+    await pipeline.exec();
+  }
+
   public async isTokenValid(tokenType: TokenType, tokenId: string): Promise<boolean> {
     const stringKey = `${tokenType}:${tokenId}`;
     const exists = await this.redisClient.exists(stringKey);

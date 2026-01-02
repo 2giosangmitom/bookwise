@@ -11,6 +11,7 @@ export default fp(
     fastify.log.debug('Registering JWT plugin');
 
     const jwtUtils = JWTUtils.getInstance(fastify.redis);
+    fastify.decorate('jwtUtils', jwtUtils);
     diContainer.register({
       jwtUtils: asValue(jwtUtils)
     });
@@ -34,3 +35,9 @@ export default fp(
     dependencies: ['Redis', 'Cookie', 'Awilix']
   }
 );
+
+declare module 'fastify' {
+  interface FastifyInstance {
+    jwtUtils: JWTUtils;
+  }
+}
