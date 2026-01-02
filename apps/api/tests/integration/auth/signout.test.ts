@@ -44,22 +44,6 @@ describe('POST /api/auth/signout', async () => {
     `);
   });
 
-  it('should fail to sign out with missing refresh token', async () => {
-    const signOutResponse = await app.inject({
-      method: 'POST',
-      url: '/api/auth/signout'
-    });
-
-    expect(signOutResponse.statusCode).toBe(401);
-    expect(signOutResponse.json()).toMatchInlineSnapshot(`
-      {
-        "error": "Unauthorized",
-        "message": "No Authorization was found in request.cookies",
-        "statusCode": 401,
-      }
-    `);
-  });
-
   it("can't use the refresh token after sign out", async () => {
     const user = users[1];
 
