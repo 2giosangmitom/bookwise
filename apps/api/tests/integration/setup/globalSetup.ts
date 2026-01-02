@@ -45,7 +45,7 @@ export default async function globalSetup() {
 
     // Drop the test database
     execSync('pnpm prisma migrate reset --force', { stdio: 'inherit' });
-    await app.redis.flushall();
+    await app.redis.flushdb();
     await app.close();
 
     console.log('Integration test database torn down.');
