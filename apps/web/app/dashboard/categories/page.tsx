@@ -12,6 +12,7 @@ import {
   CloseOutlined
 } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useDebounce } from '@uidotdev/usehooks';
 import { Button, Card, Flex, Form, Input, Modal, Table, Typography, type TableColumnsType, message } from 'antd';
 import { useState } from 'react';
 
@@ -31,10 +32,12 @@ export default function CategoriesPage() {
   const [messageApi, contextHolder] = message.useMessage();
   const [editingKey, setEditingKey] = useState('');
   const [editForm] = Form.useForm<CategoryFormField>();
+  const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   const { data: categories, isLoading } = useQuery({
-    queryKey: ['categories', page],
-    queryFn: (): Promise<GetCategoriesResponse> => getCategories(accessToken, { page })
+    queryKey: ['categories', page, debouncedSearchTerm],
+    queryFn: (): Promise<GetCategoriesResponse> => getCategories(accessToken, { page, searchTerm: debouncedSearchTerm })
   });
 
   const deleteCategoryMutation = useMutation({
@@ -81,7 +84,6 @@ export default function CategoriesPage() {
   };
 
   const columns: TableColumnsType<Category> = [
-    { title: 'ID', dataIndex: 'category_id' },
     {
       title: 'Name',
       dataIndex: 'name',
@@ -156,7 +158,12 @@ export default function CategoriesPage() {
           </div>
 
           <Flex justify="space-between" align="center" style={{ marginBottom: 16 }}>
-            <Input prefix={<SearchOutlined />} placeholder="Search categories" style={{ width: '25%' }} />
+            <Input
+              prefix={<SearchOutlined />}
+              placeholder="Search categories"
+              style={{ width: '25%' }}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
             <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateModalOpen(true)}>
               Add Category
             </Button>
@@ -184,30 +191,26 @@ export default function CategoriesPage() {
               </Form>
             </Modal>
           </Flex>
-          {isLoading ? (
-            <div>Loading...</div>
+          {isLoading || debouncedSearchTerm !== searchTerm ? (
+            <Table<Category> loading columns={columns} bordered />
           ) : (
             <div>
-              {categories && categories.data.length > 0 ? (
-                <Form form={editForm}>
-                  <Table<Category>
-                    columns={columns}
-                    dataSource={categories.data}
-                    rowKey="category_id"
-                    bordered
-                    pagination={{
-                      total: categories.meta.total,
-                      showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
-                      current: page,
-                      onChange: (page) => {
-                        setPage(page);
-                      }
-                    }}
-                  />
-                </Form>
-              ) : (
-                <div>No categories found.</div>
-              )}
+              <Form form={editForm}>
+                <Table<Category>
+                  columns={columns}
+                  dataSource={categories?.data}
+                  rowKey="category_id"
+                  bordered
+                  pagination={{
+                    total: categories?.meta.total,
+                    showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+                    current: page,
+                    onChange: (page) => {
+                      setPage(page);
+                    }
+                  }}
+                />
+              </Form>
             </div>
           )}
         </Card>

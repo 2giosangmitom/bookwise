@@ -1,9 +1,12 @@
 import { fetchApiWithAutoRefresh } from './apiClient';
 import { GetCategoriesResponse, DeleteCategoryResponse } from './types';
 
-export function getCategories(accessToken: string | null, query?: { page: number }) {
+export function getCategories(
+  accessToken: string | null,
+  query?: { page: number; limit?: number; searchTerm?: string }
+) {
   return fetchApiWithAutoRefresh<GetCategoriesResponse>(
-    `/staff/category?limit=10&page=${query?.page ?? 1}`,
+    `/staff/category?limit=${query?.limit ?? 10}&page=${query?.page ?? 1}${query?.searchTerm ? `&searchTerm=${encodeURIComponent(query.searchTerm)}` : ''}`,
     accessToken,
     {
       method: 'GET'
