@@ -15,6 +15,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDebounce } from '@uidotdev/usehooks';
 import { Button, Card, Flex, Form, Input, Modal, Table, Typography, type TableColumnsType, message } from 'antd';
 import { useState } from 'react';
+import { formatDateTime } from '@/utils/datetime';
 
 const { Title, Paragraph } = Typography;
 
@@ -87,6 +88,7 @@ export default function CategoriesPage() {
     {
       title: 'Name',
       dataIndex: 'name',
+      width: 250,
       render: (text, record) =>
         editingKey === record.category_id ? (
           <Form.Item name="name" style={{ margin: 0 }} rules={[{ required: true }]}>
@@ -98,6 +100,7 @@ export default function CategoriesPage() {
     },
     {
       title: 'Slug',
+      width: 250,
       dataIndex: 'slug',
       render: (text, record) =>
         editingKey === record.category_id ? (
@@ -108,10 +111,21 @@ export default function CategoriesPage() {
           text
         )
     },
-    { title: 'Created At', dataIndex: 'created_at' },
-    { title: 'Updated At', dataIndex: 'updated_at' },
+    {
+      title: 'Created At',
+      dataIndex: 'created_at',
+      render: (_, record) => formatDateTime(record.created_at),
+      width: 200
+    },
+    {
+      title: 'Updated At',
+      dataIndex: 'updated_at',
+      render: (_, record) => formatDateTime(record.updated_at),
+      width: 200
+    },
     {
       title: 'Actions',
+      width: 120,
       dataIndex: 'actions',
       render: (_, record) =>
         editingKey === record.category_id ? (
@@ -201,6 +215,7 @@ export default function CategoriesPage() {
                   dataSource={categories?.data}
                   rowKey="category_id"
                   bordered
+                  scroll={{ x: 'max-content' }}
                   pagination={{
                     total: categories?.meta.total,
                     showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,

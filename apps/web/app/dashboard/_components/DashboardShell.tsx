@@ -142,7 +142,7 @@ export default function DashboardShell({ children }: React.PropsWithChildren) {
   }
 
   return (
-    <Layout>
+    <Layout hasSider>
       <Layout.Sider
         collapsedWidth={0}
         width={240}
@@ -153,7 +153,8 @@ export default function DashboardShell({ children }: React.PropsWithChildren) {
           height: '100vh',
           position: 'sticky',
           top: 0,
-          left: 0
+          left: 0,
+          zIndex: 1000
         }}
         className="shadow-sm"
         breakpoint="lg">
