@@ -94,15 +94,15 @@ export const GetBooksSchema = {
   querystring: Type.Object({
     page: Type.Optional(Type.Number({ minimum: 1 })),
     limit: Type.Optional(Type.Number({ minimum: 1, maximum: 100 })),
-    title: Type.Optional(Type.String()),
-    isbn: Type.Optional(Type.String()),
-    publisher_id: Type.Optional(Type.String({ format: 'uuid' }))
+    searchTerm: Type.Optional(Type.String())
   }),
   response: {
     200: Type.Object({
       message: Type.String(),
       meta: Type.Object({
-        totalPages: Type.Number()
+        total: Type.Number(),
+        page: Type.Number(),
+        limit: Type.Number()
       }),
       data: Type.Array(
         Type.Object({
@@ -112,8 +112,14 @@ export const GetBooksSchema = {
           isbn: Type.String(),
           published_at: Type.String({ format: 'date-time' }),
           publisher_id: Type.Union([Type.String({ format: 'uuid' }), Type.Null()]),
+          publisher_name: Type.Union([Type.String(), Type.Null()]),
           image_url: Type.Union([Type.String(), Type.Null()]),
-          authors: Type.Array(Type.String({ format: 'uuid' })),
+          authors: Type.Array(
+            Type.Object({
+              author_id: Type.String({ format: 'uuid' }),
+              name: Type.String()
+            })
+          ),
           categories: Type.Array(Type.String({ format: 'uuid' })),
           created_at: Type.String({ format: 'date-time' }),
           updated_at: Type.String({ format: 'date-time' })

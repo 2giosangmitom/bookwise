@@ -102,3 +102,36 @@ export type GetPublishersResponse = {
 export type CreatePublisherResponse = ApiResponse<Publisher>;
 export type UpdatePublisherResponse = ApiResponse<Publisher>;
 export type DeletePublisherResponse = ApiResponse<Pick<Publisher, 'publisher_id' | 'name'>>;
+
+// Book-related API response types
+export type Book = {
+  book_id: string;
+  title: string;
+  description: string;
+  isbn: string;
+  published_at: string;
+  publisher_id: string | null;
+  publisher_name: string | null;
+  image_url: string | null;
+  authors: Array<{
+    author_id: string;
+    name: string;
+  }>;
+  categories: string[];
+  created_at: string;
+  updated_at: string;
+};
+
+export type GetBooksResponse = {
+  message: string;
+  data: Book[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+  };
+};
+
+export type CreateBookResponse = ApiResponse<Book>;
+export type UpdateBookResponse = ApiResponse<Book>;
+export type DeleteBookResponse = ApiResponse<Pick<Book, 'book_id' | 'title'>>;

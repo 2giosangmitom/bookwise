@@ -289,7 +289,7 @@ describe('StaffBookService', async () => {
 
   describe('getBooks', () => {
     it('should call prisma.book.findMany with correct pagination parameters', async () => {
-      const query = { page: 1, limit: 10, title: undefined, isbn: undefined, publisher_id: undefined };
+      const query = { page: 1, limit: 10, searchTerm: undefined };
 
       await service.getBooks(query);
 
@@ -297,75 +297,75 @@ describe('StaffBookService', async () => {
         expect.objectContaining({
           skip: 0,
           take: 10,
-          where: {}
+          where: {},
+          orderBy: [
+            {
+              created_at: 'desc'
+            }
+          ]
         })
       );
     });
 
-    it('should apply title filter correctly', async () => {
-      const query = { page: 1, limit: 10, title: 'The Great Gatsby', isbn: undefined, publisher_id: undefined };
+    it('should apply searchTerm filter with OR logic across title, isbn, and description', async () => {
+      const query = { page: 1, limit: 10, searchTerm: 'Great Gatsby' };
 
       await service.getBooks(query);
 
       expect(app.prisma.book.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: { title: { contains: 'The Great Gatsby', mode: 'insensitive' } }
-        })
-      );
-    });
-
-    it('should apply isbn filter correctly', async () => {
-      const query = { page: 1, limit: 10, title: undefined, isbn: '978-0-7432-7356-5', publisher_id: undefined };
-
-      await service.getBooks(query);
-
-      expect(app.prisma.book.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: { isbn: { contains: '978-0-7432-7356-5', mode: 'insensitive' } }
-        })
-      );
-    });
-
-    it('should apply publisher_id filter correctly', async () => {
-      const publisherId = faker.string.uuid();
-      const query = { page: 1, limit: 10, title: undefined, isbn: undefined, publisher_id: publisherId };
-
-      await service.getBooks(query);
-
-      expect(app.prisma.book.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: { publisher_id: publisherId }
-        })
-      );
-    });
-
-    it('should combine multiple filters', async () => {
-      const publisherId = faker.string.uuid();
-      const query = {
-        page: 2,
-        limit: 20,
-        title: 'The Great Gatsby',
-        isbn: '978-0-7432-7356-5',
-        publisher_id: publisherId
-      };
-
-      await service.getBooks(query);
-
-      expect(app.prisma.book.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({
-          skip: 20,
-          take: 20,
           where: {
-            title: { contains: 'The Great Gatsby', mode: 'insensitive' },
-            isbn: { contains: '978-0-7432-7356-5', mode: 'insensitive' },
-            publisher_id: publisherId
+            OR: [
+              { title: { contains: 'Great Gatsby', mode: 'insensitive' } },
+              { isbn: { contains: 'Great Gatsby', mode: 'insensitive' } },
+              { description: { contains: 'Great Gatsby', mode: 'insensitive' } }
+            ]
           }
         })
       );
     });
 
-    it('should fetch books and count', async () => {
-      const query = { page: 1, limit: 10, title: undefined, isbn: undefined, publisher_id: undefined };
+    it('should select publisher name in the query', async () => {
+      const query = { page: 1, limit: 10, searchTerm: undefined };
+
+      await service.getBooks(query);
+
+      expect(app.prisma.book.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          select: expect.objectContaining({
+            publisher: {
+              select: { name: true }
+            }
+          })
+        })
+      );
+    });
+
+    it('should select author details (id and name) in the query', async () => {
+      const query = { page: 1, limit: 10, searchTerm: undefined };
+
+      await service.getBooks(query);
+
+      expect(app.prisma.book.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          select: expect.objectContaining({
+            authors: {
+              select: {
+                author: {
+                  select: {
+                    author_id: true,
+                    name: true
+                  }
+                }
+              }
+            }
+          })
+        })
+      );
+    });
+
+    it('should fetch books and count with searchTerm filter', async () => {
+      const query = { page: 1, limit: 10, searchTerm: 'search' };
 
       vi.mocked(app.prisma.book.findMany).mockResolvedValueOnce([]);
       vi.mocked(app.prisma.book.count).mockResolvedValueOnce(0);
@@ -373,10 +373,18 @@ describe('StaffBookService', async () => {
       await service.getBooks(query);
 
       expect(app.prisma.book.findMany).toHaveBeenCalled();
-      expect(app.prisma.book.count).toHaveBeenCalledWith({ where: {} });
+      expect(app.prisma.book.count).toHaveBeenCalledWith({
+        where: {
+          OR: [
+            { title: { contains: 'search', mode: 'insensitive' } },
+            { isbn: { contains: 'search', mode: 'insensitive' } },
+            { description: { contains: 'search', mode: 'insensitive' } }
+          ]
+        }
+      });
     });
 
-    it('should return books and total count', async () => {
+    it('should return books with publisher and authors, and total count', async () => {
       const mockBooks = [
         {
           book_id: faker.string.uuid(),
@@ -388,15 +396,23 @@ describe('StaffBookService', async () => {
           image_url: null,
           created_at: new Date(),
           updated_at: new Date(),
-          authors: [],
+          publisher: { name: 'Test Publisher' },
+          authors: [
+            {
+              author: {
+                author_id: faker.string.uuid(),
+                name: 'Test Author'
+              }
+            }
+          ],
           categories: []
         }
       ];
 
-      vi.mocked(app.prisma.book.findMany).mockResolvedValueOnce(mockBooks);
+      vi.mocked(app.prisma.book.findMany).mockResolvedValueOnce(mockBooks as any);
       vi.mocked(app.prisma.book.count).mockResolvedValueOnce(1);
 
-      const query = { page: 1, limit: 10, title: undefined, isbn: undefined, publisher_id: undefined };
+      const query = { page: 1, limit: 10, searchTerm: undefined };
       const result = await service.getBooks(query);
 
       expect(result).toEqual({
@@ -409,7 +425,7 @@ describe('StaffBookService', async () => {
       vi.mocked(app.prisma.book.findMany).mockResolvedValueOnce([]);
       vi.mocked(app.prisma.book.count).mockResolvedValueOnce(0);
 
-      const query = { page: 1, limit: 10, title: undefined, isbn: undefined, publisher_id: undefined };
+      const query = { page: 1, limit: 10, searchTerm: undefined };
       const result = await service.getBooks(query);
 
       expect(result).toEqual({

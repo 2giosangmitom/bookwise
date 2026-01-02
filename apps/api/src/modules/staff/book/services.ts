@@ -129,23 +129,22 @@ export default class StaffBookService {
   }
 
   public async getBooks(query: Static<typeof GetBooksSchema.querystring> & { page: number; limit: number }) {
-    const filters: Prisma.BookWhereInput = {};
-
-    if (query.title) {
-      filters.title = { contains: query.title, mode: 'insensitive' };
-    }
-    if (query.isbn) {
-      filters.isbn = { contains: query.isbn, mode: 'insensitive' };
-    }
-    if (query.publisher_id) {
-      filters.publisher_id = query.publisher_id;
-    }
+    const where: Prisma.BookWhereInput = query.searchTerm
+      ? {
+          OR: [
+            { title: { contains: query.searchTerm, mode: 'insensitive' } },
+            { isbn: { contains: query.searchTerm, mode: 'insensitive' } },
+            { description: { contains: query.searchTerm, mode: 'insensitive' } }
+          ]
+        }
+      : {};
 
     const [books, total] = await Promise.all([
       this.prisma.book.findMany({
-        where: filters,
+        where,
         skip: (query.page - 1) * query.limit,
         take: query.limit,
+        orderBy: [{ created_at: 'desc' }],
         select: {
           book_id: true,
           title: true,
@@ -153,14 +152,28 @@ export default class StaffBookService {
           isbn: true,
           published_at: true,
           publisher_id: true,
+          publisher: {
+            select: {
+              name: true
+            }
+          },
           image_url: true,
           created_at: true,
           updated_at: true,
-          authors: { select: { author_id: true } },
+          authors: {
+            select: {
+              author: {
+                select: {
+                  author_id: true,
+                  name: true
+                }
+              }
+            }
+          },
           categories: { select: { category_id: true } }
         }
       }),
-      this.prisma.book.count({ where: filters })
+      this.prisma.book.count({ where })
     ]);
 
     return { books, total };

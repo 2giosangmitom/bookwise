@@ -84,21 +84,26 @@ export default class StaffBookController {
     req: FastifyRequestTypeBox<typeof GetBooksSchema>,
     reply: FastifyReplyTypeBox<typeof GetBooksSchema>
   ) {
+    const page = req.query.page ?? 1;
+    const limit = req.query.limit ?? 100;
+
     const { books, total } = await this.staffBookService.getBooks({
       ...req.query,
-      page: req.query.page ?? 1,
-      limit: req.query.limit ?? 100
+      page,
+      limit
     });
-    const totalPages = Math.ceil(total / (req.query.limit ?? 100));
 
     return reply.status(200).send({
       message: 'Books retrieved successfully',
       meta: {
-        totalPages
+        total,
+        page,
+        limit
       },
       data: books.map((book) => ({
         ...book,
-        authors: book.authors?.map((a) => a.author_id) ?? [],
+        publisher_name: book.publisher?.name ?? null,
+        authors: book.authors?.map((a) => ({ author_id: a.author.author_id, name: a.author.name })) ?? [],
         categories: book.categories?.map((c) => c.category_id) ?? [],
         published_at: book.published_at.toISOString(),
         created_at: book.created_at.toISOString(),

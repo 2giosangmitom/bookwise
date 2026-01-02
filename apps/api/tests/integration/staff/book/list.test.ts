@@ -11,8 +11,9 @@ interface BookResponse {
   isbn: string;
   published_at: string;
   publisher_id: string | null;
+  publisher_name: string | null;
   image_url: string | null;
-  authors: string[];
+  authors: Array<{ author_id: string; name: string }>;
   categories: string[];
   created_at: string;
   updated_at: string;
@@ -117,7 +118,9 @@ describe('GET /api/staff/book', async () => {
     const body = response.json();
     expect(body).toHaveProperty('data');
     expect(Array.isArray(body.data)).toBe(true);
-    expect(body.meta.totalPages).toBeDefined();
+    expect(body.meta.total).toBeDefined();
+    expect(body.meta.page).toBeDefined();
+    expect(body.meta.limit).toBeDefined();
   });
 
   it('should list books with default pagination', async () => {
@@ -144,7 +147,7 @@ describe('GET /api/staff/book', async () => {
     expect(body.data.length).toBeLessThanOrEqual(5);
   });
 
-  it('should filter books by title', async () => {
+  it('should filter books by title using searchTerm', async () => {
     // Create a test book with a specific title
     const bookTitle = `The Lord of the Rings Test ${faker.string.alphanumeric(6)}`;
     await createBookForTest({
@@ -153,7 +156,7 @@ describe('GET /api/staff/book', async () => {
 
     const response = await app.inject({
       method: 'GET',
-      url: `/api/staff/book?title=${encodeURIComponent(bookTitle)}`,
+      url: `/api/staff/book?searchTerm=${encodeURIComponent(bookTitle)}`,
       headers: { Authorization: `Bearer ${accessTokens[Role.ADMIN]}` }
     });
 
@@ -163,7 +166,7 @@ describe('GET /api/staff/book', async () => {
     expect(foundBook).toBeDefined();
   });
 
-  it('should filter books by title case-insensitively', async () => {
+  it('should filter books case-insensitively using searchTerm', async () => {
     // Create a test book
     const bookTitle = `The Hobbit Test ${faker.string.alphanumeric(6)}`;
     await createBookForTest({
@@ -172,7 +175,7 @@ describe('GET /api/staff/book', async () => {
 
     const response = await app.inject({
       method: 'GET',
-      url: `/api/staff/book?title=${encodeURIComponent('the hobbit')}`,
+      url: `/api/staff/book?searchTerm=${encodeURIComponent('the hobbit')}`,
       headers: { Authorization: `Bearer ${accessTokens[Role.ADMIN]}` }
     });
 
@@ -182,7 +185,7 @@ describe('GET /api/staff/book', async () => {
     expect(foundBook).toBeDefined();
   });
 
-  it('should filter books by ISBN', async () => {
+  it('should filter books by ISBN using searchTerm', async () => {
     // Create a test book with a specific ISBN
     const isbn = `${faker.string.numeric(13)}`;
     await createBookForTest({
@@ -191,7 +194,7 @@ describe('GET /api/staff/book', async () => {
 
     const response = await app.inject({
       method: 'GET',
-      url: `/api/staff/book?isbn=${isbn}`,
+      url: `/api/staff/book?searchTerm=${isbn}`,
       headers: { Authorization: `Bearer ${accessTokens[Role.ADMIN]}` }
     });
 
@@ -201,58 +204,36 @@ describe('GET /api/staff/book', async () => {
     expect(foundBook).toBeDefined();
   });
 
-  it('should filter books by ISBN case-insensitively', async () => {
-    // Create a test book with a specific ISBN
-    const isbn = `${faker.string.numeric(13)}`;
+  it('should search books by description using searchTerm', async () => {
+    // Create a test book with a unique description
+    const uniqueWord = `unique-${faker.string.alphanumeric(10)}`;
     await createBookForTest({
-      isbn
+      title: faker.lorem.sentence()
     });
 
-    const response = await app.inject({
-      method: 'GET',
-      url: `/api/staff/book?isbn=${isbn}`,
-      headers: { Authorization: `Bearer ${accessTokens[Role.ADMIN]}` }
+    // Need to update the book description directly
+    const book = await app.prisma.book.findFirst({
+      where: { book_id: { in: createdBookIds } },
+      orderBy: { created_at: 'desc' }
     });
 
-    expect(response.statusCode).toBe(200);
-    const body = response.json() as { data: BookResponse[] };
-    const foundBook = body.data.find((book: BookResponse) => book.isbn.toLowerCase() === isbn.toLowerCase());
-    expect(foundBook).toBeDefined();
-  });
+    if (book) {
+      await app.prisma.book.update({
+        where: { book_id: book.book_id },
+        data: { description: `This book contains ${uniqueWord} in its description` }
+      });
 
-  it('should filter books by publisher_id', async () => {
-    const response = await app.inject({
-      method: 'GET',
-      url: `/api/staff/book?publisher_id=${publisherId}`,
-      headers: { Authorization: `Bearer ${accessTokens[Role.ADMIN]}` }
-    });
+      const response = await app.inject({
+        method: 'GET',
+        url: `/api/staff/book?searchTerm=${uniqueWord}`,
+        headers: { Authorization: `Bearer ${accessTokens[Role.ADMIN]}` }
+      });
 
-    expect(response.statusCode).toBe(200);
-    const body = response.json() as { data: BookResponse[] };
-    if (body.data.length > 0) {
-      expect(body.data.every((book: BookResponse) => book.publisher_id === publisherId)).toBe(true);
+      expect(response.statusCode).toBe(200);
+      const body = response.json() as { data: BookResponse[] };
+      const foundBook = body.data.find((b: BookResponse) => b.book_id === book.book_id);
+      expect(foundBook).toBeDefined();
     }
-  });
-
-  it('should combine multiple filters', async () => {
-    // Create a test book
-    const bookTitle = `Combined Filter Test ${faker.string.alphanumeric(6)}`;
-    const isbn = `${faker.string.numeric(13)}`;
-    await createBookForTest({
-      title: bookTitle,
-      isbn
-    });
-
-    const response = await app.inject({
-      method: 'GET',
-      url: `/api/staff/book?title=${encodeURIComponent(bookTitle)}&isbn=${isbn}&publisher_id=${publisherId}`,
-      headers: { Authorization: `Bearer ${accessTokens[Role.ADMIN]}` }
-    });
-
-    expect(response.statusCode).toBe(200);
-    const body = response.json() as { data: BookResponse[] };
-    const foundBook = body.data.find((book: BookResponse) => book.title === bookTitle && book.isbn === isbn);
-    expect(foundBook).toBeDefined();
   });
 
   it('should return correct response format', async () => {
@@ -263,10 +244,16 @@ describe('GET /api/staff/book', async () => {
     });
 
     expect(response.statusCode).toBe(200);
-    const body = response.json() as { data: BookResponse[]; meta: { totalPages: number }; message: string };
+    const body = response.json() as {
+      data: BookResponse[];
+      meta: { total: number; page: number; limit: number };
+      message: string;
+    };
     expect(body).toHaveProperty('data');
     expect(body).toHaveProperty('meta');
-    expect(body.meta).toHaveProperty('totalPages');
+    expect(body.meta).toHaveProperty('total');
+    expect(body.meta).toHaveProperty('page');
+    expect(body.meta).toHaveProperty('limit');
     expect(body).toHaveProperty('message');
 
     if (body.data.length > 0) {
@@ -275,10 +262,15 @@ describe('GET /api/staff/book', async () => {
       expect(book).toHaveProperty('title');
       expect(book).toHaveProperty('isbn');
       expect(book).toHaveProperty('publisher_id');
+      expect(book).toHaveProperty('publisher_name');
       expect(book).toHaveProperty('created_at');
       expect(book).toHaveProperty('updated_at');
       expect(Array.isArray(book.authors)).toBe(true);
       expect(Array.isArray(book.categories)).toBe(true);
+      if (book.authors.length > 0) {
+        expect(book.authors[0]).toHaveProperty('author_id');
+        expect(book.authors[0]).toHaveProperty('name');
+      }
     }
   });
 
@@ -298,10 +290,10 @@ describe('GET /api/staff/book', async () => {
     expect(response1.statusCode).toBe(200);
     expect(response2.statusCode).toBe(200);
 
-    const body1 = response1.json() as { data: BookResponse[]; meta: { totalPages: number } };
-    const body2 = response2.json() as { data: BookResponse[]; meta: { totalPages: number } };
+    const body1 = response1.json() as { data: BookResponse[]; meta: { total: number; page: number; limit: number } };
+    const body2 = response2.json() as { data: BookResponse[]; meta: { total: number; page: number; limit: number } };
 
-    if (body1.meta.totalPages > 1) {
+    if (body1.meta.total > 1) {
       expect(body1.data[0]?.book_id).not.toBe(body2.data[0]?.book_id);
     }
   });
@@ -309,7 +301,7 @@ describe('GET /api/staff/book', async () => {
   it('should return empty list when no books match filters', async () => {
     const response = await app.inject({
       method: 'GET',
-      url: '/api/staff/book?title=nonexistent_book_title_xyz_12345',
+      url: '/api/staff/book?searchTerm=nonexistent_book_title_xyz_12345',
       headers: { Authorization: `Bearer ${accessTokens[Role.ADMIN]}` }
     });
 

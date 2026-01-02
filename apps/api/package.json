@@ -10,6 +10,7 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
+    "seed": "NODE_ENV=development tsx --env-file=.env scripts/seed.js",
     "test:integration": "NODE_ENV=test vitest run --project integration",
     "test:unit": "NODE_ENV=test vitest run --project unit",
     "test:coverage": "NODE_ENV=test vitest run --coverage",
