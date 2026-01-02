@@ -340,10 +340,10 @@ export default function BooksPage() {
                 <Select
                   placeholder="Type to search publishers"
                   allowClear
-                  showSearch
-                  filterOption={false}
+                  showSearch={{
+                    onSearch: (value) => setPublisherSearchTerm(value)
+                  }}
                   loading={isLoadingPublishers}
-                  onSearch={(value) => setPublisherSearchTerm(value)}
                   onFocus={() => setPublisherSearchTerm('')}
                   options={publishersData?.data.map((p) => ({
                     value: p.publisher_id,
@@ -356,10 +356,10 @@ export default function BooksPage() {
                 <Select
                   mode="multiple"
                   placeholder="Type to search authors"
-                  showSearch
-                  filterOption={false}
+                  showSearch={{
+                    onSearch: (value) => setAuthorSearchTerm(value)
+                  }}
                   loading={isLoadingAuthors}
-                  onSearch={(value) => setAuthorSearchTerm(value)}
                   onFocus={() => setAuthorSearchTerm('')}
                   notFoundContent={isLoadingAuthors ? 'Loading...' : 'No authors found'}
                   options={authorsData?.data.items.map((a) => ({
@@ -373,10 +373,10 @@ export default function BooksPage() {
                 <Select
                   mode="multiple"
                   placeholder="Type to search categories"
-                  showSearch
-                  filterOption={false}
+                  showSearch={{
+                    onSearch: (value) => setCategorySearchTerm(value)
+                  }}
                   loading={isLoadingCategories}
-                  onSearch={(value) => setCategorySearchTerm(value)}
                   onFocus={() => setCategorySearchTerm('')}
                   notFoundContent={isLoadingCategories ? 'Loading...' : 'No categories found'}
                   options={categoriesData?.data.map((c) => ({
@@ -436,10 +436,10 @@ export default function BooksPage() {
                 <Select
                   placeholder="Type to search publishers"
                   allowClear
-                  showSearch
-                  filterOption={false}
+                  showSearch={{
+                    onSearch: (value) => setPublisherSearchTerm(value)
+                  }}
                   loading={isLoadingPublishers}
-                  onSearch={(value) => setPublisherSearchTerm(value)}
                   onFocus={() => setPublisherSearchTerm('')}
                   options={publishersData?.data.map((p) => ({
                     value: p.publisher_id,
@@ -452,10 +452,10 @@ export default function BooksPage() {
                 <Select
                   mode="multiple"
                   placeholder="Type to search authors"
-                  showSearch
-                  filterOption={false}
+                  showSearch={{
+                    onSearch: (value) => setAuthorSearchTerm(value)
+                  }}
                   loading={isLoadingAuthors}
-                  onSearch={(value) => setAuthorSearchTerm(value)}
                   onFocus={() => setAuthorSearchTerm('')}
                   notFoundContent={isLoadingAuthors ? 'Loading...' : 'No authors found'}
                   options={
@@ -484,10 +484,10 @@ export default function BooksPage() {
                 <Select
                   mode="multiple"
                   placeholder="Type to search categories"
-                  showSearch
-                  filterOption={false}
+                  showSearch={{
+                    onSearch: (value) => setCategorySearchTerm(value)
+                  }}
                   loading={isLoadingCategories}
-                  onSearch={(value) => setCategorySearchTerm(value)}
                   onFocus={() => setCategorySearchTerm('')}
                   notFoundContent={isLoadingCategories ? 'Loading...' : 'No categories found'}
                   options={
