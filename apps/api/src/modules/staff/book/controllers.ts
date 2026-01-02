@@ -101,10 +101,15 @@ export default class StaffBookController {
         limit
       },
       data: books.map((book) => ({
-        ...book,
+        book_id: book.book_id,
+        title: book.title,
+        description: book.description,
+        isbn: book.isbn,
+        publisher_id: book.publisher_id,
+        image_url: book.image_url,
         publisher_name: book.publisher?.name ?? null,
         authors: book.authors?.map((a) => ({ author_id: a.author.author_id, name: a.author.name })) ?? [],
-        categories: book.categories?.map((c) => c.category_id) ?? [],
+        categories: book.categories?.map((c) => ({ category_id: c.category.category_id, name: c.category.name })) ?? [],
         published_at: book.published_at.toISOString(),
         created_at: book.created_at.toISOString(),
         updated_at: book.updated_at.toISOString()

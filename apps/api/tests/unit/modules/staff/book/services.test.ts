@@ -364,6 +364,29 @@ describe('StaffBookService', async () => {
       );
     });
 
+    it('should select category details (id and name) in the query', async () => {
+      const query = { page: 1, limit: 10, searchTerm: undefined };
+
+      await service.getBooks(query);
+
+      expect(app.prisma.book.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          select: expect.objectContaining({
+            categories: {
+              select: {
+                category: {
+                  select: {
+                    category_id: true,
+                    name: true
+                  }
+                }
+              }
+            }
+          })
+        })
+      );
+    });
+
     it('should fetch books and count with searchTerm filter', async () => {
       const query = { page: 1, limit: 10, searchTerm: 'search' };
 
@@ -405,10 +428,18 @@ describe('StaffBookService', async () => {
               }
             }
           ],
-          categories: []
+          categories: [
+            {
+              category: {
+                category_id: faker.string.uuid(),
+                name: 'Test Category'
+              }
+            }
+          ]
         }
       ];
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       vi.mocked(app.prisma.book.findMany).mockResolvedValueOnce(mockBooks as any);
       vi.mocked(app.prisma.book.count).mockResolvedValueOnce(1);
 

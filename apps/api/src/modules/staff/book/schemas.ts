@@ -120,7 +120,12 @@ export const GetBooksSchema = {
               name: Type.String()
             })
           ),
-          categories: Type.Array(Type.String({ format: 'uuid' })),
+          categories: Type.Array(
+            Type.Object({
+              category_id: Type.String({ format: 'uuid' }),
+              name: Type.String()
+            })
+          ),
           created_at: Type.String({ format: 'date-time' }),
           updated_at: Type.String({ format: 'date-time' })
         })

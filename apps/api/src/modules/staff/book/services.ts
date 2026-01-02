@@ -170,7 +170,16 @@ export default class StaffBookService {
               }
             }
           },
-          categories: { select: { category_id: true } }
+          categories: {
+            select: {
+              category: {
+                select: {
+                  category_id: true,
+                  name: true
+                }
+              }
+            }
+          }
         }
       }),
       this.prisma.book.count({ where })

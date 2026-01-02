@@ -117,7 +117,10 @@ export type Book = {
     author_id: string;
     name: string;
   }>;
-  categories: string[];
+  categories: Array<{
+    category_id: string;
+    name: string;
+  }>;
   created_at: string;
   updated_at: string;
 };

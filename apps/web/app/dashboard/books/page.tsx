@@ -52,6 +52,12 @@ export default function BooksPage() {
   const [messageApi, contextHolder] = message.useMessage();
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  const [authorSearchTerm, setAuthorSearchTerm] = useState('');
+  const [publisherSearchTerm, setPublisherSearchTerm] = useState('');
+  const [categorySearchTerm, setCategorySearchTerm] = useState('');
+  const debouncedAuthorSearch = useDebounce(authorSearchTerm, 300);
+  const debouncedPublisherSearch = useDebounce(publisherSearchTerm, 300);
+  const debouncedCategorySearch = useDebounce(categorySearchTerm, 300);
 
   // Fetch books with search and pagination
   const { data: books, isLoading } = useQuery({
@@ -59,22 +65,25 @@ export default function BooksPage() {
     queryFn: (): Promise<GetBooksResponse> => getBooks(accessToken, { page, searchTerm: debouncedSearchTerm })
   });
 
-  // Fetch authors for the select dropdown
-  const { data: authorsData } = useQuery({
-    queryKey: ['authors'],
-    queryFn: () => getAuthors(accessToken, { page: 1, limit: 100 })
+  // Fetch authors for the select dropdown with dynamic search
+  const { data: authorsData, isLoading: isLoadingAuthors } = useQuery({
+    queryKey: ['authors', debouncedAuthorSearch],
+    queryFn: () => getAuthors(accessToken, { page: 1, limit: 5, searchTerm: debouncedAuthorSearch }),
+    enabled: authorSearchTerm.length > 0 || debouncedAuthorSearch === ''
   });
 
-  // Fetch categories for the select dropdown
-  const { data: categoriesData } = useQuery({
-    queryKey: ['categories'],
-    queryFn: () => getCategories(accessToken, { page: 1, limit: 100 })
+  // Fetch categories for the select dropdown with dynamic search
+  const { data: categoriesData, isLoading: isLoadingCategories } = useQuery({
+    queryKey: ['categories', debouncedCategorySearch],
+    queryFn: () => getCategories(accessToken, { page: 1, limit: 5, searchTerm: debouncedCategorySearch }),
+    enabled: categorySearchTerm.length > 0 || debouncedCategorySearch === ''
   });
 
-  // Fetch publishers for the select dropdown
-  const { data: publishersData } = useQuery({
-    queryKey: ['publishers'],
-    queryFn: () => getPublishers(accessToken, { page: 1, limit: 100 })
+  // Fetch publishers for the select dropdown with dynamic search
+  const { data: publishersData, isLoading: isLoadingPublishers } = useQuery({
+    queryKey: ['publishers', debouncedPublisherSearch],
+    queryFn: () => getPublishers(accessToken, { page: 1, limit: 5, searchTerm: debouncedPublisherSearch }),
+    enabled: publisherSearchTerm.length > 0 || debouncedPublisherSearch === ''
   });
 
   // Delete book mutation
@@ -172,6 +181,12 @@ export default function BooksPage() {
 
   const handleEdit = (book: Book) => {
     setEditingBook(book);
+
+    // Pre-populate search terms to load the existing selections
+    if (book.categories.length > 0) {
+      setCategorySearchTerm('');
+    }
+
     editForm.setFieldsValue({
       title: book.title,
       description: book.description,
@@ -179,7 +194,7 @@ export default function BooksPage() {
       published_at: dayjs(book.published_at),
       publisher_id: book.publisher_id,
       authors: book.authors.map((a) => a.author_id),
-      categories: book.categories
+      categories: book.categories.map((c) => c.category_id)
     });
     setEditModalOpen(true);
   };
@@ -217,6 +232,13 @@ export default function BooksPage() {
       dataIndex: 'authors',
       width: 200,
       render: (authors: Book['authors']) => (authors.length > 0 ? authors.map((a) => a.name).join(', ') : '-')
+    },
+    {
+      title: 'Categories',
+      dataIndex: 'categories',
+      width: 200,
+      render: (categories: Book['categories']) =>
+        categories.length > 0 ? categories.map((c) => c.name).join(', ') : '-'
     },
     {
       title: 'Published Date',
@@ -316,9 +338,13 @@ export default function BooksPage() {
 
               <Form.Item<BookFormField> label="Publisher" name="publisher_id">
                 <Select
-                  placeholder="Select publisher"
+                  placeholder="Type to search publishers"
                   allowClear
                   showSearch
+                  filterOption={false}
+                  loading={isLoadingPublishers}
+                  onSearch={(value) => setPublisherSearchTerm(value)}
+                  onFocus={() => setPublisherSearchTerm('')}
                   options={publishersData?.data.map((p) => ({
                     value: p.publisher_id,
                     label: p.name
@@ -329,9 +355,13 @@ export default function BooksPage() {
               <Form.Item<BookFormField> label="Authors" name="authors">
                 <Select
                   mode="multiple"
-                  placeholder="Search and select authors"
+                  placeholder="Type to search authors"
                   showSearch
-                  notFoundContent={null}
+                  filterOption={false}
+                  loading={isLoadingAuthors}
+                  onSearch={(value) => setAuthorSearchTerm(value)}
+                  onFocus={() => setAuthorSearchTerm('')}
+                  notFoundContent={isLoadingAuthors ? 'Loading...' : 'No authors found'}
                   options={authorsData?.data.items.map((a) => ({
                     value: a.author_id,
                     label: a.name
@@ -342,8 +372,13 @@ export default function BooksPage() {
               <Form.Item<BookFormField> label="Categories" name="categories">
                 <Select
                   mode="multiple"
-                  placeholder="Select categories"
+                  placeholder="Type to search categories"
                   showSearch
+                  filterOption={false}
+                  loading={isLoadingCategories}
+                  onSearch={(value) => setCategorySearchTerm(value)}
+                  onFocus={() => setCategorySearchTerm('')}
+                  notFoundContent={isLoadingCategories ? 'Loading...' : 'No categories found'}
                   options={categoriesData?.data.map((c) => ({
                     value: c.category_id,
                     label: c.name
@@ -399,9 +434,13 @@ export default function BooksPage() {
 
               <Form.Item<BookFormField> label="Publisher" name="publisher_id">
                 <Select
-                  placeholder="Select publisher"
+                  placeholder="Type to search publishers"
                   allowClear
                   showSearch
+                  filterOption={false}
+                  loading={isLoadingPublishers}
+                  onSearch={(value) => setPublisherSearchTerm(value)}
+                  onFocus={() => setPublisherSearchTerm('')}
                   options={publishersData?.data.map((p) => ({
                     value: p.publisher_id,
                     label: p.name
@@ -412,25 +451,64 @@ export default function BooksPage() {
               <Form.Item<BookFormField> label="Authors" name="authors">
                 <Select
                   mode="multiple"
-                  placeholder="Search and select authors"
+                  placeholder="Type to search authors"
                   showSearch
-                  notFoundContent={null}
-                  options={authorsData?.data.items.map((a) => ({
-                    value: a.author_id,
-                    label: a.name
-                  }))}
+                  filterOption={false}
+                  loading={isLoadingAuthors}
+                  onSearch={(value) => setAuthorSearchTerm(value)}
+                  onFocus={() => setAuthorSearchTerm('')}
+                  notFoundContent={isLoadingAuthors ? 'Loading...' : 'No authors found'}
+                  options={
+                    editingBook
+                      ? [
+                          ...editingBook.authors.map((a) => ({
+                            value: a.author_id,
+                            label: a.name
+                          })),
+                          ...(authorsData?.data.items
+                            .filter((a) => !editingBook.authors.some((ea) => ea.author_id === a.author_id))
+                            .map((a) => ({
+                              value: a.author_id,
+                              label: a.name
+                            })) ?? [])
+                        ]
+                      : authorsData?.data.items.map((a) => ({
+                          value: a.author_id,
+                          label: a.name
+                        }))
+                  }
                 />
               </Form.Item>
 
               <Form.Item<BookFormField> label="Categories" name="categories">
                 <Select
                   mode="multiple"
-                  placeholder="Select categories"
+                  placeholder="Type to search categories"
                   showSearch
-                  options={categoriesData?.data.map((c) => ({
-                    value: c.category_id,
-                    label: c.name
-                  }))}
+                  filterOption={false}
+                  loading={isLoadingCategories}
+                  onSearch={(value) => setCategorySearchTerm(value)}
+                  onFocus={() => setCategorySearchTerm('')}
+                  notFoundContent={isLoadingCategories ? 'Loading...' : 'No categories found'}
+                  options={
+                    editingBook
+                      ? [
+                          ...editingBook.categories.map((c) => ({
+                            value: c.category_id,
+                            label: c.name
+                          })),
+                          ...(categoriesData?.data
+                            .filter((c) => !editingBook.categories.some((ec) => ec.category_id === c.category_id))
+                            .map((c) => ({
+                              value: c.category_id,
+                              label: c.name
+                            })) ?? [])
+                        ]
+                      : categoriesData?.data.map((c) => ({
+                          value: c.category_id,
+                          label: c.name
+                        }))
+                  }
                 />
               </Form.Item>
 

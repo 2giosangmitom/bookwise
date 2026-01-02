@@ -14,7 +14,7 @@ interface BookResponse {
   publisher_name: string | null;
   image_url: string | null;
   authors: Array<{ author_id: string; name: string }>;
-  categories: string[];
+  categories: Array<{ category_id: string; name: string }>;
   created_at: string;
   updated_at: string;
 }
@@ -270,6 +270,10 @@ describe('GET /api/staff/book', async () => {
       if (book.authors.length > 0) {
         expect(book.authors[0]).toHaveProperty('author_id');
         expect(book.authors[0]).toHaveProperty('name');
+      }
+      if (book.categories.length > 0) {
+        expect(book.categories[0]).toHaveProperty('category_id');
+        expect(book.categories[0]).toHaveProperty('name');
       }
     }
   });
