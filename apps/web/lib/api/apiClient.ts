@@ -19,7 +19,16 @@ export async function fetchApi<T>(path: string, options?: Parameters<typeof fetc
   return json;
 }
 
-export async function fetchApiWithAutoRefresh<T>(path: string, options?: Parameters<typeof fetch>[1]): Promise<T> {
+export async function fetchApiWithAutoRefresh<T>(
+  path: string,
+  accessToken: string | null,
+  options?: Parameters<typeof fetch>[1]
+): Promise<T> {
+  options = {
+    ...options,
+    headers: accessToken ? { ...options?.headers, Authorization: `Bearer ${accessToken}` } : options?.headers
+  };
+
   try {
     const response = await fetchApi<T>(path, options);
     return response;

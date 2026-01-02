@@ -142,11 +142,19 @@ export default function DashboardShell({ children }: React.PropsWithChildren) {
   }
 
   return (
-    <Layout style={{ minHeight: '100vh' }}>
+    <Layout>
       <Layout.Sider
         collapsedWidth={0}
         width={240}
-        style={{ background: '#fff', display: 'flex', flexDirection: 'column' }}
+        style={{
+          background: '#fff',
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100vh',
+          position: 'sticky',
+          top: 0,
+          left: 0
+        }}
         className="shadow-sm"
         breakpoint="lg">
         <Flex vertical className="h-full">
@@ -180,8 +188,8 @@ export default function DashboardShell({ children }: React.PropsWithChildren) {
         </Flex>
       </Layout.Sider>
 
-      <Layout style={{ display: 'flex', flexDirection: 'column' }}>
-        <Layout.Content className="p-6 overflow-auto">{children}</Layout.Content>
+      <Layout style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        <Layout.Content className="p-4 overflow-auto">{children}</Layout.Content>
       </Layout>
     </Layout>
   );

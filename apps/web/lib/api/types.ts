@@ -3,6 +3,12 @@ export type ApiResponse<T> = {
   data: T;
 };
 
+export type PaginatedResponse<T> = ApiResponse<T[]> & {
+  meta: {
+    totalPages: number;
+  };
+};
+
 // Authentication-related API response types
 export type SignInResponse = ApiResponse<{ access_token: string }>;
 export type SignUpResponse = ApiResponse<{ user_id: string }>;
@@ -27,4 +33,4 @@ export type Category = {
   updated_at: string;
 };
 
-export type GetCategoriesResponse = ApiResponse<Category[]>;
+export type GetCategoriesResponse = PaginatedResponse<Category>;

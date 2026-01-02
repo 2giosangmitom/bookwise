@@ -5,6 +5,7 @@ import './globals.css';
 import { fetchApi } from '@/lib/api/apiClient';
 import { MeResponse, RefreshTokenResponse } from '@/lib/api/types';
 import AuthProvider from './_components/AuthProvider';
+import QueryProvider from './_components/QueryProvider';
 import { cookies } from 'next/headers';
 import { getMe } from '@/lib/api/user';
 
@@ -44,7 +45,9 @@ export default async function RootLayout({ children }: React.PropsWithChildren) 
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <App>
-          <AuthProvider user={user}>{children}</AuthProvider>
+          <QueryProvider>
+            <AuthProvider user={user}>{children}</AuthProvider>
+          </QueryProvider>
         </App>
       </body>
     </html>
