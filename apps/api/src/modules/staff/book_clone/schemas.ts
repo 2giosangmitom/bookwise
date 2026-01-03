@@ -92,11 +92,9 @@ export const GetBookClonesSchema = {
   querystring: Type.Object({
     page: Type.Optional(Type.Number({ minimum: 1 })),
     limit: Type.Optional(Type.Number({ minimum: 1, maximum: 100 })),
-    book_id: Type.Optional(Type.String({ format: 'uuid' })),
-    location_id: Type.Optional(Type.String()),
+    searchTerm: Type.Optional(Type.String()),
     condition: Type.Optional(Type.Enum(BookCondition)),
-    is_available: Type.Optional(Type.Boolean()),
-    barcode: Type.Optional(Type.String())
+    is_available: Type.Optional(Type.Boolean())
   }),
   response: {
     200: Type.Object({
@@ -108,6 +106,7 @@ export const GetBookClonesSchema = {
         Type.Object({
           book_clone_id: Type.String({ format: 'uuid' }),
           book_id: Type.String({ format: 'uuid' }),
+          book_title: Type.String(),
           location_id: Type.String(),
           barcode: Type.String(),
           condition: Type.String(),

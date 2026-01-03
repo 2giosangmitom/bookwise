@@ -93,21 +93,22 @@ export default class StaffBookCloneService {
   public async getBookClones(query: Static<typeof GetBookClonesSchema.querystring> & { page: number; limit: number }) {
     const filters: Prisma.Book_CloneWhereInput = {};
 
-    if (query.book_id) {
-      filters.book_id = query.book_id;
-    }
-    if (query.location_id) {
-      filters.location_id = query.location_id;
+    if (query.searchTerm) {
+      filters.OR = [
+        { barcode: { contains: query.searchTerm, mode: 'insensitive' } },
+        { location_id: { contains: query.searchTerm, mode: 'insensitive' } },
+        { book: { title: { contains: query.searchTerm, mode: 'insensitive' } } }
+      ];
     }
     if (query.condition) {
       filters.condition = query.condition;
     }
-    if (query.barcode) {
-      filters.barcode = query.barcode;
-    }
     if (typeof query.is_available === 'boolean') {
       if (query.is_available) {
-        filters.OR = [{ loan: { is: null } }, { loan: { is: { status: 'RETURNED' } } }];
+        filters.AND = [
+          ...(Array.isArray(filters.AND) ? filters.AND : []),
+          { OR: [{ loan: { is: null } }, { loan: { is: { status: 'RETURNED' } } }] }
+        ];
       } else {
         filters.loan = { is: { status: { not: 'RETURNED' } } };
       }
@@ -126,6 +127,9 @@ export default class StaffBookCloneService {
           condition: true,
           created_at: true,
           updated_at: true,
+          book: {
+            select: { title: true }
+          },
           loan: {
             select: { status: true }
           }

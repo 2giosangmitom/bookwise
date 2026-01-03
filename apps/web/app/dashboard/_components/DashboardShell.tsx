@@ -9,7 +9,8 @@ import {
   SolutionOutlined,
   TagsOutlined,
   TeamOutlined,
-  UserOutlined
+  UserOutlined,
+  EnvironmentOutlined
 } from '@ant-design/icons';
 import { Layout, Typography, Menu, Dropdown, Button, Space, Flex } from 'antd';
 import NextImage from 'next/image';
@@ -67,6 +68,20 @@ const navItems: NavItem[] = [
     label: 'Categories',
     href: '/dashboard/categories',
     icon: <TagsOutlined />,
+    roles: ['ADMIN', 'LIBRARIAN']
+  },
+  {
+    key: 'book-clones',
+    label: 'Book Clones',
+    href: '/dashboard/book-clones',
+    icon: <BookOutlined />,
+    roles: ['ADMIN', 'LIBRARIAN']
+  },
+  {
+    key: 'locations',
+    label: 'Locations',
+    href: '/dashboard/locations',
+    icon: <EnvironmentOutlined />,
     roles: ['ADMIN', 'LIBRARIAN']
   },
   {

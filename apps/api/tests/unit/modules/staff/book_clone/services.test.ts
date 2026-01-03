@@ -368,14 +368,56 @@ describe('StaffBookCloneService', async () => {
   });
 
   describe('getBookClones', () => {
-    it('should apply filters correctly', async () => {
+    it('should apply searchTerm filter to barcode, location_id, and book title', async () => {
       const query = {
         page: 1,
         limit: 10,
-        book_id: faker.string.uuid(),
-        location_id: faker.string.alphanumeric(10),
-        condition: BookCondition.NEW,
-        barcode: faker.string.alphanumeric(10),
+        searchTerm: 'test-search'
+      };
+
+      vi.mocked(app.prisma.book_Clone.findMany).mockResolvedValueOnce([]);
+      vi.mocked(app.prisma.book_Clone.count).mockResolvedValueOnce(0);
+
+      await service.getBookClones(query);
+
+      expect(app.prisma.book_Clone.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {
+            OR: [
+              { barcode: { contains: 'test-search', mode: 'insensitive' } },
+              { location_id: { contains: 'test-search', mode: 'insensitive' } },
+              { book: { title: { contains: 'test-search', mode: 'insensitive' } } }
+            ]
+          }
+        })
+      );
+    });
+
+    it('should apply condition filter correctly', async () => {
+      const query = {
+        page: 1,
+        limit: 10,
+        condition: BookCondition.NEW
+      };
+
+      vi.mocked(app.prisma.book_Clone.findMany).mockResolvedValueOnce([]);
+      vi.mocked(app.prisma.book_Clone.count).mockResolvedValueOnce(0);
+
+      await service.getBookClones(query);
+
+      expect(app.prisma.book_Clone.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {
+            condition: BookCondition.NEW
+          }
+        })
+      );
+    });
+
+    it('should apply is_available: true filter correctly', async () => {
+      const query = {
+        page: 1,
+        limit: 10,
         is_available: true
       };
 
@@ -387,11 +429,7 @@ describe('StaffBookCloneService', async () => {
       expect(app.prisma.book_Clone.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: {
-            book_id: query.book_id,
-            location_id: query.location_id,
-            condition: query.condition,
-            barcode: query.barcode,
-            OR: [{ loan: { is: null } }, { loan: { is: { status: 'RETURNED' } } }]
+            AND: [{ OR: [{ loan: { is: null } }, { loan: { is: { status: 'RETURNED' } } }] }]
           }
         })
       );
@@ -429,6 +467,33 @@ describe('StaffBookCloneService', async () => {
       expect(app.prisma.book_Clone.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: {}
+        })
+      );
+    });
+
+    it('should combine searchTerm with condition filter', async () => {
+      const query = {
+        page: 1,
+        limit: 10,
+        searchTerm: 'test',
+        condition: BookCondition.DAMAGED
+      };
+
+      vi.mocked(app.prisma.book_Clone.findMany).mockResolvedValueOnce([]);
+      vi.mocked(app.prisma.book_Clone.count).mockResolvedValueOnce(0);
+
+      await service.getBookClones(query);
+
+      expect(app.prisma.book_Clone.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {
+            OR: [
+              { barcode: { contains: 'test', mode: 'insensitive' } },
+              { location_id: { contains: 'test', mode: 'insensitive' } },
+              { book: { title: { contains: 'test', mode: 'insensitive' } } }
+            ],
+            condition: BookCondition.DAMAGED
+          }
         })
       );
     });

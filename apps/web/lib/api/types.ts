@@ -138,3 +138,55 @@ export type GetBooksResponse = {
 export type CreateBookResponse = ApiResponse<Book>;
 export type UpdateBookResponse = ApiResponse<Book>;
 export type DeleteBookResponse = ApiResponse<Pick<Book, 'book_id' | 'title'>>;
+
+// Book Clone-related API response types
+export type BookClone = {
+  book_clone_id: string;
+  book_id: string;
+  book_title: string;
+  location_id: string;
+  barcode: string;
+  condition: 'NEW' | 'GOOD' | 'WORN' | 'DAMAGED';
+  is_available: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type GetBookClonesResponse = {
+  message: string;
+  data: BookClone[];
+  meta: {
+    totalPages: number;
+  };
+};
+
+export type CreateBookCloneResponse = ApiResponse<BookClone>;
+export type UpdateBookCloneResponse = ApiResponse<BookClone>;
+export type DeleteBookCloneResponse = ApiResponse<Pick<BookClone, 'book_clone_id' | 'barcode'>>;
+
+// Location-related API response types
+export type Location = {
+  location_id: string;
+  room: string;
+  floor: number;
+  shelf: number;
+  row: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type GetLocationsResponse = {
+  message: string;
+  data: Location[];
+  meta: {
+    totalPages: number;
+  };
+};
+
+export type CreateLocationResponse = Location & {
+  created_at: string;
+  updated_at: string;
+};
+
+export type UpdateLocationResponse = ApiResponse<Location>;
+export type DeleteLocationResponse = ApiResponse<Pick<Location, 'location_id' | 'room' | 'floor' | 'shelf' | 'row'>>;

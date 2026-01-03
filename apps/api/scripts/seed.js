@@ -13,6 +13,16 @@ async function generateHash(password) {
   return { hash: hash.toString('hex'), salt };
 }
 
+function calculateLocationId(data) {
+  return `${data.room.toUpperCase()}-${data.floor}-${data.shelf}-${data.row}`;
+}
+
+function generateBarcode() {
+  const timestamp = Date.now().toString(36);
+  const random = Math.random().toString(36).substring(2, 7);
+  return `BC-${timestamp}-${random}`.toUpperCase();
+}
+
 // IT-related seed data
 const publishers = [
   { name: "O'Reilly Media", website: 'https://oreilly.com', slug: 'oreilly-media' },
@@ -773,6 +783,59 @@ const books = [
   }
 ];
 
+const locations = [
+  { room: 'Main Hall', floor: 1, shelf: 1, row: 1 },
+  { room: 'Main Hall', floor: 1, shelf: 1, row: 2 },
+  { room: 'Main Hall', floor: 1, shelf: 2, row: 1 },
+  { room: 'Main Hall', floor: 1, shelf: 2, row: 2 },
+  { room: 'Main Hall', floor: 1, shelf: 3, row: 1 },
+  { room: 'Main Hall', floor: 1, shelf: 3, row: 2 },
+  { room: 'Main Hall', floor: 2, shelf: 1, row: 1 },
+  { room: 'Main Hall', floor: 2, shelf: 1, row: 2 },
+  { room: 'Main Hall', floor: 2, shelf: 2, row: 1 },
+  { room: 'Main Hall', floor: 2, shelf: 2, row: 2 },
+  { room: 'Study Room A', floor: 1, shelf: 1, row: 1 },
+  { room: 'Study Room A', floor: 1, shelf: 1, row: 2 },
+  { room: 'Study Room A', floor: 1, shelf: 2, row: 1 },
+  { room: 'Study Room A', floor: 1, shelf: 2, row: 2 },
+  { room: 'Study Room B', floor: 1, shelf: 1, row: 1 },
+  { room: 'Study Room B', floor: 1, shelf: 1, row: 2 },
+  { room: 'Study Room B', floor: 1, shelf: 2, row: 1 },
+  { room: 'Study Room B', floor: 1, shelf: 2, row: 2 },
+  { room: 'Archive', floor: 1, shelf: 1, row: 1 },
+  { room: 'Archive', floor: 1, shelf: 1, row: 2 },
+  { room: 'Archive', floor: 1, shelf: 2, row: 1 },
+  { room: 'Archive', floor: 1, shelf: 2, row: 2 },
+  { room: 'Archive', floor: 2, shelf: 1, row: 1 },
+  { room: 'Archive', floor: 2, shelf: 1, row: 2 },
+  { room: 'Reading Room', floor: 1, shelf: 1, row: 1 },
+  { room: 'Reading Room', floor: 1, shelf: 1, row: 2 },
+  { room: 'Reading Room', floor: 1, shelf: 2, row: 1 },
+  { room: 'Reading Room', floor: 1, shelf: 2, row: 2 },
+  { room: 'Reference Section', floor: 1, shelf: 1, row: 1 },
+  { room: 'Reference Section', floor: 1, shelf: 1, row: 2 }
+];
+
+// Book clones will be created after books are seeded
+// Each book will get 2-5 clones distributed across different locations
+const bookClonesPerBook = [
+  { bookIndex: 0, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 1, count: 4, condition: ['NEW', 'GOOD', 'GOOD', 'WORN'] },
+  { bookIndex: 2, count: 2, condition: ['NEW', 'NEW'] },
+  { bookIndex: 3, count: 3, condition: ['GOOD', 'WORN', 'DAMAGED'] },
+  { bookIndex: 4, count: 5, condition: ['NEW', 'GOOD', 'GOOD', 'WORN', 'GOOD'] },
+  { bookIndex: 5, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 6, count: 2, condition: ['NEW', 'NEW'] },
+  { bookIndex: 7, count: 4, condition: ['NEW', 'GOOD', 'WORN', 'GOOD'] },
+  { bookIndex: 8, count: 3, condition: ['GOOD', 'WORN', 'DAMAGED'] },
+  { bookIndex: 9, count: 2, condition: ['NEW', 'GOOD'] },
+  { bookIndex: 10, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 11, count: 4, condition: ['NEW', 'NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 12, count: 2, condition: ['NEW', 'GOOD'] },
+  { bookIndex: 13, count: 3, condition: ['NEW', 'GOOD', 'WORN'] },
+  { bookIndex: 14, count: 5, condition: ['NEW', 'NEW', 'GOOD', 'GOOD', 'WORN'] }
+];
+
 const users = [
   {
     name: 'Admin User',
@@ -1024,6 +1087,7 @@ async function main() {
 
   // Create Books
   console.log('Creating books...');
+  const createdBooks = [];
   for (const book of books) {
     const publisherId = publisherMap.get(book.publisherSlug);
     const categoryIds = book.categorySlugs.map((slug) => categoryMap.get(slug));
@@ -1048,7 +1112,52 @@ async function main() {
         }
       }
     });
+    createdBooks.push(created);
     console.log(`  ✓ Created book: ${created.title}`);
+  }
+
+  // Create Locations
+  console.log('Creating locations...');
+  const createdLocations = [];
+  for (const location of locations) {
+    const location_id = calculateLocationId(location);
+    const created = await prisma.location.create({
+      data: {
+        location_id,
+        room: location.room,
+        floor: location.floor,
+        shelf: location.shelf,
+        row: location.row
+      }
+    });
+    createdLocations.push(created);
+    console.log(`  ✓ Created location: ${created.location_id}`);
+  }
+
+  // Create Book Clones
+  console.log('Creating book clones...');
+  let locationIndex = 0;
+  for (const cloneConfig of bookClonesPerBook) {
+    const book = createdBooks[cloneConfig.bookIndex];
+    if (!book) continue;
+
+    for (let i = 0; i < cloneConfig.count; i++) {
+      const location = createdLocations[locationIndex % createdLocations.length];
+      const condition = cloneConfig.condition[i] || 'GOOD';
+      const barcode = generateBarcode();
+
+      await prisma.book_Clone.create({
+        data: {
+          book_id: book.book_id,
+          location_id: location.location_id,
+          barcode: barcode,
+          condition: condition
+        }
+      });
+
+      locationIndex++;
+    }
+    console.log(`  ✓ Created ${cloneConfig.count} clones for: ${book.title}`);
   }
 
   console.log('\n✅ Seed completed successfully!');

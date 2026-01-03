@@ -7,6 +7,7 @@ describe('GET /api/staff/book_clone', async () => {
   const app = await build();
   const accessTokens: Partial<Record<Role, string>> = {};
   let book_id: string;
+  let bookTitle: string;
   let location_id: string;
   let testLoanUserId: string;
   let createdCloneIds: string[] = [];
@@ -58,8 +59,9 @@ describe('GET /api/staff/book_clone', async () => {
     const loanUser = await app.prisma.user.findUnique({ where: { email: users[4].email } });
     testLoanUserId = loanUser!.user_id;
 
+    bookTitle = `TestBook-${faker.string.alphanumeric(6)}`;
     const bookData = {
-      title: faker.lorem.sentence(),
+      title: bookTitle,
       description: faker.lorem.paragraphs(2),
       isbn: faker.string.numeric(13),
       published_at: faker.date.past().toISOString(),
@@ -137,9 +139,8 @@ describe('GET /api/staff/book_clone', async () => {
       method: 'GET',
       url: '/api/staff/book_clone',
       query: {
-        book_id,
         is_available: 'true',
-        limit: '2',
+        limit: '100',
         page: '1'
       },
       headers: { Authorization: `Bearer ${accessTokens[Role.ADMIN]}` }
@@ -147,15 +148,13 @@ describe('GET /api/staff/book_clone', async () => {
 
     expect(availableResponse.statusCode).toBe(200);
     const availableBody = availableResponse.json();
-    expect(availableBody.meta).toEqual({ totalPages: 1 });
     expect(availableBody.data.every((c: { is_available: boolean }) => c.is_available)).toBe(true);
-    expect(availableBody.data.every((c: { book_id: string }) => c.book_id === book_id)).toBe(true);
+    expect(availableBody.data.every((c: { book_title: string }) => typeof c.book_title === 'string')).toBe(true);
 
     const unavailableResponse = await app.inject({
       method: 'GET',
       url: '/api/staff/book_clone',
       query: {
-        book_id,
         is_available: 'false'
       },
       headers: { Authorization: `Bearer ${accessTokens[Role.LIBRARIAN]}` }
@@ -163,8 +162,74 @@ describe('GET /api/staff/book_clone', async () => {
 
     expect(unavailableResponse.statusCode).toBe(200);
     const unavailableBody = unavailableResponse.json();
-    expect(unavailableBody.meta).toEqual({ totalPages: 1 });
-    expect(unavailableBody.data[0].book_clone_id).toBe(borrowed.book_clone_id);
-    expect(unavailableBody.data[0].is_available).toBe(false);
+    expect(
+      unavailableBody.data.some((c: { book_clone_id: string }) => c.book_clone_id === borrowed.book_clone_id)
+    ).toBe(true);
+    expect(unavailableBody.data.every((c: { is_available: boolean }) => c.is_available === false)).toBe(true);
+  });
+
+  it('should search book clones by barcode', async () => {
+    const uniqueBarcode = `UNIQUE-${faker.string.alphanumeric(8).toUpperCase()}`;
+    await createBookCloneForTest({ barcode: uniqueBarcode });
+
+    const response = await app.inject({
+      method: 'GET',
+      url: '/api/staff/book_clone',
+      query: { searchTerm: uniqueBarcode },
+      headers: { Authorization: `Bearer ${accessTokens[Role.ADMIN]}` }
+    });
+
+    expect(response.statusCode).toBe(200);
+    const body = response.json();
+    expect(body.data.length).toBeGreaterThan(0);
+    expect(body.data.some((c: { barcode: string }) => c.barcode === uniqueBarcode)).toBe(true);
+  });
+
+  it('should search book clones by location_id', async () => {
+    await createBookCloneForTest({ barcode: faker.string.alphanumeric(12) });
+
+    const response = await app.inject({
+      method: 'GET',
+      url: '/api/staff/book_clone',
+      query: { searchTerm: location_id },
+      headers: { Authorization: `Bearer ${accessTokens[Role.ADMIN]}` }
+    });
+
+    expect(response.statusCode).toBe(200);
+    const body = response.json();
+    expect(body.data.length).toBeGreaterThan(0);
+    expect(body.data.every((c: { location_id: string }) => c.location_id.includes(location_id))).toBe(true);
+  });
+
+  it('should search book clones by book title', async () => {
+    await createBookCloneForTest({ barcode: faker.string.alphanumeric(12) });
+
+    const response = await app.inject({
+      method: 'GET',
+      url: '/api/staff/book_clone',
+      query: { searchTerm: bookTitle },
+      headers: { Authorization: `Bearer ${accessTokens[Role.ADMIN]}` }
+    });
+
+    expect(response.statusCode).toBe(200);
+    const body = response.json();
+    expect(body.data.length).toBeGreaterThan(0);
+    expect(body.data.some((c: { book_title: string }) => c.book_title.includes(bookTitle))).toBe(true);
+  });
+
+  it('should filter book clones by condition', async () => {
+    await createBookCloneForTest({ barcode: faker.string.alphanumeric(12), condition: 'DAMAGED' });
+
+    const response = await app.inject({
+      method: 'GET',
+      url: '/api/staff/book_clone',
+      query: { condition: 'DAMAGED' },
+      headers: { Authorization: `Bearer ${accessTokens[Role.ADMIN]}` }
+    });
+
+    expect(response.statusCode).toBe(200);
+    const body = response.json();
+    expect(body.data.length).toBeGreaterThan(0);
+    expect(body.data.every((c: { condition: string }) => c.condition === 'DAMAGED')).toBe(true);
   });
 });

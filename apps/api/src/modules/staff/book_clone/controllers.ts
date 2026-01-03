@@ -92,6 +92,7 @@ export default class StaffBookCloneController {
       data: bookClones.map((clone) => ({
         book_clone_id: clone.book_clone_id,
         book_id: clone.book_id,
+        book_title: clone.book.title,
         location_id: clone.location_id,
         barcode: clone.barcode,
         condition: clone.condition,
