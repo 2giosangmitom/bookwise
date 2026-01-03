@@ -1,11 +1,5 @@
 import StaffLoanController from './controllers';
-import {
-  CreateLoanSchema,
-  UpdateLoanSchema,
-  DeleteLoanSchema,
-  GetLoansSchema,
-  GetTotalLoansSchema
-} from './schemas';
+import { CreateLoanSchema, UpdateLoanSchema, DeleteLoanSchema, GetLoansSchema, GetTotalLoansSchema } from './schemas';
 
 export default function staffLoanRoutes(fastify: FastifyTypeBox) {
   const controller = fastify.diContainer.resolve<StaffLoanController>('staffLoanController');
