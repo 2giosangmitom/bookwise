@@ -77,7 +77,7 @@ model Book {
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
 
-  publisher   Publisher?      @relation(fields: [publisher_id], references: [publisher_id])
+  publisher   Publisher?      @relation(fields: [publisher_id], references: [publisher_id], onDelete: SetNull)
   authors     Book_Author[]
   categories  Book_Category[]
   ratings     Rating[]
@@ -88,8 +88,8 @@ model Book_Author {
   book_id   String @db.Uuid
   author_id String @db.Uuid
 
-  book   Book   @relation(fields: [book_id], references: [book_id])
-  author Author @relation(fields: [author_id], references: [author_id])
+  book   Book   @relation(fields: [book_id], references: [book_id], onDelete: Cascade)
+  author Author @relation(fields: [author_id], references: [author_id], onDelete: Cascade)
 
   @@id([book_id, author_id])
 }
@@ -98,8 +98,8 @@ model Book_Category {
   book_id     String @db.Uuid
   category_id String @db.Uuid
 
-  book     Book     @relation(fields: [book_id], references: [book_id])
-  category Category @relation(fields: [category_id], references: [category_id])
+  book     Book     @relation(fields: [book_id], references: [book_id], onDelete: Cascade)
+  category Category @relation(fields: [category_id], references: [category_id], onDelete: Cascade)
 
   @@id([book_id, category_id])
 }
@@ -133,8 +133,8 @@ model Book_Clone {
   created_at    DateTime      @default(now())
   updated_at    DateTime      @updatedAt
 
-  book     Book     @relation(fields: [book_id], references: [book_id])
-  location Location @relation(fields: [location_id], references: [location_id])
+  book     Book     @relation(fields: [book_id], references: [book_id], onDelete: Cascade)
+  location Location @relation(fields: [location_id], references: [location_id], onDelete: Restrict)
   loan     Loan?
 }
 
@@ -155,8 +155,8 @@ model Loan {
   created_at    DateTime   @default(now())
   updated_at    DateTime   @updatedAt
 
-  user       User       @relation(fields: [user_id], references: [user_id])
-  book_clone Book_Clone @relation(fields: [book_clone_id], references: [book_clone_id])
+  user       User       @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  book_clone Book_Clone @relation(fields: [book_clone_id], references: [book_clone_id], onDelete: Restrict)
 }
 
 model Rating {
@@ -168,6 +168,6 @@ model Rating {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  user User @relation(fields: [user_id], references: [user_id])
-  book Book @relation(fields: [book_id], references: [book_id])
+  user User @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  book Book @relation(fields: [book_id], references: [book_id], onDelete: Cascade)
 }
