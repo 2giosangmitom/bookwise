@@ -781,6 +781,12 @@ const users = [
     role: 'ADMIN'
   },
   {
+    name: 'Sarah Chen',
+    email: 'sarah.chen@bookwise.com',
+    password: 'Sarah123!',
+    role: 'ADMIN'
+  },
+  {
     name: 'Alice Johnson',
     email: 'alice.johnson@bookwise.com',
     password: 'Alice123!',
@@ -790,6 +796,18 @@ const users = [
     name: 'Bob Smith',
     email: 'bob.smith@bookwise.com',
     password: 'Bob123!',
+    role: 'LIBRARIAN'
+  },
+  {
+    name: 'Michael Rodriguez',
+    email: 'michael.rodriguez@bookwise.com',
+    password: 'Michael123!',
+    role: 'LIBRARIAN'
+  },
+  {
+    name: 'Jennifer Kim',
+    email: 'jennifer.kim@bookwise.com',
+    password: 'Jennifer123!',
     role: 'LIBRARIAN'
   },
   {
@@ -820,6 +838,120 @@ const users = [
     name: 'Grace Lee',
     email: 'grace.lee@example.com',
     password: 'Grace123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Henry Anderson',
+    email: 'henry.anderson@example.com',
+    password: 'Henry123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Isabella Thompson',
+    email: 'isabella.thompson@example.com',
+    password: 'Isabella123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'James Garcia',
+    email: 'james.garcia@example.com',
+    password: 'James123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Katherine Nguyen',
+    email: 'katherine.nguyen@example.com',
+    password: 'Katherine123!',
+    role: 'MEMBER'
+  },
+  {
+    name: "Lucas O'Brien",
+    email: 'lucas.obrien@example.com',
+    password: 'Lucas123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Maria Gonzalez',
+    email: 'maria.gonzalez@example.com',
+    password: 'Maria123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Nathan White',
+    email: 'nathan.white@example.com',
+    password: 'Nathan123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Olivia Taylor',
+    email: 'olivia.taylor@example.com',
+    password: 'Olivia123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Patrick Moore',
+    email: 'patrick.moore@example.com',
+    password: 'Patrick123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Quinn Jackson',
+    email: 'quinn.jackson@example.com',
+    password: 'Quinn123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Rachel Martin',
+    email: 'rachel.martin@example.com',
+    password: 'Rachel123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Samuel Harris',
+    email: 'samuel.harris@example.com',
+    password: 'Samuel123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Tiffany Clark',
+    email: 'tiffany.clark@example.com',
+    password: 'Tiffany123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Uriel Lopez',
+    email: 'uriel.lopez@example.com',
+    password: 'Uriel123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Victoria Walker',
+    email: 'victoria.walker@example.com',
+    password: 'Victoria123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'William Young',
+    email: 'william.young@example.com',
+    password: 'William123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Xavier Hall',
+    email: 'xavier.hall@example.com',
+    password: 'Xavier123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Yuki Tanaka',
+    email: 'yuki.tanaka@example.com',
+    password: 'Yuki123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Zachary Allen',
+    email: 'zachary.allen@example.com',
+    password: 'Zachary123!',
     role: 'MEMBER'
   }
 ];
