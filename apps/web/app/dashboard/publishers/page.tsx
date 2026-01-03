@@ -86,6 +86,16 @@ export default function PublishersPage() {
     });
   };
 
+  const handleDelete = (publisherId: string) => {
+    Modal.confirm({
+      title: 'Delete Publisher',
+      content: 'Are you sure you want to delete this publisher?',
+      okText: 'Delete',
+      okType: 'danger',
+      onOk: () => deletePublisherMutation.mutate(publisherId)
+    });
+  };
+
   const columns: TableColumnsType<Publisher> = [
     {
       title: 'Name',
@@ -171,7 +181,7 @@ export default function PublishersPage() {
               size="small"
               icon={<DeleteOutlined />}
               danger
-              onClick={() => deletePublisherMutation.mutate(record.publisher_id)}
+              onClick={() => handleDelete(record.publisher_id)}
             />
           </Flex>
         )

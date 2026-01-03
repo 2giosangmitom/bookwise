@@ -46,6 +46,9 @@ export default function CategoriesPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories'] });
       messageApi.success('Category deleted successfully');
+    },
+    onError: (error) => {
+      messageApi.error(error.message);
     }
   });
 
@@ -82,6 +85,16 @@ export default function CategoriesPage() {
   const handleEditSave = (categoryId: string) => {
     editForm.validateFields(['name', 'slug']).then((values) => {
       updateCategoryMutation.mutate({ categoryId, name: values.name, slug: values.slug });
+    });
+  };
+
+  const handleDelete = (categoryId: string) => {
+    Modal.confirm({
+      title: 'Delete Category',
+      content: 'Are you sure you want to delete this category?',
+      okText: 'Delete',
+      okType: 'danger',
+      onOk: () => deleteCategoryMutation.mutate(categoryId)
     });
   };
 
@@ -155,7 +168,7 @@ export default function CategoriesPage() {
               size="small"
               icon={<DeleteOutlined />}
               danger
-              onClick={() => deleteCategoryMutation.mutate(record.category_id)}
+              onClick={() => handleDelete(record.category_id)}
             />
           </Flex>
         )

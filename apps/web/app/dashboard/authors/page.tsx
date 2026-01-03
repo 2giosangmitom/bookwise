@@ -145,6 +145,16 @@ export default function AuthorsPage() {
     setEditModalOpen(true);
   };
 
+  const handleDelete = (authorId: string) => {
+    Modal.confirm({
+      title: 'Delete Author',
+      content: 'Are you sure you want to delete this author?',
+      okText: 'Delete',
+      okType: 'danger',
+      onOk: () => deleteAuthorMutation.mutate(authorId)
+    });
+  };
+
   const columns: TableColumnsType<Author> = [
     {
       title: 'Name',
@@ -193,7 +203,7 @@ export default function AuthorsPage() {
             size="small"
             icon={<DeleteOutlined />}
             danger
-            onClick={() => deleteAuthorMutation.mutate(record.author_id)}
+            onClick={() => handleDelete(record.author_id)}
           />
         </Flex>
       )

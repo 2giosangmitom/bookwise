@@ -12,17 +12,15 @@ export default function AuthProvider({
   accessToken
 }: React.PropsWithChildren<{ user: MeResponse['data'] | null; accessToken: string | null }>) {
   const setAccessToken = useTokenStore((state) => state.setAccessToken);
+  setAccessToken(accessToken);
 
   useEffect(() => {
-    if (accessToken) {
-      setAccessToken(accessToken);
-    }
     if (!user) {
       signOut().catch((err) => {
         console.error('Error signing out:', err);
       });
     }
-  }, [accessToken, setAccessToken, user]);
+  }, [user]);
 
   return <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>;
 }
