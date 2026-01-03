@@ -64,16 +64,21 @@ export default class StaffPublisherController {
     req: FastifyRequestTypeBox<typeof GetPublishersSchema>,
     reply: FastifyReplyTypeBox<typeof GetPublishersSchema>
   ) {
+    const page = req.query.page ?? 1;
+    const limit = req.query.limit ?? 10;
     const { publishers, total } = await this.staffPublisherService.getPublishers({
       ...req.query,
-      page: req.query.page ?? 1,
-      limit: req.query.limit ?? 100
+      page,
+      limit
     });
 
     return reply.status(200).send({
       message: 'Publishers retrieved successfully',
       meta: {
-        total
+        total,
+        totalOnPage: publishers.length,
+        page,
+        limit
       },
       data: publishers.map((publisher) => ({
         ...publisher,

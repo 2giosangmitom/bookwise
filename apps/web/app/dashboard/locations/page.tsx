@@ -224,7 +224,7 @@ export default function LocationsPage() {
               bordered
               scroll={{ x: 'max-content' }}
               pagination={{
-                total: locationsData?.meta.totalPages ? locationsData.meta.totalPages * 10 : 0,
+                total: locationsData?.meta.total,
                 showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
                 current: page,
                 onChange: (newPage) => setPage(newPage)

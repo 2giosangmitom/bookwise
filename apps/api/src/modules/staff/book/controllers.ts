@@ -85,7 +85,7 @@ export default class StaffBookController {
     reply: FastifyReplyTypeBox<typeof GetBooksSchema>
   ) {
     const page = req.query.page ?? 1;
-    const limit = req.query.limit ?? 100;
+    const limit = req.query.limit ?? 10;
 
     const { books, total } = await this.staffBookService.getBooks({
       ...req.query,
@@ -97,6 +97,7 @@ export default class StaffBookController {
       message: 'Books retrieved successfully',
       meta: {
         total,
+        totalOnPage: books.length,
         page,
         limit
       },

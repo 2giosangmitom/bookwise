@@ -203,7 +203,10 @@ export default function PublishersPage() {
               prefix={<SearchOutlined />}
               placeholder="Search publishers by name"
               style={{ width: '25%' }}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setPage(1);
+              }}
             />
             <Button type="primary" icon={<PlusOutlined />} onClick={() => setCreateModalOpen(true)}>
               Add Publisher

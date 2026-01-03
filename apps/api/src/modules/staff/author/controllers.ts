@@ -34,7 +34,9 @@ export default class StaffAuthorController {
     req: FastifyRequestTypeBox<typeof GetAuthorsSchema>,
     reply: FastifyReplyTypeBox<typeof GetAuthorsSchema>
   ) {
-    const { page = 1, limit = 10, searchTerm, is_alive } = req.query;
+    const page = req.query.page ?? 1;
+    const limit = req.query.limit ?? 10;
+    const { searchTerm, is_alive } = req.query;
 
     const { data: authors, meta } = await this.staffAuthorService.findAuthors(
       { page, limit },
@@ -46,14 +48,13 @@ export default class StaffAuthorController {
 
     return reply.status(200).send({
       message: 'Authors retrieved successfully.',
-      data: {
-        meta: {
-          ...meta,
-          page,
-          limit
-        },
-        items: authors.map((author) => this.formatAuthor(author))
-      }
+      meta: {
+        total: meta.total,
+        totalOnPage: authors.length,
+        page,
+        limit
+      },
+      data: authors.map((author) => this.formatAuthor(author))
     });
   }
 

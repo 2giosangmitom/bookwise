@@ -101,6 +101,7 @@ export const GetBooksSchema = {
       message: Type.String(),
       meta: Type.Object({
         total: Type.Number(),
+        totalOnPage: Type.Number(),
         page: Type.Number(),
         limit: Type.Number()
       }),

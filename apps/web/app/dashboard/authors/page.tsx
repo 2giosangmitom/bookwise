@@ -240,12 +240,12 @@ export default function AuthorsPage() {
           ) : (
             <Table<Author>
               columns={columns}
-              dataSource={authors?.data.items}
+              dataSource={authors?.data}
               rowKey="author_id"
               bordered
               scroll={{ x: 'max-content' }}
               pagination={{
-                total: authors?.data.meta.total,
+                total: authors?.meta.total,
                 showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
                 current: page,
                 onChange: (page) => {

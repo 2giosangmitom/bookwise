@@ -91,7 +91,10 @@ describe('GET /api/staff/location', async () => {
     expect(response.statusCode).toBe(200);
     const body = response.json();
     expect(body.data).toHaveLength(2);
-    expect(body.meta.totalPages).toBeGreaterThanOrEqual(2);
+    expect(body.meta.total).toBeGreaterThanOrEqual(3);
+    expect(body.meta.totalOnPage).toBe(2);
+    expect(body.meta.page).toBe(1);
+    expect(body.meta.limit).toBe(2);
     expect(body.message).toBe('Locations retrieved successfully');
   });
 
@@ -287,7 +290,10 @@ describe('GET /api/staff/location', async () => {
     expect(body).toHaveProperty('message');
     expect(body).toHaveProperty('meta');
     expect(body).toHaveProperty('data');
-    expect(body.meta).toHaveProperty('totalPages');
+    expect(body.meta).toHaveProperty('total');
+    expect(body.meta).toHaveProperty('totalOnPage');
+    expect(body.meta).toHaveProperty('page');
+    expect(body.meta).toHaveProperty('limit');
     expect(Array.isArray(body.data)).toBe(true);
 
     if (body.data.length > 0) {

@@ -18,6 +18,10 @@ export default class StaffLoanService {
           book_clone_id: data.book_clone_id,
           loan_date: new Date(data.loan_date),
           due_date: new Date(data.due_date)
+        },
+        include: {
+          user: { select: { name: true } },
+          book_clone: { select: { barcode: true, book: { select: { title: true } } } }
         }
       });
 
@@ -64,7 +68,11 @@ export default class StaffLoanService {
     try {
       const loan = await this.prisma.loan.update({
         where: { loan_id },
-        data: updateData
+        data: updateData,
+        include: {
+          user: { select: { name: true } },
+          book_clone: { select: { barcode: true, book: { select: { title: true } } } }
+        }
       });
 
       return loan;
@@ -81,7 +89,11 @@ export default class StaffLoanService {
   public async deleteLoan(loan_id: string) {
     try {
       const deleted = await this.prisma.loan.delete({
-        where: { loan_id }
+        where: { loan_id },
+        include: {
+          user: { select: { name: true } },
+          book_clone: { select: { barcode: true, book: { select: { title: true } } } }
+        }
       });
 
       return deleted;
@@ -128,7 +140,11 @@ export default class StaffLoanService {
         where,
         skip: (query.page - 1) * query.limit,
         take: query.limit,
-        orderBy: [{ created_at: 'desc' }, { loan_id: 'asc' }]
+        orderBy: [{ created_at: 'desc' }, { loan_id: 'asc' }],
+        include: {
+          user: { select: { name: true } },
+          book_clone: { select: { barcode: true, book: { select: { title: true } } } }
+        }
       }),
       this.prisma.loan.count({ where })
     ]);

@@ -263,6 +263,9 @@ describe('GET /api/staff/publisher', async () => {
     expect(body).toHaveProperty('meta');
     expect(body).toHaveProperty('data');
     expect(body.meta).toHaveProperty('total');
+    expect(body.meta).toHaveProperty('totalOnPage');
+    expect(body.meta).toHaveProperty('page');
+    expect(body.meta).toHaveProperty('limit');
     expect(Array.isArray(body.data)).toBe(true);
 
     if (body.data.length > 0) {

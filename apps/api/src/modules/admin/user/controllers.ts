@@ -12,15 +12,22 @@ export default class AdminUserController {
     req: FastifyRequestTypeBox<typeof GetUsersSchema>,
     reply: FastifyReplyTypeBox<typeof GetUsersSchema>
   ) {
+    const page = req.query.page ?? 1;
+    const limit = req.query.limit ?? 10;
     const { users, total } = await this.adminUserService.getUsers({
       ...req.query,
-      page: req.query.page ?? 1,
-      limit: req.query.limit ?? 100
+      page,
+      limit
     });
 
     return reply.status(200).send({
       message: 'Users retrieved successfully',
-      meta: { total },
+      meta: {
+        total,
+        totalOnPage: users.length,
+        page,
+        limit
+      },
       data: users.map((user) => ({
         ...user,
         created_at: user.created_at.toISOString(),

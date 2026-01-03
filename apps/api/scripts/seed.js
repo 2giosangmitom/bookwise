@@ -1136,6 +1136,7 @@ async function main() {
 
   // Create Book Clones
   console.log('Creating book clones...');
+  const createdBookClones = [];
   let locationIndex = 0;
   for (const cloneConfig of bookClonesPerBook) {
     const book = createdBooks[cloneConfig.bookIndex];
@@ -1146,7 +1147,7 @@ async function main() {
       const condition = cloneConfig.condition[i] || 'GOOD';
       const barcode = generateBarcode();
 
-      await prisma.book_Clone.create({
+      const clone = await prisma.book_Clone.create({
         data: {
           book_id: book.book_id,
           location_id: location.location_id,
@@ -1154,11 +1155,81 @@ async function main() {
           condition: condition
         }
       });
+      createdBookClones.push(clone);
 
       locationIndex++;
     }
     console.log(`  ✓ Created ${cloneConfig.count} clones for: ${book.title}`);
   }
+
+  // Create Loans
+  console.log('Creating loans...');
+  const memberUsers = await prisma.user.findMany({
+    where: { role: 'MEMBER' },
+    take: 15
+  });
+
+  const loansToCreate = [
+    // Active borrowed loans (recent)
+    { userIndex: 0, cloneIndex: 0, daysAgo: 3, dueDays: 14, status: 'BORROWED' },
+    { userIndex: 1, cloneIndex: 1, daysAgo: 5, dueDays: 14, status: 'BORROWED' },
+    { userIndex: 2, cloneIndex: 2, daysAgo: 7, dueDays: 14, status: 'BORROWED' },
+    { userIndex: 3, cloneIndex: 3, daysAgo: 2, dueDays: 21, status: 'BORROWED' },
+    { userIndex: 4, cloneIndex: 4, daysAgo: 1, dueDays: 14, status: 'BORROWED' },
+    { userIndex: 5, cloneIndex: 5, daysAgo: 10, dueDays: 14, status: 'BORROWED' },
+    { userIndex: 6, cloneIndex: 6, daysAgo: 4, dueDays: 7, status: 'BORROWED' },
+    { userIndex: 0, cloneIndex: 7, daysAgo: 6, dueDays: 14, status: 'BORROWED' },
+    // Overdue loans
+    { userIndex: 7, cloneIndex: 8, daysAgo: 30, dueDays: 14, status: 'OVERDUE' },
+    { userIndex: 8, cloneIndex: 9, daysAgo: 25, dueDays: 14, status: 'OVERDUE' },
+    { userIndex: 9, cloneIndex: 10, daysAgo: 45, dueDays: 21, status: 'OVERDUE' },
+    { userIndex: 10, cloneIndex: 11, daysAgo: 20, dueDays: 7, status: 'OVERDUE' },
+    // Returned loans (historical)
+    { userIndex: 0, cloneIndex: 12, daysAgo: 60, dueDays: 14, returnedDaysAgo: 50, status: 'RETURNED' },
+    { userIndex: 1, cloneIndex: 13, daysAgo: 45, dueDays: 14, returnedDaysAgo: 35, status: 'RETURNED' },
+    { userIndex: 2, cloneIndex: 14, daysAgo: 30, dueDays: 21, returnedDaysAgo: 15, status: 'RETURNED' },
+    { userIndex: 3, cloneIndex: 15, daysAgo: 90, dueDays: 14, returnedDaysAgo: 80, status: 'RETURNED' },
+    { userIndex: 4, cloneIndex: 16, daysAgo: 75, dueDays: 14, returnedDaysAgo: 65, status: 'RETURNED' },
+    { userIndex: 5, cloneIndex: 17, daysAgo: 50, dueDays: 7, returnedDaysAgo: 45, status: 'RETURNED' },
+    { userIndex: 6, cloneIndex: 18, daysAgo: 40, dueDays: 14, returnedDaysAgo: 30, status: 'RETURNED' },
+    { userIndex: 7, cloneIndex: 19, daysAgo: 100, dueDays: 21, returnedDaysAgo: 85, status: 'RETURNED' },
+    { userIndex: 8, cloneIndex: 20, daysAgo: 120, dueDays: 14, returnedDaysAgo: 110, status: 'RETURNED' },
+    { userIndex: 9, cloneIndex: 21, daysAgo: 80, dueDays: 14, returnedDaysAgo: 70, status: 'RETURNED' }
+  ];
+
+  const now = new Date();
+  for (const loanConfig of loansToCreate) {
+    const user = memberUsers[loanConfig.userIndex % memberUsers.length];
+    const clone = createdBookClones[loanConfig.cloneIndex % createdBookClones.length];
+
+    if (!user || !clone) continue;
+
+    const loanDate = new Date(now);
+    loanDate.setDate(loanDate.getDate() - loanConfig.daysAgo);
+
+    const dueDate = new Date(loanDate);
+    dueDate.setDate(dueDate.getDate() + loanConfig.dueDays);
+
+    let returnDate = null;
+    if (loanConfig.returnedDaysAgo !== undefined) {
+      returnDate = new Date(now);
+      returnDate.setDate(returnDate.getDate() - loanConfig.returnedDaysAgo);
+    }
+
+    await prisma.loan.create({
+      data: {
+        user_id: user.user_id,
+        book_clone_id: clone.book_clone_id,
+        loan_date: loanDate,
+        due_date: dueDate,
+        return_date: returnDate,
+        status: loanConfig.status
+      }
+    });
+  }
+  console.log(
+    `  ✓ Created ${loansToCreate.length} loans (${loansToCreate.filter((l) => l.status === 'BORROWED').length} borrowed, ${loansToCreate.filter((l) => l.status === 'OVERDUE').length} overdue, ${loansToCreate.filter((l) => l.status === 'RETURNED').length} returned)`
+  );
 
   console.log('\n✅ Seed completed successfully!');
   console.log('\nDefault login credentials:');

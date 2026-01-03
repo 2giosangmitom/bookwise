@@ -100,7 +100,10 @@ export const GetBookClonesSchema = {
     200: Type.Object({
       message: Type.String(),
       meta: Type.Object({
-        totalPages: Type.Number()
+        total: Type.Number(),
+        totalOnPage: Type.Number(),
+        page: Type.Number(),
+        limit: Type.Number()
       }),
       data: Type.Array(
         Type.Object({

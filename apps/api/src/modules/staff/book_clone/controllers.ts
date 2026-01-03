@@ -77,17 +77,21 @@ export default class StaffBookCloneController {
     req: FastifyRequestTypeBox<typeof GetBookClonesSchema>,
     reply: FastifyReplyTypeBox<typeof GetBookClonesSchema>
   ) {
+    const page = req.query.page ?? 1;
+    const limit = req.query.limit ?? 10;
     const { bookClones, total } = await this.staffBookCloneService.getBookClones({
       ...req.query,
-      page: req.query.page ?? 1,
-      limit: req.query.limit ?? 100
+      page,
+      limit
     });
-    const totalPages = Math.ceil(total / (req.query.limit ?? 100));
 
     return reply.status(200).send({
       message: 'Book clones retrieved successfully',
       meta: {
-        totalPages
+        total,
+        totalOnPage: bookClones.length,
+        page,
+        limit
       },
       data: bookClones.map((clone) => ({
         book_clone_id: clone.book_clone_id,

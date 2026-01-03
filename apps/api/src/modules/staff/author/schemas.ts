@@ -100,14 +100,13 @@ export const GetAuthorsSchema = {
   response: {
     200: Type.Object({
       message: Type.String(),
-      data: Type.Object({
-        meta: Type.Object({
-          total: Type.Number({ minimum: 0 }),
-          page: Type.Number({ minimum: 1 }),
-          limit: Type.Number({ minimum: 1 })
-        }),
-        items: Type.Array(AuthorEntitySchema)
-      })
+      meta: Type.Object({
+        total: Type.Number(),
+        totalOnPage: Type.Number(),
+        page: Type.Number(),
+        limit: Type.Number()
+      }),
+      data: Type.Array(AuthorEntitySchema)
     }),
     400: { $ref: 'HttpError' },
     403: { $ref: 'HttpError' },

@@ -115,15 +115,16 @@ describe('GET /api/staff/author', async () => {
     expect(response.statusCode).toBe(200);
 
     const body = response.json();
-    expect(body.data.meta).toEqual(
+    expect(body.meta).toEqual(
       expect.objectContaining({
         page: 1,
         limit: 10,
-        total: 3
+        total: 3,
+        totalOnPage: 3
       })
     );
-    expect(body.data.items).toHaveLength(3);
-    expect(body.data.items.every((author: { name: string }) => author.name.includes(marker))).toBe(true);
+    expect(body.data).toHaveLength(3);
+    expect(body.data.every((author: { name: string }) => author.name.includes(marker))).toBe(true);
   });
 
   it('should filter authors by alive status', async () => {
@@ -156,10 +157,10 @@ describe('GET /api/staff/author', async () => {
     expect(aliveResponse.statusCode).toBe(200);
     const aliveBody = aliveResponse.json();
 
-    expect(aliveBody.data.meta.total).toBe(1);
-    expect(aliveBody.data.items).toHaveLength(1);
-    expect(aliveBody.data.items[0].author_id).toBe(aliveAuthor.author_id);
-    expect(aliveBody.data.items[0].date_of_death).toBeNull();
+    expect(aliveBody.meta.total).toBe(1);
+    expect(aliveBody.data).toHaveLength(1);
+    expect(aliveBody.data[0].author_id).toBe(aliveAuthor.author_id);
+    expect(aliveBody.data[0].date_of_death).toBeNull();
 
     const deceasedResponse = await app.inject({
       method: 'GET',
@@ -176,9 +177,9 @@ describe('GET /api/staff/author', async () => {
     expect(deceasedResponse.statusCode).toBe(200);
     const deceasedBody = deceasedResponse.json();
 
-    expect(deceasedBody.data.meta.total).toBe(1);
-    expect(deceasedBody.data.items).toHaveLength(1);
-    expect(deceasedBody.data.items[0].date_of_death).not.toBeNull();
+    expect(deceasedBody.meta.total).toBe(1);
+    expect(deceasedBody.data).toHaveLength(1);
+    expect(deceasedBody.data[0].date_of_death).not.toBeNull();
   });
 
   it('should support pagination', async () => {
@@ -208,13 +209,14 @@ describe('GET /api/staff/author', async () => {
     expect(paginatedResponse.statusCode).toBe(200);
     const paginatedBody = paginatedResponse.json();
 
-    expect(paginatedBody.data.meta).toEqual(
+    expect(paginatedBody.meta).toEqual(
       expect.objectContaining({
         page: 2,
         limit: 2,
-        total: 3
+        total: 3,
+        totalOnPage: 1
       })
     );
-    expect(paginatedBody.data.items).toHaveLength(1);
+    expect(paginatedBody.data).toHaveLength(1);
   });
 });

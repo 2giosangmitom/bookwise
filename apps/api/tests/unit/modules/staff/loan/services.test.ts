@@ -229,12 +229,18 @@ describe('StaffLoanService', async () => {
   });
 
   describe('deleteLoan', () => {
-    it('should call prisma.loan.delete with correct id', async () => {
+    it('should call prisma.loan.delete with correct id and include user/book_clone relations', async () => {
       const loan_id = faker.string.uuid();
 
       await service.deleteLoan(loan_id);
 
-      expect(app.prisma.loan.delete).toHaveBeenCalledWith({ where: { loan_id } });
+      expect(app.prisma.loan.delete).toHaveBeenCalledWith({
+        where: { loan_id },
+        include: {
+          user: { select: { name: true } },
+          book_clone: { select: { barcode: true, book: { select: { title: true } } } }
+        }
+      });
     });
 
     it('should return deleted loan on success', async () => {

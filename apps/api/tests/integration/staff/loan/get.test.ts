@@ -99,9 +99,18 @@ describe('GET /api/staff/loan', async () => {
       expect(response.statusCode).toBe(200);
       const body = response.json();
       expect(body).toHaveProperty('meta');
-      expect(body.meta.totalPages).toBeGreaterThanOrEqual(2);
+      expect(body.meta.total).toBeGreaterThanOrEqual(3);
+      expect(body.meta.totalOnPage).toBeDefined();
+      expect(body.meta.page).toBe(1);
+      expect(body.meta.limit).toBe(2);
       expect(Array.isArray(body.data)).toBe(true);
       expect(body.data.length).toBeLessThanOrEqual(2);
+      // Verify each loan has user_name, book_title, and barcode
+      if (body.data.length > 0) {
+        expect(body.data[0]).toHaveProperty('user_name');
+        expect(body.data[0]).toHaveProperty('book_title');
+        expect(body.data[0]).toHaveProperty('barcode');
+      }
     }
   );
 

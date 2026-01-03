@@ -119,6 +119,7 @@ describe('GET /api/staff/book', async () => {
     expect(body).toHaveProperty('data');
     expect(Array.isArray(body.data)).toBe(true);
     expect(body.meta.total).toBeDefined();
+    expect(body.meta.totalOnPage).toBeDefined();
     expect(body.meta.page).toBeDefined();
     expect(body.meta.limit).toBeDefined();
   });

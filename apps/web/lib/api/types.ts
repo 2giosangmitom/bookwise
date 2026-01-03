@@ -3,10 +3,15 @@ export type ApiResponse<T> = {
   data: T;
 };
 
+export type PaginatedMeta = {
+  total: number;
+  totalOnPage: number;
+  page: number;
+  limit: number;
+};
+
 export type PaginatedResponse<T> = ApiResponse<T[]> & {
-  meta: {
-    total: number;
-  };
+  meta: PaginatedMeta;
 };
 
 // Authentication-related API response types
@@ -29,9 +34,7 @@ export type MeResponse = ApiResponse<User>;
 export type GetUsersResponse = {
   message: string;
   data: User[];
-  meta: {
-    total: number;
-  };
+  meta: PaginatedMeta;
 };
 
 export type UpdateUserResponse = ApiResponse<User>;
@@ -67,14 +70,8 @@ export type Author = {
 
 export type GetAuthorsResponse = {
   message: string;
-  data: {
-    meta: {
-      total: number;
-      page: number;
-      limit: number;
-    };
-    items: Author[];
-  };
+  data: Author[];
+  meta: PaginatedMeta;
 };
 
 export type CreateAuthorResponse = ApiResponse<Author>;
@@ -95,9 +92,7 @@ export type Publisher = {
 export type GetPublishersResponse = {
   message: string;
   data: Publisher[];
-  meta: {
-    total: number;
-  };
+  meta: PaginatedMeta;
 };
 export type CreatePublisherResponse = ApiResponse<Publisher>;
 export type UpdatePublisherResponse = ApiResponse<Publisher>;
@@ -128,11 +123,7 @@ export type Book = {
 export type GetBooksResponse = {
   message: string;
   data: Book[];
-  meta: {
-    total: number;
-    page: number;
-    limit: number;
-  };
+  meta: PaginatedMeta;
 };
 
 export type CreateBookResponse = ApiResponse<Book>;
@@ -155,9 +146,7 @@ export type BookClone = {
 export type GetBookClonesResponse = {
   message: string;
   data: BookClone[];
-  meta: {
-    totalPages: number;
-  };
+  meta: PaginatedMeta;
 };
 
 export type CreateBookCloneResponse = ApiResponse<BookClone>;
@@ -178,9 +167,7 @@ export type Location = {
 export type GetLocationsResponse = {
   message: string;
   data: Location[];
-  meta: {
-    totalPages: number;
-  };
+  meta: PaginatedMeta;
 };
 
 export type CreateLocationResponse = Location & {
@@ -190,3 +177,31 @@ export type CreateLocationResponse = Location & {
 
 export type UpdateLocationResponse = ApiResponse<Location>;
 export type DeleteLocationResponse = ApiResponse<Pick<Location, 'location_id' | 'room' | 'floor' | 'shelf' | 'row'>>;
+
+// Loan-related API response types
+export type LoanStatus = 'BORROWED' | 'RETURNED' | 'OVERDUE';
+
+export type Loan = {
+  loan_id: string;
+  user_id: string;
+  user_name: string;
+  book_clone_id: string;
+  book_title: string;
+  barcode: string;
+  loan_date: string;
+  due_date: string;
+  return_date: string | null;
+  status: LoanStatus;
+  created_at: string;
+  updated_at: string;
+};
+
+export type GetLoansResponse = {
+  message: string;
+  data: Loan[];
+  meta: PaginatedMeta;
+};
+
+export type CreateLoanResponse = ApiResponse<Loan>;
+export type UpdateLoanResponse = ApiResponse<Loan>;
+export type DeleteLoanResponse = ApiResponse<Loan>;

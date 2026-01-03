@@ -5,7 +5,10 @@ import { LoanStatus } from '@/generated/prisma/enums';
 const LoanDataSchema = Type.Object({
   loan_id: Type.String({ format: 'uuid' }),
   user_id: Type.String({ format: 'uuid' }),
+  user_name: Type.String(),
   book_clone_id: Type.String({ format: 'uuid' }),
+  book_title: Type.String(),
+  barcode: Type.String(),
   loan_date: Type.String({ format: 'date-time' }),
   due_date: Type.String({ format: 'date-time' }),
   return_date: Type.Union([Type.String({ format: 'date-time' }), Type.Null()]),
@@ -98,7 +101,10 @@ export const GetLoansSchema = {
     200: Type.Object({
       message: Type.String(),
       meta: Type.Object({
-        totalPages: Type.Number()
+        total: Type.Number(),
+        totalOnPage: Type.Number(),
+        page: Type.Number(),
+        limit: Type.Number()
       }),
       data: Type.Array(LoanDataSchema)
     }),

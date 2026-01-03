@@ -63,17 +63,21 @@ export default class StaffLocationController {
     req: FastifyRequestTypeBox<typeof GetLocationsSchema>,
     reply: FastifyReplyTypeBox<typeof GetLocationsSchema>
   ) {
+    const page = req.query.page ?? 1;
+    const limit = req.query.limit ?? 10;
     const { locations, total } = await this.staffLocationService.getLocations({
       ...req.query,
-      page: req.query.page ?? 1,
-      limit: req.query.limit ?? 100
+      page,
+      limit
     });
-    const totalPages = Math.ceil(total / (req.query.limit ?? 100));
 
     return reply.status(200).send({
       message: 'Locations retrieved successfully',
       meta: {
-        totalPages
+        total,
+        totalOnPage: locations.length,
+        page,
+        limit
       },
       data: locations.map((location) => ({
         ...location,

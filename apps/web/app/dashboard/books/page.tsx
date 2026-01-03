@@ -362,7 +362,7 @@ export default function BooksPage() {
                   loading={isLoadingAuthors}
                   onFocus={() => setAuthorSearchTerm('')}
                   notFoundContent={isLoadingAuthors ? 'Loading...' : 'No authors found'}
-                  options={authorsData?.data.items.map((a) => ({
+                  options={authorsData?.data.map((a) => ({
                     value: a.author_id,
                     label: a.name
                   }))}
@@ -465,14 +465,14 @@ export default function BooksPage() {
                             value: a.author_id,
                             label: a.name
                           })),
-                          ...(authorsData?.data.items
+                          ...(authorsData?.data
                             .filter((a) => !editingBook.authors.some((ea) => ea.author_id === a.author_id))
                             .map((a) => ({
                               value: a.author_id,
                               label: a.name
                             })) ?? [])
                         ]
-                      : authorsData?.data.items.map((a) => ({
+                      : authorsData?.data.map((a) => ({
                           value: a.author_id,
                           label: a.name
                         }))

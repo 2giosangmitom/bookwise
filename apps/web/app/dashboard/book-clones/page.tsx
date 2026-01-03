@@ -292,7 +292,7 @@ export default function BookClonesPage() {
               bordered
               scroll={{ x: 'max-content' }}
               pagination={{
-                total: bookClonesData?.meta.totalPages ? bookClonesData.meta.totalPages * 10 : 0,
+                total: bookClonesData?.meta.total,
                 showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
                 current: page,
                 onChange: (newPage) => setPage(newPage)
