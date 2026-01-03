@@ -1,21 +1,11 @@
 import { GetPublisherBySlugSchema } from './schemas';
-import PublisherService from './services';
+import type PublisherService from './services';
 
 export default class PublisherController {
-  private static instance: PublisherController;
   private publisherService: PublisherService;
-  private fastify: FastifyTypeBox;
 
-  private constructor(fastify: FastifyTypeBox, publisherService: PublisherService) {
-    this.fastify = fastify;
+  public constructor({ publisherService }: { publisherService: PublisherService }) {
     this.publisherService = publisherService;
-  }
-
-  public static getInstance(fastify: FastifyTypeBox, publisherService = PublisherService.getInstance(fastify)) {
-    if (!PublisherController.instance) {
-      PublisherController.instance = new PublisherController(fastify, publisherService);
-    }
-    return PublisherController.instance;
   }
 
   public async getPublisherBySlug(

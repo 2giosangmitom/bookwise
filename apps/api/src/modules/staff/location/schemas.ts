@@ -1,5 +1,5 @@
 import { type FastifySchema } from 'fastify';
-import Type from 'typebox';
+import { Type } from 'typebox';
 
 export const DeleteLocationSchema = {
   summary: 'Delete a location',

@@ -3,19 +3,11 @@ import { buildMockFastify } from '../../helpers/mockFastify';
 
 describe('PublisherService', async () => {
   const app = await buildMockFastify();
-  const service = PublisherService.getInstance(app);
+  const service = new PublisherService({ prisma: app.prisma });
 
   afterEach(() => {
     vi.clearAllMocks();
     vi.resetAllMocks();
-  });
-
-  describe('getInstance', () => {
-    it('should return the same instance', () => {
-      const instance1 = PublisherService.getInstance(app);
-      const instance2 = PublisherService.getInstance(app);
-      expect(instance1).toBe(instance2);
-    });
   });
 
   describe('getPublisherBySlug', () => {

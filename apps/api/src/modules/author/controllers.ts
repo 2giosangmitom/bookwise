@@ -1,21 +1,11 @@
 import { GetAuthorBySlugSchema } from './schemas';
-import AuthorService from './services';
+import type AuthorService from './services';
 
 export default class AuthorController {
-  private static instance: AuthorController;
   private authorService: AuthorService;
-  private fastify: FastifyTypeBox;
 
-  private constructor(fastify: FastifyTypeBox, authorService: AuthorService) {
-    this.fastify = fastify;
+  public constructor({ authorService }: { authorService: AuthorService }) {
     this.authorService = authorService;
-  }
-
-  public static getInstance(fastify: FastifyTypeBox, authorService = AuthorService.getInstance(fastify)) {
-    if (!AuthorController.instance) {
-      AuthorController.instance = new AuthorController(fastify, authorService);
-    }
-    return AuthorController.instance;
   }
 
   public async getAuthorBySlug(

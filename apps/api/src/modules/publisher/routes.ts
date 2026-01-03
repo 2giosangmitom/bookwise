@@ -2,7 +2,7 @@ import PublisherController from './controllers';
 import { GetPublisherBySlugSchema } from './schemas';
 
 export default function publisherRoutes(fastify: FastifyTypeBox) {
-  const publisherController = PublisherController.getInstance(fastify);
+  const publisherController = fastify.diContainer.resolve<PublisherController>('publisherController');
 
   fastify.get(
     '/:slug',

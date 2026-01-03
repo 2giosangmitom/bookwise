@@ -1,25 +1,20 @@
+import type { PrismaClient } from '@/generated/prisma/client';
+import { httpErrors } from '@fastify/sensible';
+
 export default class AuthorService {
-  private static instance: AuthorService;
-  private fastify: FastifyTypeBox;
+  private prisma: PrismaClient;
 
-  private constructor(fastify: FastifyTypeBox) {
-    this.fastify = fastify;
-  }
-
-  public static getInstance(fastify: FastifyTypeBox): AuthorService {
-    if (!AuthorService.instance) {
-      AuthorService.instance = new AuthorService(fastify);
-    }
-    return AuthorService.instance;
+  public constructor({ prisma }: { prisma: PrismaClient }) {
+    this.prisma = prisma;
   }
 
   public async getAuthorBySlug(slug: string) {
-    const author = await this.fastify.prisma.author.findUnique({
+    const author = await this.prisma.author.findUnique({
       where: { slug }
     });
 
     if (!author) {
-      throw this.fastify.httpErrors.notFound('Author with the given slug does not exist.');
+      throw httpErrors.notFound('Author with the given slug does not exist.');
     }
 
     return author;

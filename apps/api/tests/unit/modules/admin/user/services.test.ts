@@ -3,7 +3,6 @@ import { buildMockFastify } from '../../../helpers/mockFastify';
 import { faker } from '@faker-js/faker';
 import { Role } from '@/generated/prisma/enums';
 import * as hashUtils from '@/utils/hash';
-import { JWTUtils } from '@/utils/jwt';
 
 const buildQuery = () => ({
   page: 1,
@@ -14,7 +13,7 @@ const buildQuery = () => ({
 
 describe('AdminUserService', async () => {
   const app = await buildMockFastify();
-  const service = new AdminUserService({ prisma: app.prisma, jwtUtils: JWTUtils.getInstance(app.redis) });
+  const service = new AdminUserService({ prisma: app.prisma, jwtUtils: app.jwtUtils });
 
   afterEach(() => {
     vi.restoreAllMocks();

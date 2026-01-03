@@ -3,18 +3,21 @@ import { fastifyJwt } from '@fastify/jwt';
 import { JWTUtils } from '@/utils/jwt';
 import fp from 'fastify-plugin';
 import { accessTokenExpiration } from '@/constants';
-import { asValue } from 'awilix';
-import { diContainer } from '@fastify/awilix';
+import { asFunction } from 'awilix';
 
 export default fp(
   async (fastify: FastifyTypeBox, opts: envType) => {
     fastify.log.debug('Registering JWT plugin');
 
-    const jwtUtils = JWTUtils.getInstance(fastify.redis);
-    fastify.decorate('jwtUtils', jwtUtils);
-    diContainer.register({
-      jwtUtils: asValue(jwtUtils)
+    // Register JWTUtils factory in the Awilix container
+    // This allows proper injection with the Redis client
+    fastify.diContainer.register({
+      jwtUtils: asFunction(() => new JWTUtils(fastify.redis)).singleton()
     });
+
+    // Resolve and decorate for convenience
+    const jwtUtils = fastify.diContainer.resolve<JWTUtils>('jwtUtils');
+    fastify.decorate('jwtUtils', jwtUtils);
 
     await fastify.register(fastifyJwt, {
       secret: opts.JWT_SECRET,

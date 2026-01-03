@@ -2,18 +2,10 @@ import { type FastifyRedis } from '@fastify/redis';
 import { accessTokenExpiration, refreshTokenExpiration } from '@/constants';
 
 export class JWTUtils {
-  private static instance: JWTUtils | null = null;
   private redisClient: FastifyRedis;
 
-  private constructor(redisClient: FastifyRedis) {
+  public constructor(redisClient: FastifyRedis) {
     this.redisClient = redisClient;
-  }
-
-  public static getInstance(redisClient: FastifyRedis): JWTUtils {
-    if (!JWTUtils.instance) {
-      JWTUtils.instance = new JWTUtils(redisClient);
-    }
-    return JWTUtils.instance;
   }
 
   public async storeRefreshToken(userId: string, refreshTokenId: string) {

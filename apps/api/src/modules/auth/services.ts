@@ -80,4 +80,26 @@ export default class AuthService {
   public async revokeUserRefreshToken(userId: string, refreshTokenId: string) {
     await this.jwtUtils.revokeRefreshToken(userId, refreshTokenId);
   }
+
+  public async getUserRole(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { user_id: userId },
+      select: { role: true }
+    });
+
+    if (!user) {
+      throw httpErrors.notFound('User not found');
+    }
+
+    return user.role;
+  }
+
+  public async refreshAccessToken(userId: string, oldRefreshTokenJwtId: string) {
+    const role = await this.getUserRole(userId);
+    const newAccessTokenJwtId = nanoid();
+
+    await this.storeAccessToken(userId, newAccessTokenJwtId, oldRefreshTokenJwtId);
+
+    return { role, newAccessTokenJwtId };
+  }
 }

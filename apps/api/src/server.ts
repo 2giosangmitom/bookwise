@@ -1,7 +1,7 @@
-import { JWTUtils } from '@/utils/jwt';
 import { buildApp } from './app';
 import closeWithGrace from 'close-with-grace';
 import cron from 'node-cron';
+import type { JWTUtils } from '@/utils/jwt';
 
 async function main() {
   const app = await buildApp();
@@ -29,7 +29,7 @@ async function main() {
   // Clean up dead access tokens and refresh tokens every 10 minutes
   cron.schedule('0 */10 * * * *', async () => {
     app.log.info('Running scheduled token cleanup task');
-    const jwtUtils = JWTUtils.getInstance(app.redis);
+    const jwtUtils = app.diContainer.resolve<JWTUtils>('jwtUtils');
 
     // Clean up dead refresh tokens
     let cursor = '0';

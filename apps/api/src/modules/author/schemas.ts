@@ -1,5 +1,5 @@
 import { type FastifySchema } from 'fastify';
-import Type from 'typebox';
+import { Type } from 'typebox';
 
 export const GetAuthorBySlugSchema = {
   summary: 'Get author by slug',

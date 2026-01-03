@@ -4,7 +4,7 @@ import { faker } from '@faker-js/faker';
 
 describe('AuthorService', async () => {
   const app = await buildMockFastify();
-  const authorService = AuthorService.getInstance(app);
+  const authorService = new AuthorService({ prisma: app.prisma });
 
   afterEach(() => {
     vi.clearAllMocks();

@@ -4,11 +4,10 @@ import { faker } from '@faker-js/faker';
 import { buildMockFastify } from '../../helpers/mockFastify';
 import { HttpError } from '@fastify/sensible';
 import * as hashUtils from '@/utils/hash';
-import { JWTUtils } from '@/utils/jwt';
 
 describe('AuthService', async () => {
   const app = await buildMockFastify();
-  const authService = new AuthService({ jwtUtils: JWTUtils.getInstance(app.redis), prisma: app.prisma });
+  const authService = new AuthService({ jwtUtils: app.jwtUtils, prisma: app.prisma });
 
   afterEach(() => {
     vi.restoreAllMocks();
@@ -169,6 +168,69 @@ describe('AuthService', async () => {
       expect(result).toHaveProperty('user', fakeUser);
       expect(result).toHaveProperty('accessTokenJwtId');
       expect(result).toHaveProperty('refreshTokenJwtId');
+    });
+  });
+
+  describe('getUserRole', () => {
+    it('should throw not found error if user does not exist', async () => {
+      vi.mocked(app.prisma.user.findUnique).mockResolvedValueOnce(null);
+
+      await expect(authService.getUserRole(faker.string.uuid())).rejects.toThrow(HttpError);
+      expect(app.httpErrors.notFound).toHaveBeenCalledWith('User not found');
+    });
+
+    it('should return the user role if user exists', async () => {
+      const userId = faker.string.uuid();
+      const role = Role.ADMIN;
+
+      vi.mocked(app.prisma.user.findUnique).mockResolvedValueOnce({
+        user_id: userId,
+        email: faker.internet.email(),
+        password_hash: 'hashedpassword',
+        salt: 'salt',
+        role,
+        name: faker.person.fullName(),
+        created_at: faker.date.anytime(),
+        updated_at: faker.date.anytime()
+      });
+
+      const result = await authService.getUserRole(userId);
+
+      expect(result).toBe(role);
+    });
+  });
+
+  describe('refreshAccessToken', () => {
+    it('should return new access token JWT ID and user role', async () => {
+      const userId = faker.string.uuid();
+      const oldRefreshTokenJwtId = faker.string.nanoid();
+      const role = Role.MEMBER;
+
+      vi.mocked(app.prisma.user.findUnique).mockResolvedValueOnce({
+        user_id: userId,
+        email: faker.internet.email(),
+        password_hash: 'hashedpassword',
+        salt: 'salt',
+        role,
+        name: faker.person.fullName(),
+        created_at: faker.date.anytime(),
+        updated_at: faker.date.anytime()
+      });
+
+      const result = await authService.refreshAccessToken(userId, oldRefreshTokenJwtId);
+
+      expect(result).toHaveProperty('role', role);
+      expect(result).toHaveProperty('newAccessTokenJwtId');
+      expect(typeof result.newAccessTokenJwtId).toBe('string');
+    });
+
+    it('should throw not found error if user does not exist', async () => {
+      vi.mocked(app.prisma.user.findUnique).mockResolvedValueOnce(null);
+
+      await expect(authService.refreshAccessToken(faker.string.uuid(), faker.string.nanoid())).rejects.toThrow(
+        HttpError
+      );
+      expect(app.httpErrors.notFound).toHaveBeenCalledWith('User not found');
     });
   });
 });

@@ -1,25 +1,20 @@
+import type { PrismaClient } from '@/generated/prisma/client';
+import { httpErrors } from '@fastify/sensible';
+
 export default class PublisherService {
-  private static instance: PublisherService;
-  private fastify: FastifyTypeBox;
+  private prisma: PrismaClient;
 
-  private constructor(fastify: FastifyTypeBox) {
-    this.fastify = fastify;
-  }
-
-  public static getInstance(fastify: FastifyTypeBox): PublisherService {
-    if (!PublisherService.instance) {
-      PublisherService.instance = new PublisherService(fastify);
-    }
-    return PublisherService.instance;
+  public constructor({ prisma }: { prisma: PrismaClient }) {
+    this.prisma = prisma;
   }
 
   public async getPublisherBySlug(slug: string) {
-    const publisher = await this.fastify.prisma.publisher.findUnique({
+    const publisher = await this.prisma.publisher.findUnique({
       where: { slug }
     });
 
     if (!publisher) {
-      throw this.fastify.httpErrors.notFound('Publisher with the given slug does not exist.');
+      throw httpErrors.notFound('Publisher with the given slug does not exist.');
     }
 
     return publisher;

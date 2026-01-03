@@ -4,7 +4,7 @@ import { accessTokenExpiration, refreshTokenExpiration } from '@/constants';
 
 describe('JWTUtils', async () => {
   const app = await buildMockFastify();
-  const jwtUtils = JWTUtils.getInstance(app.redis);
+  const jwtUtils = new JWTUtils(app.redis);
 
   afterEach(() => {
     vi.restoreAllMocks();
@@ -119,15 +119,6 @@ describe('JWTUtils', async () => {
 
       expect(app.redis.exists).toHaveBeenCalledWith(`${tokenType}:${tokenId}`);
       expect(isValid).toBe(false);
-    });
-  });
-
-  describe('getInstance', () => {
-    it('should return the same instance on multiple calls to getInstance', () => {
-      const instance1 = JWTUtils.getInstance(app.redis);
-      const instance2 = JWTUtils.getInstance(app.redis);
-
-      expect(instance1).toBe(instance2);
     });
   });
 });

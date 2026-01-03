@@ -3,7 +3,7 @@ import { users, build } from '../helpers/build';
 
 describe('POST /api/auth/refresh-token', async () => {
   const app = await build();
-  const jwtUtils = JWTUtils.getInstance(app.redis);
+  const jwtUtils = new JWTUtils(app.redis);
 
   afterAll(async () => {
     await app.close();

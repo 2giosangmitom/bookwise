@@ -5,6 +5,7 @@ import { passwordMinLength, passwordMaxLength } from '@/constants';
 export const GetMeSchema = {
   summary: 'Get current user profile',
   description: 'Retrieve the profile information of the currently authenticated user.',
+  security: [{ JWT: [] }],
   response: {
     200: Type.Object({
       message: Type.String(),
@@ -26,6 +27,7 @@ export const GetMeSchema = {
 export const ChangePasswordSchema = {
   summary: 'Change user password',
   description: 'Change the password for the currently authenticated user.',
+  security: [{ JWT: [] }],
   body: Type.Object({
     current_password: Type.String({ minLength: passwordMinLength, maxLength: passwordMaxLength }),
     new_password: Type.String({ minLength: passwordMinLength, maxLength: passwordMaxLength })

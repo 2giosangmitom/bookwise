@@ -1,5 +1,5 @@
 import { type FastifySchema } from 'fastify';
-import Type from 'typebox';
+import { Type } from 'typebox';
 
 export const CreateCategorySchema = {
   summary: 'Create a new category (staff)',
