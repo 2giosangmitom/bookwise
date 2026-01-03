@@ -53,6 +53,7 @@ export default function LoanPage() {
   const accessToken = useTokenStore((state) => state.accessToken);
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [editingLoan, setEditingLoan] = useState<Loan | null>(null);
@@ -69,11 +70,11 @@ export default function LoanPage() {
 
   // Fetch loans with search and pagination
   const { data: loansData, isLoading } = useQuery({
-    queryKey: ['loans', page, debouncedSearchTerm, statusFilter],
+    queryKey: ['loans', page, limit, debouncedSearchTerm, statusFilter],
     queryFn: (): Promise<GetLoansResponse> =>
       getLoans(accessToken, {
         page,
-        limit: 10,
+        limit,
         search: debouncedSearchTerm || undefined,
         status: statusFilter
       })
@@ -336,11 +337,18 @@ export default function LoanPage() {
               scroll={{ x: 1400 }}
               pagination={{
                 current: page,
-                pageSize: 10,
+                pageSize: limit,
                 total: loansData?.meta.total,
                 showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
-                onChange: setPage,
-                showSizeChanger: false
+                onChange: (newPage, pageSize) => {
+                  setPage(newPage);
+                  if (pageSize !== limit) {
+                    setLimit(pageSize);
+                    setPage(1);
+                  }
+                },
+                showSizeChanger: true,
+                pageSizeOptions: ['10', '20', '50', '100']
               }}
             />
           )}

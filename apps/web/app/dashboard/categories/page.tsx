@@ -28,6 +28,7 @@ export default function CategoriesPage() {
   const accessToken = useTokenStore((state) => state.accessToken);
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [form] = Form.useForm<CategoryFormField>();
   const [messageApi, contextHolder] = message.useMessage();
@@ -37,8 +38,9 @@ export default function CategoriesPage() {
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   const { data: categories, isLoading } = useQuery({
-    queryKey: ['categories', page, debouncedSearchTerm],
-    queryFn: (): Promise<GetCategoriesResponse> => getCategories(accessToken, { page, searchTerm: debouncedSearchTerm })
+    queryKey: ['categories', page, limit, debouncedSearchTerm],
+    queryFn: (): Promise<GetCategoriesResponse> =>
+      getCategories(accessToken, { page, limit, searchTerm: debouncedSearchTerm })
   });
 
   const deleteCategoryMutation = useMutation({
@@ -235,11 +237,18 @@ export default function CategoriesPage() {
                   scroll={{ x: 'max-content' }}
                   pagination={{
                     total: categories?.meta.total,
+                    pageSize: limit,
                     showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
                     current: page,
-                    onChange: (page) => {
+                    onChange: (page, pageSize) => {
                       setPage(page);
-                    }
+                      if (pageSize !== limit) {
+                        setLimit(pageSize);
+                        setPage(1);
+                      }
+                    },
+                    showSizeChanger: true,
+                    pageSizeOptions: ['10', '20', '50', '100']
                   }}
                 />
               </Form>

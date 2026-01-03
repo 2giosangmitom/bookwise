@@ -44,6 +44,7 @@ export default function BookClonesPage() {
   const accessToken = useTokenStore((state) => state.accessToken);
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [editingClone, setEditingClone] = useState<BookClone | null>(null);
@@ -59,11 +60,11 @@ export default function BookClonesPage() {
 
   // Fetch book clones with search and pagination
   const { data: bookClonesData, isLoading } = useQuery({
-    queryKey: ['bookClones', page, debouncedSearchTerm, conditionFilter, availabilityFilter],
+    queryKey: ['bookClones', page, limit, debouncedSearchTerm, conditionFilter, availabilityFilter],
     queryFn: (): Promise<GetBookClonesResponse> =>
       getBookClones(accessToken, {
         page,
-        limit: 10,
+        limit,
         searchTerm: debouncedSearchTerm || undefined,
         condition: conditionFilter,
         is_available: availabilityFilter
@@ -293,9 +294,18 @@ export default function BookClonesPage() {
               scroll={{ x: 'max-content' }}
               pagination={{
                 total: bookClonesData?.meta.total,
+                pageSize: limit,
                 showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
                 current: page,
-                onChange: (newPage) => setPage(newPage)
+                onChange: (newPage, pageSize) => {
+                  setPage(newPage);
+                  if (pageSize !== limit) {
+                    setLimit(pageSize);
+                    setPage(1);
+                  }
+                },
+                showSizeChanger: true,
+                pageSizeOptions: ['10', '20', '50', '100']
               }}
             />
           )}

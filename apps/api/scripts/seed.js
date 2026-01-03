@@ -38,7 +38,23 @@ const publishers = [
   { name: 'Wiley', website: 'https://wiley.com', slug: 'wiley' },
   { name: 'Morgan Kaufmann', website: 'https://mkp.com', slug: 'morgan-kaufmann' },
   { name: 'Academic Press', website: 'https://academicpress.com', slug: 'academic-press' },
-  { name: 'Microsoft Press', website: 'https://microsoftpress.com', slug: 'microsoft-press' }
+  { name: 'Microsoft Press', website: 'https://microsoftpress.com', slug: 'microsoft-press' },
+  { name: "O'Reilly Media Inc", website: 'https://oreilly.com', slug: 'oreilly-media-inc' },
+  { name: 'Simon & Schuster', website: 'https://simonandschuster.com', slug: 'simon-schuster' },
+  { name: 'Penguin Books', website: 'https://penguin.com', slug: 'penguin-books' },
+  { name: 'Pearson Education', website: 'https://pearson.com', slug: 'pearson-education' },
+  { name: 'Springer Science', website: 'https://springer.com', slug: 'springer-science' },
+  { name: 'CRC Press', website: 'https://crcpress.com', slug: 'crc-press' },
+  { name: 'Elsevier', website: 'https://elsevier.com', slug: 'elsevier' },
+  { name: 'Cengage Learning', website: 'https://cengage.com', slug: 'cengage-learning' },
+  { name: 'McGraw Hill', website: 'https://mheducation.com', slug: 'mcgraw-hill' },
+  { name: 'Hachette Book Group', website: 'https://hachettebookgroup.com', slug: 'hachette-book-group' },
+  { name: 'Random House', website: 'https://randomhouse.com', slug: 'random-house' },
+  { name: 'Bloomsbury Publishing', website: 'https://bloomsbury.com', slug: 'bloomsbury-publishing' },
+  { name: 'Taylor & Francis', website: 'https://taylorandfrancis.com', slug: 'taylor-francis' },
+  { name: 'Oxford University Press', website: 'https://oup.com', slug: 'oxford-university-press' },
+  { name: 'Cambridge University Press', website: 'https://cambridge.org', slug: 'cambridge-university-press' },
+  { name: 'Sage Publications', website: 'https://sagepub.com', slug: 'sage-publications' }
 ];
 
 const categories = [
@@ -298,6 +314,203 @@ const authors = [
     date_of_birth: new Date('1985-01-01'),
     nationality: 'British',
     slug: 'addy-osmani'
+  },
+  {
+    name: 'Linus Torvalds',
+    short_biography: 'Creator of Linux',
+    biography:
+      'Linus Torvalds is a Finnish-American software engineer who is the creator and principal developer of the Linux kernel.',
+    date_of_birth: new Date('1969-12-28'),
+    nationality: 'Finnish',
+    slug: 'linus-torvalds'
+  },
+  {
+    name: 'John Carmack',
+    short_biography: 'Game engine programmer and technology visionary',
+    biography:
+      'John Carmack is an American programmer and video game developer known for his work on game engines and for pioneering techniques in computer graphics.',
+    date_of_birth: new Date('1970-08-20'),
+    nationality: 'American',
+    slug: 'john-carmack'
+  },
+  {
+    name: 'Margaret Hamilton',
+    short_biography: 'Pioneer of software engineering',
+    biography:
+      'Margaret Hamilton is an American computer scientist, systems engineer, and business owner. She was director of the Software Engineering Division.',
+    date_of_birth: new Date('1936-08-17'),
+    nationality: 'American',
+    slug: 'margaret-hamilton'
+  },
+  {
+    name: 'Alan Turing',
+    short_biography: 'Founder of computer science and AI',
+    biography:
+      'Alan Mathison Turing was an English mathematician, computer scientist, logician, cryptanalyst, philosopher, and theoretical biologist.',
+    date_of_birth: new Date('1912-06-23'),
+    nationality: 'British',
+    slug: 'alan-turing'
+  },
+  {
+    name: 'Grace Hopper',
+    short_biography: 'Pioneering computer scientist',
+    biography:
+      'Grace Brewster Murray Hopper was an American computer scientist and United States Navy rear admiral. She was a pioneer of computer programming languages.',
+    date_of_birth: new Date('1906-12-09'),
+    nationality: 'American',
+    slug: 'grace-hopper'
+  },
+  {
+    name: 'Tony Hoare',
+    short_biography: 'Inventor of quicksort and CSP',
+    biography:
+      'Charles Antony Richard Hoare is a British computer scientist famous for his work on the quicksort sorting algorithm and Communicating Sequential Processes.',
+    date_of_birth: new Date('1934-01-11'),
+    nationality: 'British',
+    slug: 'tony-hoare'
+  },
+  {
+    name: 'Ken Thompson',
+    short_biography: 'Co-creator of Unix and the Go programming language',
+    biography:
+      'Kenneth Lane Thompson is an American pioneer of computer science. He designed and implemented the original Unix operating system.',
+    date_of_birth: new Date('1943-02-04'),
+    nationality: 'American',
+    slug: 'ken-thompson'
+  },
+  {
+    name: 'Dennis Ritchie',
+    short_biography: 'Creator of C programming language',
+    biography:
+      'Dennis MacAlistair Ritchie was an American computer scientist who created the C programming language and helped design the Unix operating system.',
+    date_of_birth: new Date('1941-09-09'),
+    nationality: 'American',
+    slug: 'dennis-ritchie'
+  },
+  {
+    name: 'Guido van Rossum',
+    short_biography: 'Creator of Python programming language',
+    biography: 'Guido van Rossum is a Dutch programmer best known as the author of the Python programming language.',
+    date_of_birth: new Date('1956-01-31'),
+    nationality: 'Dutch',
+    slug: 'guido-van-rossum'
+  },
+  {
+    name: 'Graydon Hoare',
+    short_biography: 'Creator of Rust programming language',
+    biography:
+      'Graydon Hoare is a Canadian software developer best known as the original designer and implementer of the Rust programming language.',
+    date_of_birth: new Date('1980-01-01'),
+    nationality: 'Canadian',
+    slug: 'graydon-hoare'
+  },
+  {
+    name: 'Yukihiro Matsumoto',
+    short_biography: 'Creator of Ruby programming language',
+    biography:
+      'Yukihiro Matsumoto, often known as "Matz", is a Japanese computer scientist and software programmer best known as the creator of the Ruby programming language.',
+    date_of_birth: new Date('1965-04-14'),
+    nationality: 'Japanese',
+    slug: 'yukihiro-matsumoto'
+  },
+  {
+    name: 'Andrew McCallum',
+    short_biography: 'Machine learning researcher and educator',
+    biography:
+      'Andrew McCallum is a Professor of Computer Science at the University of Massachusetts Amherst, known for his work in machine learning and natural language processing.',
+    date_of_birth: new Date('1969-01-01'),
+    nationality: 'American',
+    slug: 'andrew-mccallum'
+  },
+  {
+    name: 'Yann LeCun',
+    short_biography: 'Pioneer of deep learning',
+    biography:
+      'Yann André LeCun is a French-American computer scientist known for his work on convolutional neural networks and deep learning.',
+    date_of_birth: new Date('1960-07-08'),
+    nationality: 'French-American',
+    slug: 'yann-lecun'
+  },
+  {
+    name: 'Geoffrey Hinton',
+    short_biography: 'Deep learning pioneer',
+    biography:
+      'Geoffrey Everest Hinton is a British-Canadian cognitive psychologist and computer scientist, most famous for his work on neural networks.',
+    date_of_birth: new Date('1947-12-06'),
+    nationality: 'British-Canadian',
+    slug: 'geoffrey-hinton'
+  },
+  {
+    name: 'Yoshua Bengio',
+    short_biography: 'Deep learning researcher and AI pioneer',
+    biography:
+      'Yoshua Bengio is a Canadian computer scientist best known for his work on deep neural networks and machine learning.',
+    date_of_birth: new Date('1964-03-05'),
+    nationality: 'Canadian',
+    slug: 'yoshua-bengio'
+  },
+  {
+    name: 'Andrew Ng',
+    short_biography: 'Machine learning expert and educator',
+    biography:
+      'Andrew Yan-Tak Ng is a British-American computer scientist and entrepreneur. He is a leading expert on machine learning and AI.',
+    date_of_birth: new Date('1976-01-01'),
+    nationality: 'British-American',
+    slug: 'andrew-ng'
+  },
+  {
+    name: 'Judea Pearl',
+    short_biography: 'Artificial intelligence researcher',
+    biography:
+      'Judea Pearl is an Israeli-American computer scientist and philosopher. He is known for his work on probabilistic and causal reasoning.',
+    date_of_birth: new Date('1936-09-04'),
+    nationality: 'Israeli-American',
+    slug: 'judea-pearl'
+  },
+  {
+    name: 'Stuart Russell',
+    short_biography: 'Artificial intelligence researcher and author',
+    biography:
+      'Stuart Russell is a computer scientist and professor at UC Berkeley, known for his work on artificial intelligence and rational agents.',
+    date_of_birth: new Date('1962-01-01'),
+    nationality: 'British',
+    slug: 'stuart-russell'
+  },
+  {
+    name: 'Marvin Minsky',
+    short_biography: 'AI pioneer and cognitive scientist',
+    biography:
+      "Marvin Lee Minsky was an American cognitive scientist in the field of artificial intelligence, co-founder of MIT's Media Lab.",
+    date_of_birth: new Date('1927-08-09'),
+    nationality: 'American',
+    slug: 'marvin-minsky'
+  },
+  {
+    name: 'John Backus',
+    short_biography: 'Creator of FORTRAN programming language',
+    biography:
+      'John Warner Backus was an American computer scientist. He directed the team that invented FORTRAN, the first widely used high-level programming language.',
+    date_of_birth: new Date('1924-12-03'),
+    nationality: 'American',
+    slug: 'john-backus'
+  },
+  {
+    name: 'Niklaus Wirth',
+    short_biography: 'Creator of Pascal and Modula programming languages',
+    biography:
+      'Niklaus Emil Wirth is a Swiss computer scientist, known for designing several programming languages including Pascal and Modula.',
+    date_of_birth: new Date('1934-02-15'),
+    nationality: 'Swiss',
+    slug: 'niklaus-wirth'
+  },
+  {
+    name: 'Barbara Liskov',
+    short_biography: 'Object-oriented programming pioneer',
+    biography:
+      'Barbara Liskov is an American computer scientist known for her contributions to programming languages and systems design, including the Liskov substitution principle.',
+    date_of_birth: new Date('1939-11-07'),
+    nationality: 'American',
+    slug: 'barbara-liskov'
   }
 ];
 
@@ -780,6 +993,430 @@ const books = [
     authorSlugs: ['andrew-tanenbaum'],
     categorySlugs: ['operating-systems', 'programming-languages'],
     publisherSlug: 'no-starch-press'
+  },
+  {
+    title: 'The Mythical Man-Month',
+    description:
+      'Classic book on software project management, exploring why adding manpower to a late software project makes it later.',
+    isbn: '978-0201835953',
+    published_at: new Date('1995-01-01'),
+    authorSlugs: ['robert-c-martin'],
+    categorySlugs: ['software-architecture'],
+    publisherSlug: 'addison-wesley'
+  },
+  {
+    title: 'Code: The Hidden Language of Computer Hardware and Software',
+    description:
+      'Explore the technology behind computers and how they work from the ground up through various codes and signals.',
+    isbn: '978-0735605238',
+    published_at: new Date('1999-10-15'),
+    authorSlugs: ['andrew-tanenbaum'],
+    categorySlugs: ['programming-languages', 'operating-systems'],
+    publisherSlug: 'microsoft-press'
+  },
+  {
+    title: 'The Pragmatic Programmer: From Journeyman to Master',
+    description: 'Covers practical tips and techniques for programmers to become more effective and productive.',
+    isbn: '978-0201616224',
+    published_at: new Date('1999-10-30'),
+    authorSlugs: ['andrew-hunt', 'david-thomas'],
+    categorySlugs: ['software-architecture', 'programming-languages'],
+    publisherSlug: 'addison-wesley'
+  },
+  {
+    title: 'Secure by Design',
+    description:
+      'Learn how to build secure software systems with security built in from the start, not as an afterthought.',
+    isbn: '978-1617294357',
+    published_at: new Date('2019-05-15'),
+    authorSlugs: ['sam-newman'],
+    categorySlugs: ['cybersecurity', 'software-architecture'],
+    publisherSlug: 'manning-publications'
+  },
+  {
+    title: 'Building Microservices with Node.js',
+    description:
+      'Learn how to build scalable microservices using Node.js, covering architecture patterns and best practices.',
+    isbn: '978-1491954622',
+    published_at: new Date('2015-10-20'),
+    authorSlugs: ['gene-kim'],
+    categorySlugs: ['microservices', 'web-development', 'programming-languages'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'Web Performance in Action',
+    description:
+      'Practical techniques for optimizing web application performance including caching, compression, and optimization.',
+    isbn: '978-1617291784',
+    published_at: new Date('2016-05-15'),
+    authorSlugs: ['douglas-crockford'],
+    categorySlugs: ['web-development', 'software-architecture'],
+    publisherSlug: 'manning-publications'
+  },
+  {
+    title: 'Enterprise Integration Patterns',
+    description:
+      'Design patterns for integrating enterprise systems. Essential reference for building scalable systems.',
+    isbn: '978-0321200686',
+    published_at: new Date('2003-10-20'),
+    authorSlugs: ['martin-fowler'],
+    categorySlugs: ['software-architecture', 'database-systems'],
+    publisherSlug: 'addison-wesley'
+  },
+  {
+    title: 'Distributed Systems in Practice',
+    description: 'Practical guide to building and maintaining distributed systems at scale with real-world examples.',
+    isbn: '978-1617295171',
+    published_at: new Date('2018-03-10'),
+    authorSlugs: ['sam-newman'],
+    categorySlugs: ['software-architecture', 'devops-cloud'],
+    publisherSlug: 'manning-publications'
+  },
+  {
+    title: 'Performance Testing Guidance',
+    description:
+      'Comprehensive guide to performance testing strategies and tools for ensuring application performance.',
+    isbn: '978-0735625679',
+    published_at: new Date('2007-06-15'),
+    authorSlugs: ['venkat-subramaniam'],
+    categorySlugs: ['software-testing', 'devops-cloud'],
+    publisherSlug: 'microsoft-press'
+  },
+  {
+    title: 'Reactive Programming with RxJava',
+    description: 'Learn how to build responsive, resilient applications using reactive programming with RxJava.',
+    isbn: '978-1491927282',
+    published_at: new Date('2016-04-10'),
+    authorSlugs: ['kyle-simpson'],
+    categorySlugs: ['programming-languages', 'software-architecture'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'Scalability Rules',
+    description: 'Practical rules and guidelines for building scalable systems that can handle growth and complexity.',
+    isbn: '978-0134170757',
+    published_at: new Date('2015-09-15'),
+    authorSlugs: ['gene-kim'],
+    categorySlugs: ['software-architecture', 'devops-cloud'],
+    publisherSlug: 'addison-wesley'
+  },
+  {
+    title: 'API Design Best Practices',
+    description:
+      'Guidelines and best practices for designing RESTful APIs that are intuitive, scalable, and maintainable.',
+    isbn: '978-1491920931',
+    published_at: new Date('2016-08-20'),
+    authorSlugs: ['sam-newman'],
+    categorySlugs: ['web-development', 'software-architecture'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'Container Security',
+    description: 'Best practices for securing containerized applications and container infrastructure.',
+    isbn: '978-1492056669',
+    published_at: new Date('2020-02-10'),
+    authorSlugs: ['venkat-subramaniam'],
+    categorySlugs: ['cybersecurity', 'devops-cloud'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'Machine Learning for Absolute Beginners',
+    description: 'Introduction to machine learning concepts and practical applications without heavy mathematics.',
+    isbn: '978-1549617981',
+    published_at: new Date('2018-09-15'),
+    authorSlugs: ['andrew-ng'],
+    categorySlugs: ['machine-learning', 'data-science'],
+    publisherSlug: 'no-starch-press'
+  },
+  {
+    title: 'Deep Learning Fundamentals',
+    description:
+      'Comprehensive guide to deep learning, covering neural networks, backpropagation, and various architectures.',
+    isbn: '978-1491959541',
+    published_at: new Date('2016-09-15'),
+    authorSlugs: ['yann-lecun'],
+    categorySlugs: ['machine-learning', 'data-science'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'Practical Statistics for Data Scientists',
+    description: 'Apply statistical concepts to solve real data science problems using Python and R.',
+    isbn: '978-1491952955',
+    published_at: new Date('2017-05-30'),
+    authorSlugs: ['andrew-mccallum'],
+    categorySlugs: ['data-science', 'machine-learning'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'Computer Vision with Python',
+    description: 'Learn computer vision techniques for image processing, object detection, and recognition.',
+    isbn: '978-1491922935',
+    published_at: new Date('2016-04-15'),
+    authorSlugs: ['joshua-bloch'],
+    categorySlugs: ['machine-learning', 'programming-languages'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'Natural Language Processing in Action',
+    description: 'Practical guide to NLP including text processing, sentiment analysis, and machine translation.',
+    isbn: '978-1617294632',
+    published_at: new Date('2019-02-15'),
+    authorSlugs: ['andrew-mccallum'],
+    categorySlugs: ['machine-learning', 'data-science'],
+    publisherSlug: 'manning-publications'
+  },
+  {
+    title: 'Time Series Analysis and Forecasting',
+    description: 'Master time series data analysis and forecasting techniques with practical examples.',
+    isbn: '978-1491949405',
+    published_at: new Date('2016-12-15'),
+    authorSlugs: ['thomas-cormen'],
+    categorySlugs: ['data-science', 'machine-learning'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'Blockchain Basics',
+    description: 'Introduction to blockchain technology, cryptocurrencies, and distributed ledger systems.',
+    isbn: '978-1491919416',
+    published_at: new Date('2015-12-15'),
+    authorSlugs: ['douglas-crockford'],
+    categorySlugs: ['blockchain', 'software-architecture'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'IoT Design and Prototyping',
+    description: 'Learn how to design and build Internet of Things applications with sensors and connected devices.',
+    isbn: '978-1491934556',
+    published_at: new Date('2016-03-15'),
+    authorSlugs: ['venkat-subramaniam'],
+    categorySlugs: ['internet-of-things', 'programming-languages'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'Game Development with Unity',
+    description:
+      'Practical guide to game development using the Unity engine, covering graphics, physics, and gameplay.',
+    isbn: '978-1491919935',
+    published_at: new Date('2016-02-15'),
+    authorSlugs: ['john-carmack'],
+    categorySlugs: ['game-development', 'programming-languages'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'Mobile App Development with React Native',
+    description: 'Build cross-platform mobile applications using React Native and JavaScript.',
+    isbn: '978-1491989265',
+    published_at: new Date('2016-09-15'),
+    authorSlugs: ['kyle-simpson'],
+    categorySlugs: ['mobile-development', 'web-development'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'UI/UX Design Principles',
+    description: 'Master the principles of user interface and user experience design for web and mobile applications.',
+    isbn: '978-1491952611',
+    published_at: new Date('2015-07-15'),
+    authorSlugs: ['addy-osmani'],
+    categorySlugs: ['ui-ux-design', 'web-development'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'Digital Marketing Analytics',
+    description: 'Learn analytics and data-driven strategies for digital marketing campaigns.',
+    isbn: '978-1491949406',
+    published_at: new Date('2015-06-15'),
+    authorSlugs: ['andrew-mccallum'],
+    categorySlugs: ['data-science'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'Graph Databases for Beginners',
+    description: 'Introduction to graph databases including Neo4j, their properties, and use cases.',
+    isbn: '978-1491949407',
+    published_at: new Date('2015-05-15'),
+    authorSlugs: ['thomas-cormen'],
+    categorySlugs: ['database-systems', 'software-architecture'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'SQL Performance Tuning',
+    description: 'Techniques and strategies for optimizing SQL queries and database performance.',
+    isbn: '978-1491927244',
+    published_at: new Date('2016-09-20'),
+    authorSlugs: ['jon-bentley'],
+    categorySlugs: ['database-systems', 'software-architecture'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'Network Protocols Handbook',
+    description: 'Comprehensive reference for network protocols including TCP/IP, HTTP, and more.',
+    isbn: '978-1491927251',
+    published_at: new Date('2014-03-15'),
+    authorSlugs: ['brian-kernighan'],
+    categorySlugs: ['network-engineering', 'operating-systems'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'Cryptography Engineering',
+    description: 'Design and implementation of cryptographic systems with practical examples and case studies.',
+    isbn: '978-1118722108',
+    published_at: new Date('2015-01-15'),
+    authorSlugs: ['douglas-crockford'],
+    categorySlugs: ['cybersecurity', 'software-architecture'],
+    publisherSlug: 'wiley'
+  },
+  {
+    title: 'Penetration Testing Guide',
+    description: 'Practical guide to penetration testing methodology, tools, and techniques for ethical hacking.',
+    isbn: '978-1491918557',
+    published_at: new Date('2015-07-15'),
+    authorSlugs: ['venkat-subramaniam'],
+    categorySlugs: ['cybersecurity'],
+    publisherSlug: 'no-starch-press'
+  },
+  {
+    title: 'Web Security Testing Handbook',
+    description: 'Comprehensive guide to testing web application security, covering OWASP top 10 and beyond.',
+    isbn: '978-1491921563',
+    published_at: new Date('2015-07-20'),
+    authorSlugs: ['gene-kim'],
+    categorySlugs: ['cybersecurity', 'web-development'],
+    publisherSlug: 'no-starch-press'
+  },
+  {
+    title: 'Learning Go',
+    description: 'Master the Go programming language with practical examples and real-world applications.',
+    isbn: '978-1491954560',
+    published_at: new Date('2015-10-15'),
+    authorSlugs: ['ken-thompson'],
+    categorySlugs: ['programming-languages'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'Rust in Action',
+    description: 'Learn systems programming with Rust, exploring memory safety, concurrency, and performance.',
+    isbn: '978-1617294557',
+    published_at: new Date('2021-02-15'),
+    authorSlugs: ['graydon-hoare'],
+    categorySlugs: ['programming-languages', 'software-architecture'],
+    publisherSlug: 'manning-publications'
+  },
+  {
+    title: 'Programming in Scala',
+    description: 'Comprehensive guide to functional and object-oriented programming in Scala.',
+    isbn: '978-0981531687',
+    published_at: new Date('2008-12-15'),
+    authorSlugs: ['venkat-subramaniam'],
+    categorySlugs: ['programming-languages'],
+    publisherSlug: 'artima-press'
+  },
+  {
+    title: 'Elixir in Action',
+    description: 'Learn concurrent and distributed programming with Elixir and the Erlang VM.',
+    isbn: '978-1617295027',
+    published_at: new Date('2019-04-15'),
+    authorSlugs: ['ken-thompson'],
+    categorySlugs: ['programming-languages', 'software-architecture'],
+    publisherSlug: 'manning-publications'
+  },
+  {
+    title: 'Functional Programming in Java',
+    description: 'Explore functional programming concepts and techniques in modern Java.',
+    isbn: '978-1491927283',
+    published_at: new Date('2016-04-15'),
+    authorSlugs: ['joshua-bloch'],
+    categorySlugs: ['programming-languages', 'software-architecture'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'Lambda Expressions in Java',
+    description: 'Master lambda expressions and functional programming features in Java 8+.',
+    isbn: '978-1491926971',
+    published_at: new Date('2014-09-15'),
+    authorSlugs: ['joshua-bloch'],
+    categorySlugs: ['programming-languages'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'Test-Driven Development in C++',
+    description: 'Apply TDD principles to C++ development with practical examples and patterns.',
+    isbn: '978-1491927305',
+    published_at: new Date('2015-11-15'),
+    authorSlugs: ['bjarne-stroustrup'],
+    categorySlugs: ['programming-languages', 'software-testing'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'Modern C++ Design',
+    description: 'Techniques and patterns for writing effective modern C++ code.',
+    isbn: '978-0201704310',
+    published_at: new Date('2001-07-15'),
+    authorSlugs: ['bjarne-stroustrup'],
+    categorySlugs: ['programming-languages', 'software-architecture'],
+    publisherSlug: 'addison-wesley'
+  },
+  {
+    title: 'Professional JavaScript',
+    description: 'Advanced JavaScript techniques and patterns for professional developers.',
+    isbn: '978-1491952023',
+    published_at: new Date('2016-05-15'),
+    authorSlugs: ['douglas-crockford'],
+    categorySlugs: ['programming-languages', 'web-development'],
+    publisherSlug: 'wrox-press'
+  },
+  {
+    title: 'Advanced Python',
+    description: 'Advanced Python programming techniques including metaprogramming and descriptors.',
+    isbn: '978-1491921555',
+    published_at: new Date('2015-07-15'),
+    authorSlugs: ['guido-van-rossum'],
+    categorySlugs: ['programming-languages'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'Network Programming with Python',
+    description: 'Learn network programming concepts and build networked applications with Python.',
+    isbn: '978-1491927596',
+    published_at: new Date('2016-08-15'),
+    authorSlugs: ['guido-van-rossum'],
+    categorySlugs: ['programming-languages', 'network-engineering'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'System Programming in Rust',
+    description: 'Systems-level programming with Rust, covering OS interactions and performance.',
+    isbn: '978-1491977231',
+    published_at: new Date('2015-07-15'),
+    authorSlugs: ['graydon-hoare'],
+    categorySlugs: ['programming-languages', 'operating-systems'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'Building Cloud Native Applications',
+    description: 'Patterns and practices for building applications designed for cloud platforms.',
+    isbn: '978-1491961711',
+    published_at: new Date('2015-04-15'),
+    authorSlugs: ['sam-newman'],
+    categorySlugs: ['cloud-computing', 'software-architecture'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'Docker for Developers',
+    description: 'Learn Docker containerization for development, testing, and deployment.',
+    isbn: '978-1491917411',
+    published_at: new Date('2014-12-15'),
+    authorSlugs: ['gene-kim'],
+    categorySlugs: ['devops-cloud'],
+    publisherSlug: 'oreilly-media'
+  },
+  {
+    title: 'Kubernetes in 24 Hours',
+    description: 'Quick start guide to Kubernetes for container orchestration and management.',
+    isbn: '978-1491949408',
+    published_at: new Date('2019-06-15'),
+    authorSlugs: ['gene-kim'],
+    categorySlugs: ['devops-cloud', 'cloud-computing'],
+    publisherSlug: 'sams-publishing'
   }
 ];
 
@@ -790,50 +1427,144 @@ const locations = [
   { room: 'Main Hall', floor: 1, shelf: 2, row: 2 },
   { room: 'Main Hall', floor: 1, shelf: 3, row: 1 },
   { room: 'Main Hall', floor: 1, shelf: 3, row: 2 },
+  { room: 'Main Hall', floor: 1, shelf: 4, row: 1 },
+  { room: 'Main Hall', floor: 1, shelf: 4, row: 2 },
   { room: 'Main Hall', floor: 2, shelf: 1, row: 1 },
   { room: 'Main Hall', floor: 2, shelf: 1, row: 2 },
   { room: 'Main Hall', floor: 2, shelf: 2, row: 1 },
   { room: 'Main Hall', floor: 2, shelf: 2, row: 2 },
+  { room: 'Main Hall', floor: 2, shelf: 3, row: 1 },
+  { room: 'Main Hall', floor: 2, shelf: 3, row: 2 },
+  { room: 'Main Hall', floor: 3, shelf: 1, row: 1 },
+  { room: 'Main Hall', floor: 3, shelf: 1, row: 2 },
+  { room: 'Main Hall', floor: 3, shelf: 2, row: 1 },
+  { room: 'Main Hall', floor: 3, shelf: 2, row: 2 },
   { room: 'Study Room A', floor: 1, shelf: 1, row: 1 },
   { room: 'Study Room A', floor: 1, shelf: 1, row: 2 },
   { room: 'Study Room A', floor: 1, shelf: 2, row: 1 },
   { room: 'Study Room A', floor: 1, shelf: 2, row: 2 },
+  { room: 'Study Room A', floor: 1, shelf: 3, row: 1 },
+  { room: 'Study Room A', floor: 2, shelf: 1, row: 1 },
   { room: 'Study Room B', floor: 1, shelf: 1, row: 1 },
   { room: 'Study Room B', floor: 1, shelf: 1, row: 2 },
   { room: 'Study Room B', floor: 1, shelf: 2, row: 1 },
   { room: 'Study Room B', floor: 1, shelf: 2, row: 2 },
+  { room: 'Study Room B', floor: 1, shelf: 3, row: 1 },
+  { room: 'Study Room B', floor: 2, shelf: 1, row: 1 },
+  { room: 'Study Room C', floor: 1, shelf: 1, row: 1 },
+  { room: 'Study Room C', floor: 1, shelf: 1, row: 2 },
+  { room: 'Study Room C', floor: 1, shelf: 2, row: 1 },
+  { room: 'Study Room C', floor: 1, shelf: 2, row: 2 },
   { room: 'Archive', floor: 1, shelf: 1, row: 1 },
   { room: 'Archive', floor: 1, shelf: 1, row: 2 },
   { room: 'Archive', floor: 1, shelf: 2, row: 1 },
   { room: 'Archive', floor: 1, shelf: 2, row: 2 },
+  { room: 'Archive', floor: 1, shelf: 3, row: 1 },
   { room: 'Archive', floor: 2, shelf: 1, row: 1 },
   { room: 'Archive', floor: 2, shelf: 1, row: 2 },
+  { room: 'Archive', floor: 2, shelf: 2, row: 1 },
+  { room: 'Archive', floor: 2, shelf: 2, row: 2 },
   { room: 'Reading Room', floor: 1, shelf: 1, row: 1 },
   { room: 'Reading Room', floor: 1, shelf: 1, row: 2 },
   { room: 'Reading Room', floor: 1, shelf: 2, row: 1 },
   { room: 'Reading Room', floor: 1, shelf: 2, row: 2 },
+  { room: 'Reading Room', floor: 1, shelf: 3, row: 1 },
+  { room: 'Reading Room', floor: 2, shelf: 1, row: 1 },
   { room: 'Reference Section', floor: 1, shelf: 1, row: 1 },
-  { room: 'Reference Section', floor: 1, shelf: 1, row: 2 }
+  { room: 'Reference Section', floor: 1, shelf: 1, row: 2 },
+  { room: 'Reference Section', floor: 1, shelf: 2, row: 1 },
+  { room: 'Reference Section', floor: 1, shelf: 2, row: 2 },
+  { room: 'Reference Section', floor: 1, shelf: 3, row: 1 },
+  { room: 'Digital Media', floor: 1, shelf: 1, row: 1 },
+  { room: 'Digital Media', floor: 1, shelf: 1, row: 2 },
+  { room: 'Digital Media', floor: 1, shelf: 2, row: 1 },
+  { room: 'Rare Books Room', floor: 2, shelf: 1, row: 1 },
+  { room: 'Rare Books Room', floor: 2, shelf: 1, row: 2 }
 ];
 
 // Book clones will be created after books are seeded
 // Each book will get 2-5 clones distributed across different locations
 const bookClonesPerBook = [
-  { bookIndex: 0, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 0, count: 5, condition: ['NEW', 'GOOD', 'GOOD', 'WORN', 'GOOD'] },
   { bookIndex: 1, count: 4, condition: ['NEW', 'GOOD', 'GOOD', 'WORN'] },
-  { bookIndex: 2, count: 2, condition: ['NEW', 'NEW'] },
+  { bookIndex: 2, count: 3, condition: ['NEW', 'NEW', 'GOOD'] },
   { bookIndex: 3, count: 3, condition: ['GOOD', 'WORN', 'DAMAGED'] },
   { bookIndex: 4, count: 5, condition: ['NEW', 'GOOD', 'GOOD', 'WORN', 'GOOD'] },
-  { bookIndex: 5, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
-  { bookIndex: 6, count: 2, condition: ['NEW', 'NEW'] },
+  { bookIndex: 5, count: 4, condition: ['NEW', 'GOOD', 'GOOD', 'GOOD'] },
+  { bookIndex: 6, count: 3, condition: ['NEW', 'NEW', 'GOOD'] },
   { bookIndex: 7, count: 4, condition: ['NEW', 'GOOD', 'WORN', 'GOOD'] },
   { bookIndex: 8, count: 3, condition: ['GOOD', 'WORN', 'DAMAGED'] },
-  { bookIndex: 9, count: 2, condition: ['NEW', 'GOOD'] },
+  { bookIndex: 9, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
   { bookIndex: 10, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
   { bookIndex: 11, count: 4, condition: ['NEW', 'NEW', 'GOOD', 'GOOD'] },
-  { bookIndex: 12, count: 2, condition: ['NEW', 'GOOD'] },
+  { bookIndex: 12, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
   { bookIndex: 13, count: 3, condition: ['NEW', 'GOOD', 'WORN'] },
-  { bookIndex: 14, count: 5, condition: ['NEW', 'NEW', 'GOOD', 'GOOD', 'WORN'] }
+  { bookIndex: 14, count: 5, condition: ['NEW', 'NEW', 'GOOD', 'GOOD', 'WORN'] },
+  { bookIndex: 15, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 16, count: 4, condition: ['NEW', 'GOOD', 'GOOD', 'WORN'] },
+  { bookIndex: 17, count: 2, condition: ['NEW', 'GOOD'] },
+  { bookIndex: 18, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 19, count: 4, condition: ['NEW', 'NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 20, count: 3, condition: ['NEW', 'GOOD', 'WORN'] },
+  { bookIndex: 21, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 22, count: 4, condition: ['NEW', 'GOOD', 'GOOD', 'WORN'] },
+  { bookIndex: 23, count: 2, condition: ['NEW', 'GOOD'] },
+  { bookIndex: 24, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 25, count: 4, condition: ['NEW', 'NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 26, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 27, count: 3, condition: ['NEW', 'GOOD', 'WORN'] },
+  { bookIndex: 28, count: 4, condition: ['NEW', 'GOOD', 'GOOD', 'WORN'] },
+  { bookIndex: 29, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 30, count: 3, condition: ['NEW', 'GOOD', 'WORN'] },
+  { bookIndex: 31, count: 4, condition: ['NEW', 'NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 32, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 33, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 34, count: 4, condition: ['NEW', 'GOOD', 'GOOD', 'WORN'] },
+  { bookIndex: 35, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 36, count: 3, condition: ['GOOD', 'WORN', 'DAMAGED'] },
+  { bookIndex: 37, count: 4, condition: ['NEW', 'GOOD', 'GOOD', 'WORN'] },
+  { bookIndex: 38, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 39, count: 3, condition: ['NEW', 'GOOD', 'WORN'] },
+  { bookIndex: 40, count: 4, condition: ['NEW', 'NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 41, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 42, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 43, count: 4, condition: ['NEW', 'GOOD', 'WORN', 'GOOD'] },
+  { bookIndex: 44, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 45, count: 3, condition: ['NEW', 'GOOD', 'WORN'] },
+  { bookIndex: 46, count: 4, condition: ['NEW', 'NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 47, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 48, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 49, count: 4, condition: ['NEW', 'GOOD', 'GOOD', 'WORN'] },
+  { bookIndex: 50, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 51, count: 3, condition: ['NEW', 'GOOD', 'WORN'] },
+  { bookIndex: 52, count: 4, condition: ['NEW', 'NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 53, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 54, count: 3, condition: ['GOOD', 'WORN', 'DAMAGED'] },
+  { bookIndex: 55, count: 4, condition: ['NEW', 'GOOD', 'GOOD', 'WORN'] },
+  { bookIndex: 56, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 57, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 58, count: 4, condition: ['NEW', 'GOOD', 'WORN', 'GOOD'] },
+  { bookIndex: 59, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 60, count: 3, condition: ['NEW', 'GOOD', 'WORN'] },
+  { bookIndex: 61, count: 4, condition: ['NEW', 'NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 62, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 63, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 64, count: 4, condition: ['NEW', 'GOOD', 'GOOD', 'WORN'] },
+  { bookIndex: 65, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 66, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 67, count: 4, condition: ['NEW', 'GOOD', 'WORN', 'GOOD'] },
+  { bookIndex: 68, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 69, count: 3, condition: ['NEW', 'GOOD', 'WORN'] },
+  { bookIndex: 70, count: 4, condition: ['NEW', 'NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 71, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 72, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 73, count: 4, condition: ['NEW', 'GOOD', 'GOOD', 'WORN'] },
+  { bookIndex: 74, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 75, count: 3, condition: ['NEW', 'GOOD', 'WORN'] },
+  { bookIndex: 76, count: 4, condition: ['NEW', 'NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 77, count: 3, condition: ['NEW', 'GOOD', 'GOOD'] },
+  { bookIndex: 78, count: 3, condition: ['GOOD', 'WORN', 'DAMAGED'] },
+  { bookIndex: 79, count: 4, condition: ['NEW', 'GOOD', 'GOOD', 'WORN'] }
 ];
 
 const users = [
@@ -1016,6 +1747,210 @@ const users = [
     email: 'zachary.allen@example.com',
     password: 'Zachary123!',
     role: 'MEMBER'
+  },
+  {
+    name: 'Amber Bennett',
+    email: 'amber.bennett@example.com',
+    password: 'Amber123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Brandon Cross',
+    email: 'brandon.cross@example.com',
+    password: 'Brandon123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Chloe Davis',
+    email: 'chloe.davis@example.com',
+    password: 'Chloe123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Derek Elliott',
+    email: 'derek.elliott@example.com',
+    password: 'Derek123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Elise Foster',
+    email: 'elise.foster@example.com',
+    password: 'Elise123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Felix Green',
+    email: 'felix.green@example.com',
+    password: 'Felix123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Gwen Hayes',
+    email: 'gwen.hayes@example.com',
+    password: 'Gwen123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Hunter Irving',
+    email: 'hunter.irving@example.com',
+    password: 'Hunter123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Ivy Jenkins',
+    email: 'ivy.jenkins@example.com',
+    password: 'Ivy123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Jack Kelly',
+    email: 'jack.kelly@example.com',
+    password: 'Jack123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Kimberly Lewis',
+    email: 'kimberly.lewis@example.com',
+    password: 'Kimberly123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Logan Miller',
+    email: 'logan.miller@example.com',
+    password: 'Logan123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Megan Nelson',
+    email: 'megan.nelson@example.com',
+    password: 'Megan123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Nathan Oliver',
+    email: 'nathan.oliver@example.com',
+    password: 'Nathan123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Oakley Parker',
+    email: 'oakley.parker@example.com',
+    password: 'Oakley123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Piper Quinn',
+    email: 'piper.quinn@example.com',
+    password: 'Piper123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Quinn Roberts',
+    email: 'quinn.roberts@example.com',
+    password: 'Quinn123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Ryan Scott',
+    email: 'ryan.scott@example.com',
+    password: 'Ryan123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Sophie Taylor',
+    email: 'sophie.taylor@example.com',
+    password: 'Sophie123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Tyler Underwood',
+    email: 'tyler.underwood@example.com',
+    password: 'Tyler123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Uma Vincent',
+    email: 'uma.vincent@example.com',
+    password: 'Uma123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Vera Watson',
+    email: 'vera.watson@example.com',
+    password: 'Vera123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Wesley Xavier',
+    email: 'wesley.xavier@example.com',
+    password: 'Wesley123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Xenia Young',
+    email: 'xenia.young@example.com',
+    password: 'Xenia123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Yolanda Zhang',
+    email: 'yolanda.zhang@example.com',
+    password: 'Yolanda123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Zoe Adams',
+    email: 'zoe.adams@example.com',
+    password: 'Zoe123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Aidan Blake',
+    email: 'aidan.blake@example.com',
+    password: 'Aidan123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Bailey Carter',
+    email: 'bailey.carter@example.com',
+    password: 'Bailey123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Casey Davis',
+    email: 'casey.davis@example.com',
+    password: 'Casey123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Dakota Edwards',
+    email: 'dakota.edwards@example.com',
+    password: 'Dakota123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Eden Foster',
+    email: 'eden.foster@example.com',
+    password: 'Eden123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Finley Grant',
+    email: 'finley.grant@example.com',
+    password: 'Finley123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Griffin Hayes',
+    email: 'griffin.hayes@example.com',
+    password: 'Griffin123!',
+    role: 'MEMBER'
+  },
+  {
+    name: 'Harley Irving',
+    email: 'harley.irving@example.com',
+    password: 'Harley123!',
+    role: 'MEMBER'
   }
 ];
 
@@ -1178,23 +2113,81 @@ async function main() {
     { userIndex: 4, cloneIndex: 4, daysAgo: 1, dueDays: 14, status: 'BORROWED' },
     { userIndex: 5, cloneIndex: 5, daysAgo: 10, dueDays: 14, status: 'BORROWED' },
     { userIndex: 6, cloneIndex: 6, daysAgo: 4, dueDays: 7, status: 'BORROWED' },
-    { userIndex: 0, cloneIndex: 7, daysAgo: 6, dueDays: 14, status: 'BORROWED' },
+    { userIndex: 7, cloneIndex: 7, daysAgo: 6, dueDays: 14, status: 'BORROWED' },
+    { userIndex: 8, cloneIndex: 8, daysAgo: 3, dueDays: 14, status: 'BORROWED' },
+    { userIndex: 9, cloneIndex: 9, daysAgo: 8, dueDays: 21, status: 'BORROWED' },
+    { userIndex: 10, cloneIndex: 10, daysAgo: 2, dueDays: 14, status: 'BORROWED' },
+    { userIndex: 11, cloneIndex: 11, daysAgo: 5, dueDays: 14, status: 'BORROWED' },
+    { userIndex: 12, cloneIndex: 12, daysAgo: 9, dueDays: 7, status: 'BORROWED' },
+    { userIndex: 13, cloneIndex: 13, daysAgo: 1, dueDays: 14, status: 'BORROWED' },
+    { userIndex: 14, cloneIndex: 14, daysAgo: 4, dueDays: 21, status: 'BORROWED' },
     // Overdue loans
-    { userIndex: 7, cloneIndex: 8, daysAgo: 30, dueDays: 14, status: 'OVERDUE' },
-    { userIndex: 8, cloneIndex: 9, daysAgo: 25, dueDays: 14, status: 'OVERDUE' },
-    { userIndex: 9, cloneIndex: 10, daysAgo: 45, dueDays: 21, status: 'OVERDUE' },
-    { userIndex: 10, cloneIndex: 11, daysAgo: 20, dueDays: 7, status: 'OVERDUE' },
+    { userIndex: 0, cloneIndex: 15, daysAgo: 30, dueDays: 14, status: 'OVERDUE' },
+    { userIndex: 1, cloneIndex: 16, daysAgo: 25, dueDays: 14, status: 'OVERDUE' },
+    { userIndex: 2, cloneIndex: 17, daysAgo: 45, dueDays: 21, status: 'OVERDUE' },
+    { userIndex: 3, cloneIndex: 18, daysAgo: 20, dueDays: 7, status: 'OVERDUE' },
+    { userIndex: 4, cloneIndex: 19, daysAgo: 35, dueDays: 14, status: 'OVERDUE' },
+    { userIndex: 5, cloneIndex: 20, daysAgo: 40, dueDays: 14, status: 'OVERDUE' },
+    { userIndex: 6, cloneIndex: 21, daysAgo: 22, dueDays: 14, status: 'OVERDUE' },
     // Returned loans (historical)
-    { userIndex: 0, cloneIndex: 12, daysAgo: 60, dueDays: 14, returnedDaysAgo: 50, status: 'RETURNED' },
-    { userIndex: 1, cloneIndex: 13, daysAgo: 45, dueDays: 14, returnedDaysAgo: 35, status: 'RETURNED' },
-    { userIndex: 2, cloneIndex: 14, daysAgo: 30, dueDays: 21, returnedDaysAgo: 15, status: 'RETURNED' },
-    { userIndex: 3, cloneIndex: 15, daysAgo: 90, dueDays: 14, returnedDaysAgo: 80, status: 'RETURNED' },
-    { userIndex: 4, cloneIndex: 16, daysAgo: 75, dueDays: 14, returnedDaysAgo: 65, status: 'RETURNED' },
-    { userIndex: 5, cloneIndex: 17, daysAgo: 50, dueDays: 7, returnedDaysAgo: 45, status: 'RETURNED' },
-    { userIndex: 6, cloneIndex: 18, daysAgo: 40, dueDays: 14, returnedDaysAgo: 30, status: 'RETURNED' },
-    { userIndex: 7, cloneIndex: 19, daysAgo: 100, dueDays: 21, returnedDaysAgo: 85, status: 'RETURNED' },
-    { userIndex: 8, cloneIndex: 20, daysAgo: 120, dueDays: 14, returnedDaysAgo: 110, status: 'RETURNED' },
-    { userIndex: 9, cloneIndex: 21, daysAgo: 80, dueDays: 14, returnedDaysAgo: 70, status: 'RETURNED' }
+    { userIndex: 0, cloneIndex: 22, daysAgo: 60, dueDays: 14, returnedDaysAgo: 50, status: 'RETURNED' },
+    { userIndex: 1, cloneIndex: 23, daysAgo: 45, dueDays: 14, returnedDaysAgo: 35, status: 'RETURNED' },
+    { userIndex: 2, cloneIndex: 24, daysAgo: 30, dueDays: 21, returnedDaysAgo: 15, status: 'RETURNED' },
+    { userIndex: 3, cloneIndex: 25, daysAgo: 90, dueDays: 14, returnedDaysAgo: 80, status: 'RETURNED' },
+    { userIndex: 4, cloneIndex: 26, daysAgo: 75, dueDays: 14, returnedDaysAgo: 65, status: 'RETURNED' },
+    { userIndex: 5, cloneIndex: 27, daysAgo: 50, dueDays: 7, returnedDaysAgo: 45, status: 'RETURNED' },
+    { userIndex: 6, cloneIndex: 28, daysAgo: 40, dueDays: 14, returnedDaysAgo: 30, status: 'RETURNED' },
+    { userIndex: 7, cloneIndex: 29, daysAgo: 100, dueDays: 21, returnedDaysAgo: 85, status: 'RETURNED' },
+    { userIndex: 8, cloneIndex: 30, daysAgo: 120, dueDays: 14, returnedDaysAgo: 110, status: 'RETURNED' },
+    { userIndex: 9, cloneIndex: 31, daysAgo: 80, dueDays: 14, returnedDaysAgo: 70, status: 'RETURNED' },
+    { userIndex: 10, cloneIndex: 32, daysAgo: 55, dueDays: 14, returnedDaysAgo: 48, status: 'RETURNED' },
+    { userIndex: 11, cloneIndex: 33, daysAgo: 70, dueDays: 21, returnedDaysAgo: 60, status: 'RETURNED' },
+    { userIndex: 12, cloneIndex: 34, daysAgo: 35, dueDays: 14, returnedDaysAgo: 25, status: 'RETURNED' },
+    { userIndex: 13, cloneIndex: 35, daysAgo: 42, dueDays: 14, returnedDaysAgo: 32, status: 'RETURNED' },
+    { userIndex: 14, cloneIndex: 36, daysAgo: 65, dueDays: 7, returnedDaysAgo: 58, status: 'RETURNED' },
+    { userIndex: 0, cloneIndex: 37, daysAgo: 85, dueDays: 14, returnedDaysAgo: 75, status: 'RETURNED' },
+    { userIndex: 1, cloneIndex: 38, daysAgo: 50, dueDays: 14, returnedDaysAgo: 40, status: 'RETURNED' },
+    { userIndex: 2, cloneIndex: 39, daysAgo: 72, dueDays: 21, returnedDaysAgo: 62, status: 'RETURNED' },
+    { userIndex: 3, cloneIndex: 40, daysAgo: 38, dueDays: 14, returnedDaysAgo: 28, status: 'RETURNED' },
+    { userIndex: 4, cloneIndex: 41, daysAgo: 95, dueDays: 14, returnedDaysAgo: 85, status: 'RETURNED' },
+    { userIndex: 5, cloneIndex: 42, daysAgo: 60, dueDays: 7, returnedDaysAgo: 55, status: 'RETURNED' },
+    { userIndex: 6, cloneIndex: 43, daysAgo: 45, dueDays: 14, returnedDaysAgo: 35, status: 'RETURNED' },
+    { userIndex: 7, cloneIndex: 44, daysAgo: 77, dueDays: 14, returnedDaysAgo: 67, status: 'RETURNED' },
+    { userIndex: 8, cloneIndex: 45, daysAgo: 52, dueDays: 21, returnedDaysAgo: 42, status: 'RETURNED' },
+    { userIndex: 9, cloneIndex: 46, daysAgo: 110, dueDays: 14, returnedDaysAgo: 100, status: 'RETURNED' },
+    { userIndex: 10, cloneIndex: 47, daysAgo: 66, dueDays: 14, returnedDaysAgo: 56, status: 'RETURNED' },
+    { userIndex: 11, cloneIndex: 48, daysAgo: 48, dueDays: 14, returnedDaysAgo: 38, status: 'RETURNED' },
+    { userIndex: 12, cloneIndex: 49, daysAgo: 81, dueDays: 7, returnedDaysAgo: 74, status: 'RETURNED' },
+    { userIndex: 13, cloneIndex: 50, daysAgo: 58, dueDays: 14, returnedDaysAgo: 48, status: 'RETURNED' },
+    { userIndex: 14, cloneIndex: 51, daysAgo: 39, dueDays: 14, returnedDaysAgo: 29, status: 'RETURNED' },
+    { userIndex: 0, cloneIndex: 52, daysAgo: 105, dueDays: 21, returnedDaysAgo: 95, status: 'RETURNED' },
+    { userIndex: 1, cloneIndex: 53, daysAgo: 63, dueDays: 14, returnedDaysAgo: 53, status: 'RETURNED' },
+    { userIndex: 2, cloneIndex: 54, daysAgo: 76, dueDays: 14, returnedDaysAgo: 66, status: 'RETURNED' },
+    { userIndex: 3, cloneIndex: 55, daysAgo: 44, dueDays: 14, returnedDaysAgo: 34, status: 'RETURNED' },
+    { userIndex: 4, cloneIndex: 56, daysAgo: 88, dueDays: 7, returnedDaysAgo: 80, status: 'RETURNED' },
+    { userIndex: 5, cloneIndex: 57, daysAgo: 55, dueDays: 14, returnedDaysAgo: 45, status: 'RETURNED' },
+    { userIndex: 6, cloneIndex: 58, daysAgo: 67, dueDays: 14, returnedDaysAgo: 57, status: 'RETURNED' },
+    { userIndex: 7, cloneIndex: 59, daysAgo: 92, dueDays: 21, returnedDaysAgo: 82, status: 'RETURNED' },
+    { userIndex: 8, cloneIndex: 60, daysAgo: 47, dueDays: 14, returnedDaysAgo: 37, status: 'RETURNED' },
+    { userIndex: 9, cloneIndex: 61, daysAgo: 83, dueDays: 14, returnedDaysAgo: 73, status: 'RETURNED' },
+    { userIndex: 10, cloneIndex: 62, daysAgo: 58, dueDays: 14, returnedDaysAgo: 48, status: 'RETURNED' },
+    { userIndex: 11, cloneIndex: 63, daysAgo: 71, dueDays: 7, returnedDaysAgo: 64, status: 'RETURNED' },
+    { userIndex: 12, cloneIndex: 64, daysAgo: 39, dueDays: 14, returnedDaysAgo: 29, status: 'RETURNED' },
+    { userIndex: 13, cloneIndex: 65, daysAgo: 78, dueDays: 14, returnedDaysAgo: 68, status: 'RETURNED' },
+    { userIndex: 14, cloneIndex: 66, daysAgo: 54, dueDays: 21, returnedDaysAgo: 44, status: 'RETURNED' },
+    { userIndex: 0, cloneIndex: 67, daysAgo: 90, dueDays: 14, returnedDaysAgo: 80, status: 'RETURNED' },
+    { userIndex: 1, cloneIndex: 68, daysAgo: 62, dueDays: 14, returnedDaysAgo: 52, status: 'RETURNED' },
+    { userIndex: 2, cloneIndex: 69, daysAgo: 49, dueDays: 14, returnedDaysAgo: 39, status: 'RETURNED' },
+    { userIndex: 3, cloneIndex: 70, daysAgo: 73, dueDays: 7, returnedDaysAgo: 66, status: 'RETURNED' },
+    { userIndex: 4, cloneIndex: 71, daysAgo: 56, dueDays: 14, returnedDaysAgo: 46, status: 'RETURNED' },
+    { userIndex: 5, cloneIndex: 72, daysAgo: 68, dueDays: 14, returnedDaysAgo: 58, status: 'RETURNED' },
+    { userIndex: 6, cloneIndex: 73, daysAgo: 84, dueDays: 21, returnedDaysAgo: 74, status: 'RETURNED' },
+    { userIndex: 7, cloneIndex: 74, daysAgo: 51, dueDays: 14, returnedDaysAgo: 41, status: 'RETURNED' },
+    { userIndex: 8, cloneIndex: 75, daysAgo: 79, dueDays: 14, returnedDaysAgo: 69, status: 'RETURNED' },
+    { userIndex: 9, cloneIndex: 76, daysAgo: 60, dueDays: 14, returnedDaysAgo: 50, status: 'RETURNED' },
+    { userIndex: 10, cloneIndex: 77, daysAgo: 74, dueDays: 7, returnedDaysAgo: 67, status: 'RETURNED' },
+    { userIndex: 11, cloneIndex: 78, daysAgo: 41, dueDays: 14, returnedDaysAgo: 31, status: 'RETURNED' },
+    { userIndex: 12, cloneIndex: 79, daysAgo: 80, dueDays: 14, returnedDaysAgo: 70, status: 'RETURNED' }
   ];
 
   const now = new Date();
@@ -1230,6 +2223,94 @@ async function main() {
   console.log(
     `  ✓ Created ${loansToCreate.length} loans (${loansToCreate.filter((l) => l.status === 'BORROWED').length} borrowed, ${loansToCreate.filter((l) => l.status === 'OVERDUE').length} overdue, ${loansToCreate.filter((l) => l.status === 'RETURNED').length} returned)`
   );
+
+  // Create Ratings
+  console.log('Creating ratings...');
+  const ratingsToCreate = [
+    { userIndex: 0, bookIndex: 0, rate: 5, comment: 'Excellent book! Very informative and well-written.' },
+    { userIndex: 1, bookIndex: 1, rate: 4, comment: 'Great content but quite technical for beginners.' },
+    { userIndex: 2, bookIndex: 2, rate: 5, comment: 'A must-read for every developer.' },
+    { userIndex: 3, bookIndex: 3, rate: 5, comment: 'Classic work. Highly recommended.' },
+    { userIndex: 4, bookIndex: 4, rate: 4, comment: 'Good insights on TDD practices.' },
+    { userIndex: 5, bookIndex: 5, rate: 5, comment: 'Practical and effective Java guide.' },
+    { userIndex: 6, bookIndex: 6, rate: 3, comment: 'Good introduction but covers limited topics.' },
+    { userIndex: 7, bookIndex: 7, rate: 5, comment: 'Amazing book about pragmatism in programming.' },
+    { userIndex: 8, bookIndex: 8, rate: 4, comment: 'Insightful DevOps narrative.' },
+    { userIndex: 9, bookIndex: 9, rate: 5, comment: 'Essential for working with legacy code.' },
+    { userIndex: 10, bookIndex: 10, rate: 4, comment: 'Comprehensive guide to microservices.' },
+    { userIndex: 11, bookIndex: 11, rate: 5, comment: 'Principles of clean architecture explained clearly.' },
+    { userIndex: 12, bookIndex: 12, rate: 4, comment: 'Excellent guide on continuous delivery.' },
+    { userIndex: 13, bookIndex: 13, rate: 5, comment: 'Data-intensive applications covered thoroughly.' },
+    { userIndex: 14, bookIndex: 14, rate: 5, comment: 'Google insights on running production systems.' },
+    { userIndex: 0, bookIndex: 15, rate: 4, comment: 'Enterprise architecture patterns explained well.' },
+    { userIndex: 1, bookIndex: 16, rate: 5, comment: 'Best book on XP practices.' },
+    { userIndex: 2, bookIndex: 17, rate: 4, comment: 'Practical microservices patterns with code.' },
+    { userIndex: 3, bookIndex: 18, rate: 5, comment: 'JavaScript goodness in one place.' },
+    { userIndex: 4, bookIndex: 19, rate: 5, comment: 'Code Complete is essential reading.' },
+    { userIndex: 5, bookIndex: 20, rate: 4, comment: 'Classic C book, still relevant.' },
+    { userIndex: 6, bookIndex: 21, rate: 5, comment: 'Algorithms book with great depth.' },
+    { userIndex: 7, bookIndex: 22, rate: 4, comment: 'System design interview prep guide.' },
+    { userIndex: 8, bookIndex: 23, rate: 5, comment: 'Concurrency in Go explained clearly.' },
+    { userIndex: 9, bookIndex: 24, rate: 4, comment: 'Linux programming interface comprehensive.' },
+    { userIndex: 10, bookIndex: 25, rate: 5, comment: 'Managing software projects effectively.' },
+    { userIndex: 11, bookIndex: 26, rate: 4, comment: 'Code hidden language is fascinating.' },
+    { userIndex: 12, bookIndex: 27, rate: 5, comment: 'Practical tips for every programmer.' },
+    { userIndex: 13, bookIndex: 28, rate: 4, comment: 'Security design best practices.' },
+    { userIndex: 14, bookIndex: 29, rate: 5, comment: 'Node.js microservices guide excellent.' },
+    { userIndex: 0, bookIndex: 30, rate: 4, comment: 'Web performance optimization practical.' },
+    { userIndex: 1, bookIndex: 31, rate: 5, comment: 'Enterprise integration patterns valuable.' },
+    { userIndex: 2, bookIndex: 32, rate: 5, comment: 'Distributed systems in practice helpful.' },
+    { userIndex: 3, bookIndex: 33, rate: 4, comment: 'Performance testing guidance clear.' },
+    { userIndex: 4, bookIndex: 34, rate: 5, comment: 'RxJava reactive programming guide great.' },
+    { userIndex: 5, bookIndex: 35, rate: 4, comment: 'Scalability rules well documented.' },
+    { userIndex: 6, bookIndex: 36, rate: 5, comment: 'API design best practices comprehensive.' },
+    { userIndex: 7, bookIndex: 37, rate: 4, comment: 'Container security important topic.' },
+    { userIndex: 8, bookIndex: 38, rate: 5, comment: 'Machine learning fundamentals explained.' },
+    { userIndex: 9, bookIndex: 39, rate: 5, comment: 'Deep learning practical guide excellent.' },
+    { userIndex: 10, bookIndex: 40, rate: 4, comment: 'Statistics for data scientists useful.' },
+    { userIndex: 11, bookIndex: 41, rate: 5, comment: 'Computer vision with Python comprehensive.' },
+    { userIndex: 12, bookIndex: 42, rate: 4, comment: 'NLP techniques well explained.' },
+    { userIndex: 13, bookIndex: 43, rate: 5, comment: 'Time series analysis detailed guide.' },
+    { userIndex: 14, bookIndex: 44, rate: 4, comment: 'Blockchain basics clear introduction.' },
+    { userIndex: 0, bookIndex: 45, rate: 5, comment: 'IoT design and prototyping practical.' },
+    { userIndex: 1, bookIndex: 46, rate: 5, comment: 'Game development Unity guide excellent.' },
+    { userIndex: 2, bookIndex: 47, rate: 4, comment: 'React Native for mobile apps great.' },
+    { userIndex: 3, bookIndex: 48, rate: 5, comment: 'UI/UX design principles comprehensive.' },
+    { userIndex: 4, bookIndex: 49, rate: 4, comment: 'Digital marketing analytics useful.' },
+    { userIndex: 5, bookIndex: 50, rate: 5, comment: 'Graph databases introduction helpful.' },
+    { userIndex: 6, bookIndex: 51, rate: 5, comment: 'SQL performance tuning essential.' },
+    { userIndex: 7, bookIndex: 52, rate: 4, comment: 'Network protocols handbook reference.' },
+    { userIndex: 8, bookIndex: 53, rate: 5, comment: 'Cryptography engineering detailed guide.' },
+    { userIndex: 9, bookIndex: 54, rate: 4, comment: 'Penetration testing practical handbook.' },
+    { userIndex: 10, bookIndex: 55, rate: 5, comment: 'Web security testing comprehensive.' },
+    { userIndex: 11, bookIndex: 56, rate: 5, comment: 'Learning Go effective guide.' },
+    { userIndex: 12, bookIndex: 57, rate: 4, comment: 'Rust in action detailed explanations.' },
+    { userIndex: 13, bookIndex: 58, rate: 5, comment: 'Programming in Scala excellent.' },
+    { userIndex: 14, bookIndex: 59, rate: 4, comment: 'Elixir concurrent programming guide.' }
+  ];
+
+  let ratingsCreated = 0;
+  for (const ratingConfig of ratingsToCreate) {
+    try {
+      const user = memberUsers[ratingConfig.userIndex % memberUsers.length];
+      const book = createdBooks[ratingConfig.bookIndex % createdBooks.length];
+
+      if (!user || !book) continue;
+
+      await prisma.rating.create({
+        data: {
+          user_id: user.user_id,
+          book_id: book.book_id,
+          rate: ratingConfig.rate,
+          comment: ratingConfig.comment
+        }
+      });
+      ratingsCreated++;
+    } catch {
+      // Ignore duplicate ratings
+    }
+  }
+  console.log(`  ✓ Created ${ratingsCreated} ratings`);
 
   console.log('\n✅ Seed completed successfully!');
   console.log('\nDefault login credentials:');

@@ -39,6 +39,7 @@ export default function AuthorsPage() {
   const accessToken = useTokenStore((state) => state.accessToken);
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [form] = Form.useForm<AuthorFormField>();
@@ -49,8 +50,9 @@ export default function AuthorsPage() {
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   const { data: authors, isLoading } = useQuery({
-    queryKey: ['authors', page, debouncedSearchTerm],
-    queryFn: (): Promise<GetAuthorsResponse> => getAuthors(accessToken, { page, searchTerm: debouncedSearchTerm })
+    queryKey: ['authors', page, limit, debouncedSearchTerm],
+    queryFn: (): Promise<GetAuthorsResponse> =>
+      getAuthors(accessToken, { page, limit, searchTerm: debouncedSearchTerm })
   });
 
   const deleteAuthorMutation = useMutation({
@@ -246,11 +248,18 @@ export default function AuthorsPage() {
               scroll={{ x: 'max-content' }}
               pagination={{
                 total: authors?.meta.total,
+                pageSize: limit,
                 showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
                 current: page,
-                onChange: (page) => {
+                onChange: (page, pageSize) => {
                   setPage(page);
-                }
+                  if (pageSize !== limit) {
+                    setLimit(pageSize);
+                    setPage(1);
+                  }
+                },
+                showSizeChanger: true,
+                pageSizeOptions: ['10', '20', '50', '100']
               }}
             />
           )}

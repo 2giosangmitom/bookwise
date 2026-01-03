@@ -29,6 +29,7 @@ export default function PublishersPage() {
   const accessToken = useTokenStore((state) => state.accessToken);
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [form] = Form.useForm<PublisherFormField>();
   const [messageApi, contextHolder] = message.useMessage();
@@ -38,8 +39,9 @@ export default function PublishersPage() {
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   const { data: publishers, isLoading } = useQuery({
-    queryKey: ['publishers', page, debouncedSearchTerm],
-    queryFn: (): Promise<GetPublishersResponse> => getPublishers(accessToken, { page, searchTerm: debouncedSearchTerm })
+    queryKey: ['publishers', page, limit, debouncedSearchTerm],
+    queryFn: (): Promise<GetPublishersResponse> =>
+      getPublishers(accessToken, { page, limit, searchTerm: debouncedSearchTerm })
   });
 
   const deletePublisherMutation = useMutation({
@@ -254,11 +256,18 @@ export default function PublishersPage() {
                   scroll={{ x: 'max-content' }}
                   pagination={{
                     total: publishers?.meta.total,
+                    pageSize: limit,
                     showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
                     current: page,
-                    onChange: (page) => {
+                    onChange: (page, pageSize) => {
                       setPage(page);
-                    }
+                      if (pageSize !== limit) {
+                        setLimit(pageSize);
+                        setPage(1);
+                      }
+                    },
+                    showSizeChanger: true,
+                    pageSizeOptions: ['10', '20', '50', '100']
                   }}
                 />
               </Form>

@@ -44,6 +44,7 @@ export default function BooksPage() {
   const accessToken = useTokenStore((state) => state.accessToken);
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [editingBook, setEditingBook] = useState<Book | null>(null);
@@ -61,8 +62,8 @@ export default function BooksPage() {
 
   // Fetch books with search and pagination
   const { data: books, isLoading } = useQuery({
-    queryKey: ['books', page, debouncedSearchTerm],
-    queryFn: (): Promise<GetBooksResponse> => getBooks(accessToken, { page, searchTerm: debouncedSearchTerm })
+    queryKey: ['books', page, limit, debouncedSearchTerm],
+    queryFn: (): Promise<GetBooksResponse> => getBooks(accessToken, { page, limit, searchTerm: debouncedSearchTerm })
   });
 
   // Fetch authors for the select dropdown with dynamic search
@@ -529,12 +530,18 @@ export default function BooksPage() {
               scroll={{ x: 'max-content' }}
               pagination={{
                 total: books?.meta.total,
+                pageSize: limit,
                 showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
                 current: page,
-                pageSize: books?.meta.limit,
-                onChange: (page) => {
+                onChange: (page, pageSize) => {
                   setPage(page);
-                }
+                  if (pageSize !== limit) {
+                    setLimit(pageSize);
+                    setPage(1);
+                  }
+                },
+                showSizeChanger: true,
+                pageSizeOptions: ['10', '20', '50', '100']
               }}
             />
           )}

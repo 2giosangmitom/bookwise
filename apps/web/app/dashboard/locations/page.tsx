@@ -35,6 +35,7 @@ export default function LocationsPage() {
   const accessToken = useTokenStore((state) => state.accessToken);
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   const [isCreateModalOpen, setCreateModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [editingLocation, setEditingLocation] = useState<Location | null>(null);
@@ -46,11 +47,11 @@ export default function LocationsPage() {
 
   // Fetch locations with search and pagination
   const { data: locationsData, isLoading } = useQuery({
-    queryKey: ['locations', page, debouncedSearchTerm],
+    queryKey: ['locations', page, limit, debouncedSearchTerm],
     queryFn: (): Promise<GetLocationsResponse> =>
       getLocations(accessToken, {
         page,
-        limit: 10,
+        limit,
         room: debouncedSearchTerm
       })
   });
@@ -225,9 +226,18 @@ export default function LocationsPage() {
               scroll={{ x: 'max-content' }}
               pagination={{
                 total: locationsData?.meta.total,
+                pageSize: limit,
                 showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
                 current: page,
-                onChange: (newPage) => setPage(newPage)
+                onChange: (newPage, pageSize) => {
+                  setPage(newPage);
+                  if (pageSize !== limit) {
+                    setLimit(pageSize);
+                    setPage(1);
+                  }
+                },
+                showSizeChanger: true,
+                pageSizeOptions: ['10', '20', '50', '100']
               }}
             />
           )}
