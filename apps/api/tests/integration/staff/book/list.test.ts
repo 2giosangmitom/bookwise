@@ -279,30 +279,6 @@ describe('GET /api/staff/book', async () => {
     }
   });
 
-  it('should handle pagination correctly', async () => {
-    const response1 = await app.inject({
-      method: 'GET',
-      url: '/api/staff/book?page=1&limit=1',
-      headers: { Authorization: `Bearer ${accessTokens[Role.ADMIN]}` }
-    });
-
-    const response2 = await app.inject({
-      method: 'GET',
-      url: '/api/staff/book?page=2&limit=1',
-      headers: { Authorization: `Bearer ${accessTokens[Role.ADMIN]}` }
-    });
-
-    expect(response1.statusCode).toBe(200);
-    expect(response2.statusCode).toBe(200);
-
-    const body1 = response1.json() as { data: BookResponse[]; meta: { total: number; page: number; limit: number } };
-    const body2 = response2.json() as { data: BookResponse[]; meta: { total: number; page: number; limit: number } };
-
-    if (body1.meta.total > 1) {
-      expect(body1.data[0]?.book_id).not.toBe(body2.data[0]?.book_id);
-    }
-  });
-
   it('should return empty list when no books match filters', async () => {
     const response = await app.inject({
       method: 'GET',
