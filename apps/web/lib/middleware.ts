@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { API_BASE_URL } from './constants';
+import { getMe } from './api/user';
 
 const PROTECTED_ROUTES = ['/dashboard'];
 const AUTH_ROUTES = ['/signin', '/signup'];
@@ -12,9 +13,11 @@ export function isAuthRoute(url: string): boolean {
   return AUTH_ROUTES.some((route) => url.includes(route));
 }
 
-export async function validateRefreshToken(refreshToken: string | undefined): Promise<boolean> {
+export async function validateRefreshToken(
+  refreshToken: string | undefined
+): Promise<{ isValid: boolean; role: string | null }> {
   if (!refreshToken) {
-    return false;
+    return { isValid: false, role: null };
   }
 
   try {
@@ -24,11 +27,12 @@ export async function validateRefreshToken(refreshToken: string | undefined): Pr
         cookie: `refreshToken=${refreshToken}`
       }
     });
+    const me = await getMe((await response.json()).data.access_token);
 
-    return response.ok;
+    return { isValid: response.ok, role: me.data.role };
   } catch (error) {
     console.error('Token validation failed:', error);
-    return false;
+    return { isValid: false, role: null };
   }
 }
 

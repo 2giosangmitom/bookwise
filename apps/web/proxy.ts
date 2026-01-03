@@ -8,12 +8,17 @@ export async function proxy(req: NextRequest) {
 
   // Validate token for protected routes
   if (isProtected) {
-    const isValidToken = await validateRefreshToken(refreshToken);
+    const { isValid, role } = await validateRefreshToken(refreshToken);
 
-    if (!isValidToken) {
+    if (!isValid) {
       const response = NextResponse.redirect(new URL('/signin', req.url));
       deleteRefreshTokenCookie(response);
       return response;
+    }
+
+    // Only LIBRARIAN and ADMIN can access dashboard
+    if (req.url.includes('/dashboard') && role && role !== 'LIBRARIAN' && role !== 'ADMIN') {
+      return NextResponse.redirect(new URL('/', req.url));
     }
   }
 
