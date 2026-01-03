@@ -151,4 +151,12 @@ export default class StaffLoanService {
 
     return { loans, total };
   }
+
+  public async getTotalLoans(status?: LoanStatus) {
+    const totalActiveLoans = await this.prisma.loan.count({
+      where: { status }
+    });
+
+    return totalActiveLoans;
+  }
 }

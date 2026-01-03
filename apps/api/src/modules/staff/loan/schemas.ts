@@ -112,3 +112,22 @@ export const GetLoansSchema = {
     500: { $ref: 'HttpError' }
   }
 } as const satisfies FastifySchema;
+
+export const GetTotalLoansSchema = {
+  summary: 'Get total loans',
+  description: 'Retrieve the total number of loans.',
+  querystring: Type.Object({
+    status: Type.Optional(Type.Enum(LoanStatus))
+  }),
+  security: [{ JWT: [] }],
+  response: {
+    200: Type.Object({
+      message: Type.String(),
+      data: Type.Object({
+        total_loans: Type.Number()
+      })
+    }),
+    403: { $ref: 'HttpError' },
+    500: { $ref: 'HttpError' }
+  }
+} as const satisfies FastifySchema;

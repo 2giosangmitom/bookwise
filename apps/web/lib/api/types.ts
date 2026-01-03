@@ -205,3 +205,4 @@ export type GetLoansResponse = {
 export type CreateLoanResponse = ApiResponse<Loan>;
 export type UpdateLoanResponse = ApiResponse<Loan>;
 export type DeleteLoanResponse = ApiResponse<Loan>;
+export type GetTotalActiveLoansResponse = ApiResponse<{ total_loans: number }>;

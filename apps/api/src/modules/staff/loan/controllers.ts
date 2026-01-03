@@ -1,5 +1,5 @@
 import type StaffLoanService from './services';
-import { CreateLoanSchema, UpdateLoanSchema, DeleteLoanSchema, GetLoansSchema } from './schemas';
+import { CreateLoanSchema, UpdateLoanSchema, DeleteLoanSchema, GetLoansSchema, GetTotalLoansSchema } from './schemas';
 
 export default class StaffLoanController {
   private staffLoanService: StaffLoanService;
@@ -118,6 +118,19 @@ export default class StaffLoanController {
         created_at: loan.created_at.toISOString(),
         updated_at: loan.updated_at.toISOString()
       }))
+    });
+  }
+
+  public async getTotalLoans(
+    req: FastifyRequestTypeBox<typeof GetTotalLoansSchema>,
+    reply: FastifyReplyTypeBox<typeof GetTotalLoansSchema>
+  ) {
+    const total_loans = await this.staffLoanService.getTotalLoans(req.query.status);
+    return reply.status(200).send({
+      message: 'Total loans retrieved successfully',
+      data: {
+        total_loans
+      }
     });
   }
 }

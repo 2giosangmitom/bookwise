@@ -1,5 +1,12 @@
 import { fetchApiWithAutoRefresh } from './apiClient';
-import { GetLoansResponse, CreateLoanResponse, UpdateLoanResponse, DeleteLoanResponse, LoanStatus } from './types';
+import {
+  GetLoansResponse,
+  CreateLoanResponse,
+  UpdateLoanResponse,
+  DeleteLoanResponse,
+  LoanStatus,
+  GetTotalActiveLoansResponse
+} from './types';
 
 export function getLoans(
   accessToken: string | null,
@@ -65,4 +72,19 @@ export function deleteLoan(accessToken: string | null, loanId: string) {
   return fetchApiWithAutoRefresh<DeleteLoanResponse>(`/staff/loan/${loanId}`, accessToken, {
     method: 'DELETE'
   });
+}
+
+export function getTotalLoans(accessToken: string | null, status?: LoanStatus) {
+  const params = new URLSearchParams();
+  if (status) params.append('status', status);
+
+  const queryString = params.toString();
+
+  return fetchApiWithAutoRefresh<GetTotalActiveLoansResponse>(
+    `/staff/loan/total${queryString ? `?${queryString}` : ''}`,
+    accessToken,
+    {
+      method: 'GET'
+    }
+  );
 }
