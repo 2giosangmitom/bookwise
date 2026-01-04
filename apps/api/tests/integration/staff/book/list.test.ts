@@ -237,6 +237,123 @@ describe('GET /api/staff/book', async () => {
     }
   });
 
+  it('should filter books by author name using searchTerm', async () => {
+    // Create an author for testing
+    const authorName = `Test Author ${faker.string.alphanumeric(8)}`;
+    const authorResponse = await app.inject({
+      method: 'POST',
+      url: '/api/staff/author',
+      headers: { Authorization: `Bearer ${accessTokens[Role.ADMIN]}` },
+      payload: {
+        name: authorName,
+        short_biography: faker.lorem.sentence(),
+        biography: faker.lorem.paragraphs(2),
+        date_of_birth: faker.date.past().toISOString(),
+        date_of_death: null,
+        nationality: 'Test',
+        slug: `test-author-${faker.string.alphanumeric(6)}`
+      }
+    });
+
+    expect(authorResponse.statusCode).toBe(201);
+    const authorData = authorResponse.json();
+    const authorId = authorData.data.author_id;
+
+    // Create a book with the author
+    const bookResponse = await app.inject({
+      method: 'POST',
+      url: '/api/staff/book',
+      headers: { Authorization: `Bearer ${accessTokens[Role.ADMIN]}` },
+      payload: {
+        title: `Book with Author ${faker.string.alphanumeric(6)}`,
+        description: faker.lorem.paragraphs(2),
+        isbn: faker.string.numeric(13),
+        published_at: faker.date.past().toISOString(),
+        publisher_id: publisherId,
+        authors: [authorId],
+        categories: []
+      }
+    });
+
+    expect(bookResponse.statusCode).toBe(201);
+    const bookData = bookResponse.json();
+    createdBookIds.push(bookData.data.book_id);
+
+    // Search for the book by author name
+    const response = await app.inject({
+      method: 'GET',
+      url: `/api/staff/book?searchTerm=${encodeURIComponent(authorName)}`,
+      headers: { Authorization: `Bearer ${accessTokens[Role.ADMIN]}` }
+    });
+
+    expect(response.statusCode).toBe(200);
+    const body = response.json() as { data: BookResponse[] };
+    const foundBook = body.data.find((book: BookResponse) => book.book_id === bookData.data.book_id);
+    expect(foundBook).toBeDefined();
+    expect(foundBook?.authors).toContainEqual(
+      expect.objectContaining({
+        author_id: authorId,
+        name: authorName
+      })
+    );
+  });
+
+  it('should filter books by author name case-insensitively', async () => {
+    // Create an author for testing
+    const authorName = `Another Author ${faker.string.alphanumeric(8)}`;
+    const authorResponse = await app.inject({
+      method: 'POST',
+      url: '/api/staff/author',
+      headers: { Authorization: `Bearer ${accessTokens[Role.ADMIN]}` },
+      payload: {
+        name: authorName,
+        short_biography: faker.lorem.sentence(),
+        biography: faker.lorem.paragraphs(2),
+        date_of_birth: faker.date.past().toISOString(),
+        date_of_death: null,
+        nationality: 'Test',
+        slug: `another-author-${faker.string.alphanumeric(6)}`
+      }
+    });
+
+    expect(authorResponse.statusCode).toBe(201);
+    const authorData = authorResponse.json();
+    const authorId = authorData.data.author_id;
+
+    // Create a book with the author
+    const bookResponse = await app.inject({
+      method: 'POST',
+      url: '/api/staff/book',
+      headers: { Authorization: `Bearer ${accessTokens[Role.ADMIN]}` },
+      payload: {
+        title: `Book by Author ${faker.string.alphanumeric(6)}`,
+        description: faker.lorem.paragraphs(2),
+        isbn: faker.string.numeric(13),
+        published_at: faker.date.past().toISOString(),
+        publisher_id: publisherId,
+        authors: [authorId],
+        categories: []
+      }
+    });
+
+    expect(bookResponse.statusCode).toBe(201);
+    const bookData = bookResponse.json();
+    createdBookIds.push(bookData.data.book_id);
+
+    // Search with different case
+    const searchTerm = authorName.toLowerCase().split(' ')[0]; // Search for first word in lowercase
+    const response = await app.inject({
+      method: 'GET',
+      url: `/api/staff/book?searchTerm=${encodeURIComponent(searchTerm)}`,
+      headers: { Authorization: `Bearer ${accessTokens[Role.ADMIN]}` }
+    });
+
+    expect(response.statusCode).toBe(200);
+    const body = response.json() as { data: BookResponse[] };
+    const foundBook = body.data.find((book: BookResponse) => book.book_id === bookData.data.book_id);
+    expect(foundBook).toBeDefined();
+  });
+
   it('should return correct response format', async () => {
     const response = await app.inject({
       method: 'GET',

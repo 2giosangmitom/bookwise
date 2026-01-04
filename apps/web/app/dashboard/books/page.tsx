@@ -286,7 +286,7 @@ export default function BooksPage() {
           <Flex justify="space-between" align="center" style={{ marginBottom: 16 }}>
             <Input
               prefix={<SearchOutlined />}
-              placeholder="Search books by title, ISBN, or description"
+              placeholder="Search books by title, ISBN, author, or description"
               style={{ width: '40%' }}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
@@ -342,7 +342,8 @@ export default function BooksPage() {
                   placeholder="Type to search publishers"
                   allowClear
                   showSearch={{
-                    onSearch: (value) => setPublisherSearchTerm(value)
+                    onSearch: (value) => setPublisherSearchTerm(value),
+                    filterOption: false
                   }}
                   loading={isLoadingPublishers}
                   onFocus={() => setPublisherSearchTerm('')}
@@ -358,7 +359,8 @@ export default function BooksPage() {
                   mode="multiple"
                   placeholder="Type to search authors"
                   showSearch={{
-                    onSearch: (value) => setAuthorSearchTerm(value)
+                    onSearch: (value) => setAuthorSearchTerm(value),
+                    filterOption: false
                   }}
                   loading={isLoadingAuthors}
                   onFocus={() => setAuthorSearchTerm('')}
@@ -375,7 +377,8 @@ export default function BooksPage() {
                   mode="multiple"
                   placeholder="Type to search categories"
                   showSearch={{
-                    onSearch: (value) => setCategorySearchTerm(value)
+                    onSearch: (value) => setCategorySearchTerm(value),
+                    filterOption: false
                   }}
                   loading={isLoadingCategories}
                   onFocus={() => setCategorySearchTerm('')}
@@ -438,7 +441,8 @@ export default function BooksPage() {
                   placeholder="Type to search publishers"
                   allowClear
                   showSearch={{
-                    onSearch: (value) => setPublisherSearchTerm(value)
+                    onSearch: (value) => setPublisherSearchTerm(value),
+                    filterOption: false
                   }}
                   loading={isLoadingPublishers}
                   onFocus={() => setPublisherSearchTerm('')}
@@ -454,7 +458,8 @@ export default function BooksPage() {
                   mode="multiple"
                   placeholder="Type to search authors"
                   showSearch={{
-                    onSearch: (value) => setAuthorSearchTerm(value)
+                    onSearch: (value) => setAuthorSearchTerm(value),
+                    filterOption: false
                   }}
                   loading={isLoadingAuthors}
                   onFocus={() => setAuthorSearchTerm('')}
@@ -486,7 +491,8 @@ export default function BooksPage() {
                   mode="multiple"
                   placeholder="Type to search categories"
                   showSearch={{
-                    onSearch: (value) => setCategorySearchTerm(value)
+                    onSearch: (value) => setCategorySearchTerm(value),
+                    filterOption: false
                   }}
                   loading={isLoadingCategories}
                   onFocus={() => setCategorySearchTerm('')}

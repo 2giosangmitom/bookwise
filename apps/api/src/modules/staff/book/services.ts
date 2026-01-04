@@ -134,7 +134,16 @@ export default class StaffBookService {
           OR: [
             { title: { contains: query.searchTerm, mode: 'insensitive' } },
             { isbn: { contains: query.searchTerm, mode: 'insensitive' } },
-            { description: { contains: query.searchTerm, mode: 'insensitive' } }
+            { description: { contains: query.searchTerm, mode: 'insensitive' } },
+            {
+              authors: {
+                some: {
+                  author: {
+                    name: { contains: query.searchTerm, mode: 'insensitive' }
+                  }
+                }
+              }
+            }
           ]
         }
       : {};

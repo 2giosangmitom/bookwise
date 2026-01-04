@@ -1,5 +1,10 @@
 import { fetchApiWithAutoRefresh } from './apiClient';
-import { GetCategoriesResponse, DeleteCategoryResponse, GetKPopularCategoriesResponse } from './types';
+import {
+  GetCategoriesResponse,
+  DeleteCategoryResponse,
+  GetKPopularCategoriesResponse,
+  GetCategoryDistributionResponse
+} from './types';
 
 export function getCategories(
   accessToken: string | null,
@@ -42,6 +47,12 @@ export function updateCategory(accessToken: string | null, categoryId: string, d
 
 export function getKPopularCategories(accessToken: string | null, k: number) {
   return fetchApiWithAutoRefresh<GetKPopularCategoriesResponse>(`/staff/category/popular?k=${k}`, accessToken, {
+    method: 'GET'
+  });
+}
+
+export function getCategoryDistribution(accessToken: string | null) {
+  return fetchApiWithAutoRefresh<GetCategoryDistributionResponse>(`/staff/category/distribution`, accessToken, {
     method: 'GET'
   });
 }

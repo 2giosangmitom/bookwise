@@ -58,6 +58,14 @@ export type GetKPopularCategoriesResponse = ApiResponse<
   meta: { total_loans: number };
 };
 
+export type CategoryDistribution = {
+  category_id: string;
+  name: string;
+  book_count: number;
+};
+
+export type GetCategoryDistributionResponse = ApiResponse<CategoryDistribution[]>;
+
 // Author-related API response types
 export type Author = {
   author_id: string;

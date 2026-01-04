@@ -134,3 +134,23 @@ export const GetKPopularCategoriesSchema = {
     500: { $ref: 'HttpError' }
   }
 } as const satisfies FastifySchema;
+
+export const GetCategoryDistributionSchema = {
+  summary: 'Get category distribution',
+  description: 'Retrieve the distribution of books across all categories.',
+  security: [{ JWT: [] }],
+  response: {
+    200: Type.Object({
+      message: Type.String(),
+      data: Type.Array(
+        Type.Object({
+          category_id: Type.String({ format: 'uuid' }),
+          name: Type.String(),
+          book_count: Type.Number()
+        })
+      )
+    }),
+    403: { $ref: 'HttpError' },
+    500: { $ref: 'HttpError' }
+  }
+} as const satisfies FastifySchema;

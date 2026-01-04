@@ -4,13 +4,19 @@ import {
   DeleteCategorySchema,
   GetCategoriesSchema,
   GetKPopularCategoriesSchema,
-  UpdateCategorySchema
+  UpdateCategorySchema,
+  GetCategoryDistributionSchema
 } from './schemas';
 
 export default function staffCategoryRoutes(fastify: FastifyTypeBox) {
   const controller = fastify.diContainer.resolve<StaffCategoryController>('staffCategoryController');
 
   fastify.get('/', { schema: GetCategoriesSchema }, controller.getCategories.bind(controller));
+  fastify.get(
+    '/distribution',
+    { schema: GetCategoryDistributionSchema },
+    controller.getCategoryDistribution.bind(controller)
+  );
   fastify.get('/popular', { schema: GetKPopularCategoriesSchema }, controller.getKPopularCategories.bind(controller));
   fastify.post('/', { schema: CreateCategorySchema }, controller.createCategory.bind(controller));
   fastify.delete('/:category_id', { schema: DeleteCategorySchema }, controller.deleteCategory.bind(controller));

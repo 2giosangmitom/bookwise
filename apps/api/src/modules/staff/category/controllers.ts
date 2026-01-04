@@ -4,7 +4,8 @@ import {
   DeleteCategorySchema,
   GetCategoriesSchema,
   GetKPopularCategoriesSchema,
-  UpdateCategorySchema
+  UpdateCategorySchema,
+  GetCategoryDistributionSchema
 } from './schemas';
 
 export default class StaffCategoryController {
@@ -108,6 +109,22 @@ export default class StaffCategoryController {
         name: category.name,
         slug: category.slug,
         loan_count: category.loan_count
+      }))
+    });
+  }
+
+  public async getCategoryDistribution(
+    req: FastifyRequestTypeBox<typeof GetCategoryDistributionSchema>,
+    reply: FastifyReplyTypeBox<typeof GetCategoryDistributionSchema>
+  ) {
+    const distribution = await this.categoryService.getCategoryDistribution();
+
+    return reply.status(200).send({
+      message: 'Category distribution retrieved successfully.',
+      data: distribution.map((item) => ({
+        category_id: item.category_id,
+        name: item.name,
+        book_count: Number(item.book_count)
       }))
     });
   }

@@ -135,4 +135,30 @@ export default class StaffCategoryService {
 
     return { categories, total_loans: totalLoans };
   }
+
+  public async getCategoryDistribution() {
+    const distribution = await this.prisma.$queryRaw<
+      {
+        category_id: string;
+        name: string;
+        book_count: number;
+      }[]
+    >`
+      SELECT
+        c.category_id,
+        c.name,
+        COUNT(DISTINCT bc.book_id) AS book_count
+      FROM
+        "Category" c
+      LEFT JOIN
+        "Book_Category" bc ON c.category_id = bc.category_id
+      GROUP BY
+        c.category_id,
+        c.name
+      ORDER BY
+        book_count DESC;
+    `;
+
+    return distribution;
+  }
 }

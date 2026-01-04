@@ -3,23 +3,17 @@
 import { getTotalLoans, getLoanStatusStats } from '@/lib/api/loan';
 import { getBookCloneConditionStats } from '@/lib/api/bookClone';
 import { useAuthContext } from '@/contexts/Auth';
-import { ReadFilled, WarningFilled } from '@ant-design/icons';
+import { ReadFilled, WarningFilled, BookOutlined, AppstoreOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
-import { Card, Col, Row, Skeleton, Typography } from 'antd';
-import { getKPopularCategories } from '@/lib/api/category';
-import { useEffect, useRef } from 'react';
-import { Chart, registerables } from 'chart.js';
-
-Chart.register(...registerables);
+import { Card, Col, Row, Skeleton, Typography, Spin } from 'antd';
+import { getKPopularCategories, getCategoryDistribution } from '@/lib/api/category';
+import DoughnutChartComponent from '@/app/_components/charts/DoughnutChart';
+import BarChartComponent from '@/app/_components/charts/BarChart';
 
 const { Title, Paragraph } = Typography;
 
 export default function DashboardPage() {
   const { accessToken } = useAuthContext();
-  const loanStatusChartRef = useRef<HTMLCanvasElement>(null);
-  const conditionChartRef = useRef<HTMLCanvasElement>(null);
-  const loanStatusChartInstance = useRef<Chart | null>(null);
-  const conditionChartInstance = useRef<Chart | null>(null);
 
   const { data: totalActiveLoans, isPending: isActiveLoansLoading } = useQuery({
     queryKey: ['totalActiveLoans'],
@@ -44,134 +38,24 @@ export default function DashboardPage() {
     queryFn: () => getBookCloneConditionStats(accessToken)
   });
 
-  // Loan Status Chart
-  useEffect(() => {
-    if (!loanStatusStats || !loanStatusChartRef.current) return;
+  const { data: categoryDistribution, isPending: isCategoryDistributionLoading } = useQuery({
+    queryKey: ['categoryDistribution'],
+    queryFn: () => getCategoryDistribution(accessToken)
+  });
 
-    if (loanStatusChartInstance.current) {
-      loanStatusChartInstance.current.destroy();
-    }
-
-    const ctx = loanStatusChartRef.current.getContext('2d');
-    if (!ctx) return;
-
-    loanStatusChartInstance.current = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: ['Borrowed', 'Returned', 'Overdue'],
-        datasets: [
-          {
-            label: 'Number of Loans',
-            data: [loanStatusStats.data.BORROWED, loanStatusStats.data.RETURNED, loanStatusStats.data.OVERDUE],
-            backgroundColor: ['rgba(54, 162, 235, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)'],
-            borderColor: ['rgba(54, 162, 235, 1)', 'rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
-            borderWidth: 1
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: false
-          },
-          title: {
-            display: true,
-            text: 'Loan Status Distribution'
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            ticks: {
-              stepSize: 1
-            }
-          }
-        }
-      }
-    });
-
-    return () => {
-      if (loanStatusChartInstance.current) {
-        loanStatusChartInstance.current.destroy();
-      }
-    };
-  }, [loanStatusStats]);
-
-  // Book Clone Condition Chart
-  useEffect(() => {
-    if (!conditionStats || !conditionChartRef.current) return;
-
-    if (conditionChartInstance.current) {
-      conditionChartInstance.current.destroy();
-    }
-
-    const ctx = conditionChartRef.current.getContext('2d');
-    if (!ctx) return;
-
-    conditionChartInstance.current = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: ['New', 'Good', 'Worn', 'Damaged', 'Lost'],
-        datasets: [
-          {
-            label: 'Book Clones',
-            data: [
-              conditionStats.data.NEW,
-              conditionStats.data.GOOD,
-              conditionStats.data.WORN,
-              conditionStats.data.DAMAGED,
-              conditionStats.data.LOST
-            ],
-            backgroundColor: [
-              'rgba(75, 192, 192, 0.6)',
-              'rgba(54, 162, 235, 0.6)',
-              'rgba(255, 206, 86, 0.6)',
-              'rgba(255, 159, 64, 0.6)',
-              'rgba(255, 99, 132, 0.6)'
-            ],
-            borderColor: [
-              'rgba(75, 192, 192, 1)',
-              'rgba(54, 162, 235, 1)',
-              'rgba(255, 206, 86, 1)',
-              'rgba(255, 159, 64, 1)',
-              'rgba(255, 99, 132, 1)'
-            ],
-            borderWidth: 1
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'bottom'
-          },
-          title: {
-            display: true,
-            text: 'Book Clone Condition Distribution'
-          }
-        }
-      }
-    });
-
-    return () => {
-      if (conditionChartInstance.current) {
-        conditionChartInstance.current.destroy();
-      }
-    };
-  }, [conditionStats]);
+  // Prepare data for category distribution charts
+  const categories = categoryDistribution?.data ?? [];
+  const totalBooks = categories.reduce((sum, cat) => sum + cat.book_count, 0);
+  const categoryCount = categories.length;
 
   return (
     <>
-      <Card>
+      <Card style={{ marginBottom: 16 }}>
         <Title level={3}>Dashboard</Title>
         <Paragraph type="secondary">Welcome back. Here&apos;s what&apos;s happening with your library today.</Paragraph>
 
-        <Row gutter={[16, 16]} className="mt-9">
-          <Col xs={24} sm={24} md={12} lg={6}>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={12} md={8} lg={6}>
             <Card className="relative h-full" style={{ backgroundColor: 'var(--color-blue-50)' }}>
               <Title level={4}>Active Loans</Title>
               <ReadFilled className="absolute top-4 right-4 text-4xl" style={{ color: 'var(--color-blue-600)' }} />
@@ -184,7 +68,7 @@ export default function DashboardPage() {
               )}
             </Card>
           </Col>
-          <Col xs={24} sm={24} md={12} lg={6}>
+          <Col xs={24} sm={12} md={8} lg={6}>
             <Card className="relative h-full" style={{ backgroundColor: 'var(--color-red-50)' }}>
               <Title level={4}>Overdue Loans</Title>
               <WarningFilled className="absolute top-4 right-4 text-4xl" style={{ color: 'var(--color-red-600)' }} />
@@ -197,62 +81,155 @@ export default function DashboardPage() {
               )}
             </Card>
           </Col>
-        </Row>
-      </Card>
-
-      <div className="mt-8">
-        <Row gutter={[16, 16]}>
-          <Col xs={24} sm={24} md={16}>
-            <Card>
-              {isLoanStatusStatsLoading ? (
-                <Skeleton active />
+          <Col xs={24} sm={12} md={8} lg={6}>
+            <Card className="relative h-full" style={{ backgroundColor: 'var(--color-green-50)' }}>
+              <Title level={4}>Total Books</Title>
+              <BookOutlined className="absolute top-4 right-4 text-4xl" style={{ color: 'var(--color-green-600)' }} />
+              {isCategoryDistributionLoading ? (
+                <Skeleton.Input style={{ width: 100 }} active />
               ) : (
-                <div style={{ height: '400px' }}>
-                  <canvas ref={loanStatusChartRef}></canvas>
-                </div>
+                <Typography.Text style={{ fontWeight: 'bold', fontSize: '24px' }}>{totalBooks}</Typography.Text>
               )}
             </Card>
           </Col>
-          <Col xs={24} sm={24} md={8}>
-            <Card>
-              <Title level={4}>Popular Categories</Title>
+          <Col xs={24} sm={12} md={8} lg={6}>
+            <Card className="relative h-full" style={{ backgroundColor: 'var(--color-purple-50)' }}>
+              <Title level={4}>Categories</Title>
+              <AppstoreOutlined
+                className="absolute top-4 right-4 text-4xl"
+                style={{ color: 'var(--color-purple-600)' }}
+              />
+              {isCategoryDistributionLoading ? (
+                <Skeleton.Input style={{ width: 100 }} active />
+              ) : (
+                <Typography.Text style={{ fontWeight: 'bold', fontSize: '24px' }}>{categoryCount}</Typography.Text>
+              )}
+            </Card>
+          </Col>
+        </Row>
+      </Card>
+
+      <div style={{ marginTop: 16 }}>
+        <Row gutter={[16, 16]}>
+          <Col xs={24} lg={12}>
+            {isLoanStatusStatsLoading ? (
+              <Card style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400 }}>
+                <Spin size="large" />
+              </Card>
+            ) : loanStatusStats ? (
+              <BarChartComponent
+                title="Loan Status Distribution"
+                labels={['Borrowed', 'Returned', 'Overdue']}
+                datasets={[
+                  {
+                    label: 'Number of Loans',
+                    data: [loanStatusStats.data.BORROWED, loanStatusStats.data.RETURNED, loanStatusStats.data.OVERDUE],
+                    backgroundColor: '#1890ff'
+                  }
+                ]}
+                yAxisLabel="Number of Loans"
+              />
+            ) : (
+              <Card title="Loan Status Distribution">
+                <p style={{ textAlign: 'center', color: '#999' }}>No data available</p>
+              </Card>
+            )}
+          </Col>
+          <Col xs={24} lg={12}>
+            {isConditionStatsLoading ? (
+              <Card style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400 }}>
+                <Spin size="large" />
+              </Card>
+            ) : conditionStats ? (
+              <DoughnutChartComponent
+                title="Book Condition Distribution"
+                labels={['New', 'Good', 'Worn', 'Damaged', 'Lost']}
+                datasets={[
+                  {
+                    label: 'Book Clones',
+                    data: [
+                      conditionStats.data.NEW,
+                      conditionStats.data.GOOD,
+                      conditionStats.data.WORN,
+                      conditionStats.data.DAMAGED,
+                      conditionStats.data.LOST
+                    ]
+                  }
+                ]}
+              />
+            ) : (
+              <Card title="Book Condition Distribution">
+                <p style={{ textAlign: 'center', color: '#999' }}>No data available</p>
+              </Card>
+            )}
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]} className="mt-4">
+          <Col xs={24} lg={12}>
+            {isCategoryDistributionLoading ? (
+              <Card style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400 }}>
+                <Spin size="large" />
+              </Card>
+            ) : categories.length > 0 ? (
+              <BarChartComponent
+                title="Category Distribution"
+                labels={categories.map((cat) => cat.name)}
+                datasets={[
+                  {
+                    label: 'Number of Books',
+                    data: categories.map((cat) => cat.book_count),
+                    backgroundColor: '#52c41a'
+                  }
+                ]}
+                yAxisLabel="Number of Books"
+              />
+            ) : (
+              <Card title="Category Distribution">
+                <p style={{ textAlign: 'center', color: '#999' }}>No data available</p>
+              </Card>
+            )}
+          </Col>
+          <Col xs={24} lg={12}>
+            <Card style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+              <Title level={4} style={{ marginBottom: 16 }}>
+                Popular Categories by Loans
+              </Title>
               {isKPopularCategoriesLoading ? (
                 <Skeleton active />
               ) : (
-                <div className="w-full">
-                  {kPopularCategories ? (
+                <div style={{ flex: 1, overflowY: 'auto', paddingRight: 8 }}>
+                  {kPopularCategories && kPopularCategories.data.length > 0 ? (
                     kPopularCategories.data.map((category) => (
-                      <div key={category.category_id}>
-                        <div className="flex justify-between">
-                          <p>{category.name}</p>
-                          <p>{((category.loan_count / kPopularCategories.meta.total_loans) * 100).toFixed(2)}%</p>
+                      <div key={category.category_id} style={{ marginBottom: '20px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                          <span style={{ fontWeight: 500 }}>{category.name}</span>
+                          <span style={{ color: '#666' }}>
+                            {((category.loan_count / kPopularCategories.meta.total_loans) * 100).toFixed(2)}%
+                          </span>
                         </div>
-                        <div className="w-full bg-neutral-200 rounded mt-1">
+                        <div
+                          style={{
+                            width: '100%',
+                            backgroundColor: '#f0f0f0',
+                            borderRadius: '4px',
+                            height: '8px',
+                            overflow: 'hidden'
+                          }}>
                           <div
-                            className="bg-blue-400 h-2 rounded hover:bg-blue-500 transition-all mb-4"
-                            title={`${category.loan_count} loans`}
                             style={{
-                              width: `${(category.loan_count / kPopularCategories.meta.total_loans) * 100}%`
-                            }}></div>
+                              width: `${(category.loan_count / kPopularCategories.meta.total_loans) * 100}%`,
+                              backgroundColor: '#1890ff',
+                              height: '100%',
+                              borderRadius: '4px',
+                              transition: 'all 0.3s ease'
+                            }}
+                            title={`${category.loan_count} loans`}></div>
                         </div>
                       </div>
                     ))
                   ) : (
-                    <div>No data available.</div>
+                    <p style={{ textAlign: 'center', color: '#999' }}>No data available</p>
                   )}
-                </div>
-              )}
-            </Card>
-          </Col>
-        </Row>
-        <Row gutter={[16, 16]} className="mt-4">
-          <Col xs={24}>
-            <Card>
-              {isConditionStatsLoading ? (
-                <Skeleton active />
-              ) : (
-                <div style={{ height: '400px' }}>
-                  <canvas ref={conditionChartRef}></canvas>
                 </div>
               )}
             </Card>
