@@ -75,8 +75,11 @@ export default function DashboardPage() {
                   {kPopularCategories ? (
                     kPopularCategories.data.map((category) => (
                       <div key={category.category_id}>
-                        <p>{category.name}</p>
-                        <div className="w-full bg-neutral-200 rounded">
+                        <div className="flex justify-between">
+                          <p>{category.name}</p>
+                          <p>{((category.loan_count / kPopularCategories.meta.total_loans) * 100).toFixed(2)}%</p>
+                        </div>
+                        <div className="w-full bg-neutral-200 rounded mt-1">
                           <div
                             className="bg-blue-400 h-2 rounded hover:bg-blue-500 transition-all mb-4"
                             title={`${category.loan_count} loans`}
