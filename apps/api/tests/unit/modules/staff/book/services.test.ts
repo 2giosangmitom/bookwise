@@ -307,24 +307,6 @@ describe('StaffBookService', async () => {
       );
     });
 
-    it('should apply searchTerm filter with OR logic across title, isbn, and description', async () => {
-      const query = { page: 1, limit: 10, searchTerm: 'Great Gatsby' };
-
-      await service.getBooks(query);
-
-      expect(app.prisma.book.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: {
-            OR: [
-              { title: { contains: 'Great Gatsby', mode: 'insensitive' } },
-              { isbn: { contains: 'Great Gatsby', mode: 'insensitive' } },
-              { description: { contains: 'Great Gatsby', mode: 'insensitive' } }
-            ]
-          }
-        })
-      );
-    });
-
     it('should select publisher name in the query', async () => {
       const query = { page: 1, limit: 10, searchTerm: undefined };
 
@@ -401,7 +383,19 @@ describe('StaffBookService', async () => {
           OR: [
             { title: { contains: 'search', mode: 'insensitive' } },
             { isbn: { contains: 'search', mode: 'insensitive' } },
-            { description: { contains: 'search', mode: 'insensitive' } }
+            { description: { contains: 'search', mode: 'insensitive' } },
+            {
+              authors: {
+                some: {
+                  author: {
+                    name: {
+                      contains: 'search',
+                      mode: 'insensitive'
+                    }
+                  }
+                }
+              }
+            }
           ]
         }
       });
