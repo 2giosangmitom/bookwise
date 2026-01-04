@@ -3,8 +3,12 @@ import { createContext, useContext } from 'react';
 
 const AuthContext = createContext<{
   user: MeResponse['data'] | null;
+  accessToken: string | null;
+  setAccessToken: (token: string | null) => void;
 }>({
-  user: null
+  user: null,
+  accessToken: null,
+  setAccessToken: () => {}
 });
 
 function useAuthContext() {

@@ -1,7 +1,7 @@
 'use client';
 
 import { getTotalLoans } from '@/lib/api/loan';
-import useTokenStore from '@/stores/useTokenStore';
+import { useAuthContext } from '@/contexts/Auth';
 import { ReadFilled, WarningFilled } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import { Card, Skeleton, Space, Typography } from 'antd';
@@ -9,7 +9,7 @@ import { Card, Skeleton, Space, Typography } from 'antd';
 const { Title, Paragraph } = Typography;
 
 export default function DashboardPage() {
-  const accessToken = useTokenStore((state) => state.accessToken);
+  const { accessToken } = useAuthContext();
   const { data: totalActiveLoans, isPending: isActiveLoansLoading } = useQuery({
     queryKey: ['totalActiveLoans'],
     queryFn: () => getTotalLoans(accessToken, 'BORROWED')

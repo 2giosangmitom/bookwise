@@ -8,7 +8,7 @@ import { openNotificationWithIcon } from '@/utils/notification';
 import { signIn } from '@/lib/api/auth';
 import { ApiError } from '@/lib/api/apiClient';
 import { useRouter } from 'next/navigation';
-import useTokenStore from '@/stores/useTokenStore';
+import { useAuthContext } from '@/contexts/Auth';
 
 // Type for form fields
 type FieldType = {
@@ -20,7 +20,7 @@ export default function SignInForm() {
   const [loading, setLoading] = useState<boolean>(false);
   const [api, contextHolder] = notification.useNotification();
   const [form] = Form.useForm<FieldType>();
-  const setAccessToken = useTokenStore((state) => state.setAccessToken);
+  const { setAccessToken } = useAuthContext();
   const router = useRouter();
 
   // Handle form submission

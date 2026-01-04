@@ -39,8 +39,7 @@ apps/
 ├── web/        # Next.js Web Application
 │   ├── App Router (Server Components by default)
 │   ├── Ant Design UI
-│   ├── TanStack Query for server state
-│   └── Zustand for auth state
+│   └── TanStack Query for server state
 ```
 
 The monorepo is managed with **pnpm workspaces**, allowing shared tooling, consistent TypeScript configuration, and clean dependency boundaries.

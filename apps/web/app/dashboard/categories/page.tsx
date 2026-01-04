@@ -2,7 +2,7 @@
 
 import { createCategory, deleteCategory, getCategories, updateCategory } from '@/lib/api/category';
 import { Category, GetCategoriesResponse } from '@/lib/api/types';
-import useTokenStore from '@/stores/useTokenStore';
+import { useAuthContext } from '@/contexts/Auth';
 import {
   PlusOutlined,
   SearchOutlined,
@@ -25,7 +25,7 @@ interface CategoryFormField {
 }
 
 export default function CategoriesPage() {
-  const accessToken = useTokenStore((state) => state.accessToken);
+  const { accessToken } = useAuthContext();
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);

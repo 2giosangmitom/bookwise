@@ -2,7 +2,7 @@
 
 import { getUsers, updateUser } from '@/lib/api/user';
 import { User, GetUsersResponse } from '@/lib/api/types';
-import useTokenStore from '@/stores/useTokenStore';
+import { useAuthContext } from '@/contexts/Auth';
 import { SearchOutlined, EditOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDebounce } from '@uidotdev/usehooks';
@@ -33,7 +33,7 @@ interface UserFormField {
 }
 
 export default function UsersPage() {
-  const accessToken = useTokenStore((state) => state.accessToken);
+  const { accessToken } = useAuthContext();
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);

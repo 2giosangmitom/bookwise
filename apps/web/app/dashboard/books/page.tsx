@@ -5,7 +5,7 @@ import { getAuthors } from '@/lib/api/author';
 import { getCategories } from '@/lib/api/category';
 import { getPublishers } from '@/lib/api/publisher';
 import { Book, GetBooksResponse } from '@/lib/api/types';
-import useTokenStore from '@/stores/useTokenStore';
+import { useAuthContext } from '@/contexts/Auth';
 import { PlusOutlined, SearchOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDebounce } from '@uidotdev/usehooks';
@@ -41,7 +41,7 @@ interface BookFormField {
 }
 
 export default function BooksPage() {
-  const accessToken = useTokenStore((state) => state.accessToken);
+  const { accessToken } = useAuthContext();
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);

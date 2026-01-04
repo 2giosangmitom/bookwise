@@ -18,7 +18,6 @@ import { useMemo } from 'react';
 import Link from 'next/link';
 import { redirect, usePathname, useRouter } from 'next/navigation';
 import { signOut } from '@/lib/api/auth';
-import useTokenStore from '@/stores/useTokenStore';
 
 type NavItem = {
   key: string;
@@ -96,9 +95,9 @@ const navItems: NavItem[] = [
 export default function DashboardShell({ children }: React.PropsWithChildren) {
   const authContext = useAuthContext();
   const user = authContext.user;
+  const { setAccessToken } = useAuthContext();
   const pathname = usePathname();
   const router = useRouter();
-  const setAccessToken = useTokenStore((state) => state.setAccessToken);
 
   const selectedKey = useMemo(() => {
     const key = navItems.find((item) => item.href === pathname)?.key;

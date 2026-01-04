@@ -4,7 +4,7 @@ import { createLoan, deleteLoan, getLoans, updateLoan } from '@/lib/api/loan';
 import { getBookClones } from '@/lib/api/bookClone';
 import { getUsers } from '@/lib/api/user';
 import { Loan, GetLoansResponse, LoanStatus } from '@/lib/api/types';
-import useTokenStore from '@/stores/useTokenStore';
+import { useAuthContext } from '@/contexts/Auth';
 import { PlusOutlined, SearchOutlined, EditOutlined, DeleteOutlined, CheckOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDebounce } from '@uidotdev/usehooks';
@@ -50,7 +50,7 @@ const LOAN_STATUSES: { label: string; value: LoanStatus }[] = [
 ];
 
 export default function LoanPage() {
-  const accessToken = useTokenStore((state) => state.accessToken);
+  const { accessToken } = useAuthContext();
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);

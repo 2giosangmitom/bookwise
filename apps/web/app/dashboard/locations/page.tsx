@@ -2,7 +2,7 @@
 
 import { createLocation, deleteLocation, getLocations, updateLocation } from '@/lib/api/location';
 import { Location, GetLocationsResponse } from '@/lib/api/types';
-import useTokenStore from '@/stores/useTokenStore';
+import { useAuthContext } from '@/contexts/Auth';
 import { PlusOutlined, SearchOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDebounce } from '@uidotdev/usehooks';
@@ -32,7 +32,7 @@ interface LocationFormField {
 }
 
 export default function LocationsPage() {
-  const accessToken = useTokenStore((state) => state.accessToken);
+  const { accessToken } = useAuthContext();
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);

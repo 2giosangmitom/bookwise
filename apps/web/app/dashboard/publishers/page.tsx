@@ -2,7 +2,7 @@
 
 import { createPublisher, deletePublisher, getPublishers, updatePublisher } from '@/lib/api/publisher';
 import { Publisher, GetPublishersResponse } from '@/lib/api/types';
-import useTokenStore from '@/stores/useTokenStore';
+import { useAuthContext } from '@/contexts/Auth';
 import {
   PlusOutlined,
   SearchOutlined,
@@ -26,7 +26,7 @@ interface PublisherFormField {
 }
 
 export default function PublishersPage() {
-  const accessToken = useTokenStore((state) => state.accessToken);
+  const { accessToken } = useAuthContext();
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
