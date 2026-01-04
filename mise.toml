@@ -5,7 +5,7 @@ prettier = "latest"
 
 [tasks.compose-up-dev]
 description = "Start Docker Compose services for development"
-run = "docker compose -f compose.yml -f compose.dev.yml up postgres redis -d"
+run = "docker compose -f compose.yml -f compose.dev.yml up postgres redis rustfs -d"
 
 [tasks.compose-down]
 description = "Stop Docker Compose services"
