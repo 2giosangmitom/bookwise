@@ -131,27 +131,3 @@ export const GetTotalLoansSchema = {
     500: { $ref: 'HttpError' }
   }
 } as const satisfies FastifySchema;
-
-export const GetLoanActivitySchema = {
-  summary: 'Get loan activity',
-  description: 'Get loan activity statistics over a specified period.',
-  querystring: Type.Object({
-    start_date: Type.String({ format: 'date-time' }),
-    end_date: Type.String({ format: 'date-time' })
-  }),
-  security: [{ JWT: [] }],
-  response: {
-    200: Type.Object({
-      message: Type.String(),
-      data: Type.Array(
-        Type.Object({
-          date: Type.String({ format: 'date' }),
-          loans_created: Type.Number()
-        })
-      )
-    }),
-    400: { $ref: 'HttpError' },
-    403: { $ref: 'HttpError' },
-    500: { $ref: 'HttpError' }
-  }
-} as const satisfies FastifySchema;
