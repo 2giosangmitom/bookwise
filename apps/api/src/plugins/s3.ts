@@ -1,5 +1,5 @@
 import fp from 'fastify-plugin';
-import { S3Client, ListBucketsCommand, CreateBucketCommand } from '@aws-sdk/client-s3';
+import { S3Client, ListBucketsCommand, CreateBucketCommand, PutBucketPolicyCommand } from '@aws-sdk/client-s3';
 import type { envType } from '@/config/envSchema';
 import { asValue } from 'awilix';
 
@@ -35,6 +35,31 @@ export default fp(
     for (const bucket of bucketsToCreate) {
       const createBucketCommand = new CreateBucketCommand({ Bucket: bucket });
       await s3Client.send(createBucketCommand);
+
+      const putPolicyCommand = new PutBucketPolicyCommand({
+        Bucket: bucket,
+        Policy: JSON.stringify({
+          ID: '',
+          Version: '2012-10-17',
+          Statement: [
+            {
+              Sid: '',
+              Effect: 'Allow',
+              Principal: { AWS: ['*'] },
+              Action: ['s3:GetObject'],
+              Resource: ['arn:aws:s3:::bookwise-publishers/*']
+            },
+            {
+              Sid: '',
+              Effect: 'Allow',
+              Principal: { AWS: ['arn:aws:iam::*:root'] },
+              Action: ['s3:DeleteObject', 's3:DeleteObjectTagging', 's3:PutObject', 's3:PutObjectTagging'],
+              Resource: ['arn:aws:s3:::bookwise-publishers/*']
+            }
+          ]
+        })
+      });
+      await s3Client.send(putPolicyCommand);
     }
 
     fastify.diContainer.register('s3Client', asValue(s3Client));
