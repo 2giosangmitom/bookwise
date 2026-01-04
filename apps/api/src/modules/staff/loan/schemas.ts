@@ -2,6 +2,23 @@ import { Type } from 'typebox';
 import { type FastifySchema } from 'fastify';
 import { LoanStatus } from '@/generated/prisma/enums';
 
+export const GetLoanStatusStatsSchema = {
+  summary: 'Get loan status statistics',
+  description: 'Endpoint to get the count of loans grouped by status.',
+  security: [{ JWT: [] }],
+  response: {
+    200: Type.Object({
+      message: Type.String(),
+      data: Type.Object({
+        BORROWED: Type.Number(),
+        RETURNED: Type.Number(),
+        OVERDUE: Type.Number()
+      })
+    }),
+    500: { $ref: 'HttpError' }
+  }
+} as const satisfies FastifySchema;
+
 const LoanDataSchema = Type.Object({
   loan_id: Type.String({ format: 'uuid' }),
   user_id: Type.String({ format: 'uuid' }),

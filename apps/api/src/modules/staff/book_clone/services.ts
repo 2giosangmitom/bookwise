@@ -140,4 +140,27 @@ export default class StaffBookCloneService {
 
     return { bookClones, total };
   }
+
+  public async getConditionStats() {
+    const stats = await this.prisma.book_Clone.groupBy({
+      by: ['condition'],
+      _count: {
+        condition: true
+      }
+    });
+
+    const conditionStats: Record<BookCondition, number> = {
+      NEW: 0,
+      GOOD: 0,
+      WORN: 0,
+      DAMAGED: 0,
+      LOST: 0
+    };
+
+    stats.forEach((stat) => {
+      conditionStats[stat.condition] = stat._count.condition;
+    });
+
+    return conditionStats;
+  }
 }

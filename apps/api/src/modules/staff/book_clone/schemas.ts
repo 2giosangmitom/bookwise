@@ -2,6 +2,25 @@ import { Type } from 'typebox';
 import { type FastifySchema } from 'fastify';
 import { BookCondition } from '@/generated/prisma/enums';
 
+export const GetBookCloneConditionStatsSchema = {
+  summary: 'Get book clone condition statistics',
+  description: 'Endpoint to get the count of book clones grouped by condition.',
+  security: [{ JWT: [] }],
+  response: {
+    200: Type.Object({
+      message: Type.String(),
+      data: Type.Object({
+        NEW: Type.Number(),
+        GOOD: Type.Number(),
+        WORN: Type.Number(),
+        DAMAGED: Type.Number(),
+        LOST: Type.Number()
+      })
+    }),
+    500: { $ref: 'HttpError' }
+  }
+} as const satisfies FastifySchema;
+
 export const CreateBookCloneSchema = {
   summary: 'Create a new book clone',
   description: 'Endpoint to create a new book clone (physical copy) in the system.',

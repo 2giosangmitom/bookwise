@@ -1,5 +1,11 @@
 import StaffBookCloneController from './controllers';
-import { CreateBookCloneSchema, DeleteBookCloneSchema, GetBookClonesSchema, UpdateBookCloneSchema } from './schemas';
+import {
+  CreateBookCloneSchema,
+  DeleteBookCloneSchema,
+  GetBookClonesSchema,
+  GetBookCloneConditionStatsSchema,
+  UpdateBookCloneSchema
+} from './schemas';
 
 export default function staffBookCloneRoutes(fastify: FastifyTypeBox) {
   const staffBookCloneController = fastify.diContainer.resolve<StaffBookCloneController>('staffBookCloneController');
@@ -8,6 +14,11 @@ export default function staffBookCloneRoutes(fastify: FastifyTypeBox) {
     '/',
     { schema: GetBookClonesSchema },
     staffBookCloneController.getBookClones.bind(staffBookCloneController)
+  );
+  fastify.get(
+    '/stats/condition',
+    { schema: GetBookCloneConditionStatsSchema },
+    staffBookCloneController.getConditionStats.bind(staffBookCloneController)
   );
   fastify.post(
     '/',

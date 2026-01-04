@@ -3,7 +3,8 @@ import {
   GetBookClonesResponse,
   CreateBookCloneResponse,
   UpdateBookCloneResponse,
-  DeleteBookCloneResponse
+  DeleteBookCloneResponse,
+  GetBookCloneConditionStatsResponse
 } from './types';
 
 export function getBookClones(
@@ -73,5 +74,11 @@ export function updateBookClone(
 export function deleteBookClone(accessToken: string | null, bookCloneId: string) {
   return fetchApiWithAutoRefresh<DeleteBookCloneResponse>(`/staff/book_clone/${bookCloneId}`, accessToken, {
     method: 'DELETE'
+  });
+}
+
+export function getBookCloneConditionStats(accessToken: string | null) {
+  return fetchApiWithAutoRefresh<GetBookCloneConditionStatsResponse>('/staff/book_clone/stats/condition', accessToken, {
+    method: 'GET'
   });
 }

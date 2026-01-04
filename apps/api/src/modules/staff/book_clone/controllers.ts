@@ -1,4 +1,10 @@
-import { CreateBookCloneSchema, DeleteBookCloneSchema, GetBookClonesSchema, UpdateBookCloneSchema } from './schemas';
+import {
+  CreateBookCloneSchema,
+  DeleteBookCloneSchema,
+  GetBookClonesSchema,
+  GetBookCloneConditionStatsSchema,
+  UpdateBookCloneSchema
+} from './schemas';
 import type StaffBookCloneService from './services';
 
 export default class StaffBookCloneController {
@@ -104,6 +110,18 @@ export default class StaffBookCloneController {
         created_at: clone.created_at.toISOString(),
         updated_at: clone.updated_at.toISOString()
       }))
+    });
+  }
+
+  public async getConditionStats(
+    req: FastifyRequestTypeBox<typeof GetBookCloneConditionStatsSchema>,
+    reply: FastifyReplyTypeBox<typeof GetBookCloneConditionStatsSchema>
+  ) {
+    const stats = await this.staffBookCloneService.getConditionStats();
+
+    return reply.status(200).send({
+      message: 'Book clone condition statistics retrieved successfully',
+      data: stats
     });
   }
 }

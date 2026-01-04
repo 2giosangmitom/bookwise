@@ -211,3 +211,18 @@ export type CreateLoanResponse = ApiResponse<Loan>;
 export type UpdateLoanResponse = ApiResponse<Loan>;
 export type DeleteLoanResponse = ApiResponse<Loan>;
 export type GetTotalActiveLoansResponse = ApiResponse<{ total_loans: number }>;
+export type GetLoanStatusStatsResponse = ApiResponse<{
+  BORROWED: number;
+  RETURNED: number;
+  OVERDUE: number;
+}>;
+
+// Book Clone stats
+export type BookCondition = 'NEW' | 'GOOD' | 'WORN' | 'DAMAGED' | 'LOST';
+export type GetBookCloneConditionStatsResponse = ApiResponse<{
+  NEW: number;
+  GOOD: number;
+  WORN: number;
+  DAMAGED: number;
+  LOST: number;
+}>;

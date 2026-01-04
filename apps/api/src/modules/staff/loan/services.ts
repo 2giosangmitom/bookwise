@@ -159,4 +159,25 @@ export default class StaffLoanService {
 
     return totalActiveLoans;
   }
+
+  public async getStatusStats() {
+    const stats = await this.prisma.loan.groupBy({
+      by: ['status'],
+      _count: {
+        status: true
+      }
+    });
+
+    const statusStats: Record<LoanStatus, number> = {
+      BORROWED: 0,
+      RETURNED: 0,
+      OVERDUE: 0
+    };
+
+    stats.forEach((stat) => {
+      statusStats[stat.status] = stat._count.status;
+    });
+
+    return statusStats;
+  }
 }

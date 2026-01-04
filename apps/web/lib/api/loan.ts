@@ -5,7 +5,8 @@ import {
   UpdateLoanResponse,
   DeleteLoanResponse,
   LoanStatus,
-  GetTotalActiveLoansResponse
+  GetTotalActiveLoansResponse,
+  GetLoanStatusStatsResponse
 } from './types';
 
 export function getLoans(
@@ -87,4 +88,10 @@ export function getTotalLoans(accessToken: string | null, status?: LoanStatus) {
       method: 'GET'
     }
   );
+}
+
+export function getLoanStatusStats(accessToken: string | null) {
+  return fetchApiWithAutoRefresh<GetLoanStatusStatsResponse>('/staff/loan/stats/status', accessToken, {
+    method: 'GET'
+  });
 }

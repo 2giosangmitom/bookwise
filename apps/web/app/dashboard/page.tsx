@@ -1,16 +1,26 @@
 'use client';
 
-import { getTotalLoans } from '@/lib/api/loan';
+import { getTotalLoans, getLoanStatusStats } from '@/lib/api/loan';
+import { getBookCloneConditionStats } from '@/lib/api/bookClone';
 import { useAuthContext } from '@/contexts/Auth';
 import { ReadFilled, WarningFilled } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import { Card, Col, Row, Skeleton, Typography } from 'antd';
 import { getKPopularCategories } from '@/lib/api/category';
+import { useEffect, useRef } from 'react';
+import { Chart, registerables } from 'chart.js';
+
+Chart.register(...registerables);
 
 const { Title, Paragraph } = Typography;
 
 export default function DashboardPage() {
   const { accessToken } = useAuthContext();
+  const loanStatusChartRef = useRef<HTMLCanvasElement>(null);
+  const conditionChartRef = useRef<HTMLCanvasElement>(null);
+  const loanStatusChartInstance = useRef<Chart | null>(null);
+  const conditionChartInstance = useRef<Chart | null>(null);
+
   const { data: totalActiveLoans, isPending: isActiveLoansLoading } = useQuery({
     queryKey: ['totalActiveLoans'],
     queryFn: () => getTotalLoans(accessToken, 'BORROWED')
@@ -23,6 +33,136 @@ export default function DashboardPage() {
     queryKey: ['kPopularCategories'],
     queryFn: () => getKPopularCategories(accessToken, 5)
   });
+
+  const { data: loanStatusStats, isPending: isLoanStatusStatsLoading } = useQuery({
+    queryKey: ['loanStatusStats'],
+    queryFn: () => getLoanStatusStats(accessToken)
+  });
+
+  const { data: conditionStats, isPending: isConditionStatsLoading } = useQuery({
+    queryKey: ['conditionStats'],
+    queryFn: () => getBookCloneConditionStats(accessToken)
+  });
+
+  // Loan Status Chart
+  useEffect(() => {
+    if (!loanStatusStats || !loanStatusChartRef.current) return;
+
+    if (loanStatusChartInstance.current) {
+      loanStatusChartInstance.current.destroy();
+    }
+
+    const ctx = loanStatusChartRef.current.getContext('2d');
+    if (!ctx) return;
+
+    loanStatusChartInstance.current = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Borrowed', 'Returned', 'Overdue'],
+        datasets: [
+          {
+            label: 'Number of Loans',
+            data: [loanStatusStats.data.BORROWED, loanStatusStats.data.RETURNED, loanStatusStats.data.OVERDUE],
+            backgroundColor: ['rgba(54, 162, 235, 0.6)', 'rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)'],
+            borderColor: ['rgba(54, 162, 235, 1)', 'rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
+            borderWidth: 1
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          },
+          title: {
+            display: true,
+            text: 'Loan Status Distribution'
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              stepSize: 1
+            }
+          }
+        }
+      }
+    });
+
+    return () => {
+      if (loanStatusChartInstance.current) {
+        loanStatusChartInstance.current.destroy();
+      }
+    };
+  }, [loanStatusStats]);
+
+  // Book Clone Condition Chart
+  useEffect(() => {
+    if (!conditionStats || !conditionChartRef.current) return;
+
+    if (conditionChartInstance.current) {
+      conditionChartInstance.current.destroy();
+    }
+
+    const ctx = conditionChartRef.current.getContext('2d');
+    if (!ctx) return;
+
+    conditionChartInstance.current = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['New', 'Good', 'Worn', 'Damaged', 'Lost'],
+        datasets: [
+          {
+            label: 'Book Clones',
+            data: [
+              conditionStats.data.NEW,
+              conditionStats.data.GOOD,
+              conditionStats.data.WORN,
+              conditionStats.data.DAMAGED,
+              conditionStats.data.LOST
+            ],
+            backgroundColor: [
+              'rgba(75, 192, 192, 0.6)',
+              'rgba(54, 162, 235, 0.6)',
+              'rgba(255, 206, 86, 0.6)',
+              'rgba(255, 159, 64, 0.6)',
+              'rgba(255, 99, 132, 0.6)'
+            ],
+            borderColor: [
+              'rgba(75, 192, 192, 1)',
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 206, 86, 1)',
+              'rgba(255, 159, 64, 1)',
+              'rgba(255, 99, 132, 1)'
+            ],
+            borderWidth: 1
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom'
+          },
+          title: {
+            display: true,
+            text: 'Book Clone Condition Distribution'
+          }
+        }
+      }
+    });
+
+    return () => {
+      if (conditionChartInstance.current) {
+        conditionChartInstance.current.destroy();
+      }
+    };
+  }, [conditionStats]);
 
   return (
     <>
@@ -63,7 +203,15 @@ export default function DashboardPage() {
       <div className="mt-8">
         <Row gutter={[16, 16]}>
           <Col xs={24} sm={24} md={16}>
-            <Card>Placeholder for chart</Card>
+            <Card>
+              {isLoanStatusStatsLoading ? (
+                <Skeleton active />
+              ) : (
+                <div style={{ height: '400px' }}>
+                  <canvas ref={loanStatusChartRef}></canvas>
+                </div>
+              )}
+            </Card>
           </Col>
           <Col xs={24} sm={24} md={8}>
             <Card>
@@ -92,6 +240,19 @@ export default function DashboardPage() {
                   ) : (
                     <div>No data available.</div>
                   )}
+                </div>
+              )}
+            </Card>
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]} className="mt-4">
+          <Col xs={24}>
+            <Card>
+              {isConditionStatsLoading ? (
+                <Skeleton active />
+              ) : (
+                <div style={{ height: '400px' }}>
+                  <canvas ref={conditionChartRef}></canvas>
                 </div>
               )}
             </Card>
