@@ -93,6 +93,21 @@ async function main() {
 
     app.log.info('Token cleanup task completed');
   });
+
+  // Cron-job to mark overdue loans every day at midnight
+  cron.schedule('0 0 * * *', async () => {
+    app.log.info('Running scheduled overdue loan check task');
+    const result = await app.prisma.loan.updateMany({
+      where: {
+        due_date: { lt: new Date() },
+        status: { not: 'RETURNED' }
+      },
+      data: {
+        status: 'OVERDUE'
+      }
+    });
+    app.log.info(`Overdue loan check task completed, updated ${result.count} loans`);
+  });
 }
 
 main().catch((error) => {
