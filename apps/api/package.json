@@ -17,6 +17,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.962.0",
     "@fastify/auth": "^5.0.4",
     "@fastify/autoload": "^6.3.1",
     "@fastify/awilix": "^8.2.0",
@@ -24,10 +25,11 @@
     "@fastify/cors": "^11.2.0",
     "@fastify/env": "^5.0.3",
     "@fastify/jwt": "^10.0.0",
+    "@fastify/multipart": "^9.3.0",
     "@fastify/redis": "^7.1.0",
     "@fastify/sensible": "^6.0.4",
     "@fastify/swagger": "^9.6.1",
-    "@fastify/swagger-ui": "^5.2.3",
+    "@fastify/swagger-ui": "^5.2.4",
     "@fastify/type-provider-typebox": "^6.1.0",
     "@prisma/adapter-pg": "^7.2.0",
     "@prisma/client": "^7.2.0",
@@ -38,7 +40,7 @@
     "nanoid": "^5.1.6",
     "node-cron": "^4.2.1",
     "pg": "^8.16.3",
-    "typebox": "^1.0.71",
+    "typebox": "^1.0.72",
     "typescript": "^5.9.3"
   },
   "devDependencies": {
