@@ -52,6 +52,11 @@ export type GetCategoriesResponse = PaginatedResponse<Category>;
 export type CreateCategoryResponse = ApiResponse<Category>;
 export type UpdateCategoryResponse = ApiResponse<Category>;
 export type DeleteCategoryResponse = ApiResponse<Pick<Category, 'category_id' | 'name'>>;
+export type GetKPopularCategoriesResponse = ApiResponse<
+  Array<Pick<Category, 'category_id' | 'name' | 'slug'> & { loan_count: number }>
+> & {
+  meta: { total_loans: number };
+};
 
 // Author-related API response types
 export type Author = {

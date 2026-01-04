@@ -107,3 +107,30 @@ export const GetCategoriesSchema = {
     500: { $ref: 'HttpError' }
   }
 } as const satisfies FastifySchema;
+
+export const GetKPopularCategoriesSchema = {
+  summary: 'Get K popular categories',
+  description: 'Retrieve the top K categories based on the number of books associated with each category.',
+  querystring: Type.Object({
+    k: Type.Number({ minimum: 1, maximum: 100 })
+  }),
+  security: [{ JWT: [] }],
+  response: {
+    200: Type.Object({
+      message: Type.String(),
+      meta: Type.Object({
+        total_loans: Type.Number() // Total number of loans for calculate percentage
+      }),
+      data: Type.Array(
+        Type.Object({
+          category_id: Type.String({ format: 'uuid' }),
+          name: Type.String(),
+          slug: Type.String(),
+          loan_count: Type.Number()
+        })
+      )
+    }),
+    403: { $ref: 'HttpError' },
+    500: { $ref: 'HttpError' }
+  }
+} as const satisfies FastifySchema;

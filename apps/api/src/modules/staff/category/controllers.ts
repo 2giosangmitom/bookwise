@@ -1,5 +1,11 @@
 import type StaffCategoryService from './services';
-import { CreateCategorySchema, DeleteCategorySchema, GetCategoriesSchema, UpdateCategorySchema } from './schemas';
+import {
+  CreateCategorySchema,
+  DeleteCategorySchema,
+  GetCategoriesSchema,
+  GetKPopularCategoriesSchema,
+  UpdateCategorySchema
+} from './schemas';
 
 export default class StaffCategoryController {
   private categoryService: StaffCategoryService;
@@ -82,6 +88,26 @@ export default class StaffCategoryController {
         slug: category.slug,
         created_at: category.created_at.toISOString(),
         updated_at: category.updated_at.toISOString()
+      }))
+    });
+  }
+
+  public async getKPopularCategories(
+    req: FastifyRequestTypeBox<typeof GetKPopularCategoriesSchema>,
+    reply: FastifyReplyTypeBox<typeof GetKPopularCategoriesSchema>
+  ) {
+    const result = await this.categoryService.getKPopularCategories(req.query.k);
+
+    return reply.status(200).send({
+      message: 'Popular categories retrieved successfully.',
+      meta: {
+        total_loans: result.total_loans
+      },
+      data: result.categories.map((category) => ({
+        category_id: category.category_id,
+        name: category.name,
+        slug: category.slug,
+        loan_count: category.loan_count
       }))
     });
   }

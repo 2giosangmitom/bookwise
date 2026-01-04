@@ -98,4 +98,41 @@ export default class StaffCategoryService {
 
     return { categories, total };
   }
+
+  public async getKPopularCategories(k: number) {
+    const categories = await this.prisma.$queryRaw<
+      {
+        category_id: string;
+        name: string;
+        slug: string;
+        loan_count: number;
+      }[]
+    >`
+      SELECT
+        c.category_id,
+        c.name,
+        c.slug,
+        COUNT(bl.loan_id) AS loan_count
+      FROM
+        "Category" c
+      INNER JOIN
+        "Book_Category" bc ON c.category_id = bc.category_id
+      INNER JOIN
+        "Book_Clone" bc2 ON bc.book_id = bc2.book_id
+      INNER JOIN
+        "Loan" bl ON bc2.book_clone_id = bl.book_clone_id
+      GROUP BY
+        c.category_id
+      ORDER BY
+        loan_count DESC
+      LIMIT ${k};
+    `;
+
+    const totalLoansResult = await this.prisma.$queryRaw<{ total_loans: number }[]>`
+      SELECT COUNT(*) AS total_loans FROM "Loan";
+    `;
+    const totalLoans = totalLoansResult[0]?.total_loans || 0;
+
+    return { categories, total_loans: totalLoans };
+  }
 }
