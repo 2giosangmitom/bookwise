@@ -12,3 +12,6 @@ export const nameMaxLength = 50;
 
 // HTTP server error messages
 export const internalServerErrorMessage = 'An unexpected error occurred';
+
+// Allowed MIME types
+export const allowedImageTypes = ['image/jpeg', 'image/png', 'image/webp'];

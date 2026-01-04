@@ -1,11 +1,34 @@
-import { CreatePublisherSchema, DeletePublisherSchema, UpdatePublisherSchema, GetPublishersSchema } from './schemas';
+import { DeleteObjectCommand, PutObjectCommand, type S3Client } from '@aws-sdk/client-s3';
+import {
+  CreatePublisherSchema,
+  DeletePublisherSchema,
+  UpdatePublisherSchema,
+  GetPublishersSchema,
+  UploadPublisherImageSchema
+} from './schemas';
 import type StaffPublisherService from './services';
+import { httpErrors } from '@fastify/sensible';
+import type PublisherService from '@/modules/publisher/services';
+import path from 'node:path';
+import { allowedImageTypes } from '@/constants';
 
 export default class StaffPublisherController {
   private staffPublisherService: StaffPublisherService;
+  private publisherService: PublisherService;
+  private s3Client: S3Client;
 
-  public constructor({ staffPublisherService }: { staffPublisherService: StaffPublisherService }) {
+  public constructor({
+    staffPublisherService,
+    s3Client,
+    publisherService
+  }: {
+    staffPublisherService: StaffPublisherService;
+    s3Client: S3Client;
+    publisherService: PublisherService;
+  }) {
     this.staffPublisherService = staffPublisherService;
+    this.s3Client = s3Client;
+    this.publisherService = publisherService;
   }
 
   public async createPublisher(
@@ -85,6 +108,54 @@ export default class StaffPublisherController {
         created_at: publisher.created_at.toISOString(),
         updated_at: publisher.updated_at.toISOString()
       }))
+    });
+  }
+
+  public async uploadPublisherImage(
+    req: FastifyRequestTypeBox<typeof UploadPublisherImageSchema>,
+    reply: FastifyReplyTypeBox<typeof UploadPublisherImageSchema>
+  ) {
+    const publisher = await this.publisherService.getPublisherBySlug(req.params.publisher_slug);
+
+    // Delete previous image from S3 if exists
+    if (publisher.image_url) {
+      const pathParts = publisher.image_url.split('/');
+      await this.s3Client.send(
+        new DeleteObjectCommand({
+          Bucket: pathParts[0],
+          Key: pathParts[1]
+        })
+      );
+    }
+
+    const data = await req.file();
+    if (!data) {
+      throw httpErrors.badRequest('File not provided');
+    }
+
+    if (!allowedImageTypes.includes(data.mimetype)) {
+      throw httpErrors.badRequest(`Invalid file type: ${data.mimetype}`);
+    }
+
+    const buffer = await data.toBuffer();
+    await this.s3Client.send(
+      new PutObjectCommand({
+        Bucket: 'bookwise-publishers',
+        Key: `${publisher.publisher_id}${path.extname(data.filename)}`,
+        Body: buffer,
+        ContentType: data.mimetype
+      })
+    );
+
+    await req.server.prisma.publisher.update({
+      where: { publisher_id: publisher.publisher_id },
+      data: {
+        image_url: `bookwise-publishers/${publisher.slug}${path.extname(data.filename)}`
+      }
+    });
+
+    return reply.status(200).send({
+      message: 'Publisher image uploaded successfully'
     });
   }
 }

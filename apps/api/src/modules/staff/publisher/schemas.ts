@@ -111,3 +111,20 @@ export const GetPublishersSchema = {
     500: { $ref: 'HttpError' }
   }
 } as const satisfies FastifySchema;
+
+export const UploadPublisherImageSchema = {
+  summary: 'Upload publisher image',
+  description: 'Endpoint to upload an image for a specific publisher.',
+  security: [{ JWT: [] }],
+  consumes: ['multipart/form-data'],
+  params: Type.Object({
+    publisher_slug: Type.String()
+  }),
+  response: {
+    200: Type.Object({
+      message: Type.String()
+    }),
+    403: { $ref: 'HttpError' },
+    500: { $ref: 'HttpError' }
+  }
+} as const satisfies FastifySchema;

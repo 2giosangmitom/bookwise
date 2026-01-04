@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.962.0",
+    "@aws-sdk/s3-request-presigner": "^3.962.0",
     "@fastify/auth": "^5.0.4",
     "@fastify/autoload": "^6.3.1",
     "@fastify/awilix": "^8.2.0",
