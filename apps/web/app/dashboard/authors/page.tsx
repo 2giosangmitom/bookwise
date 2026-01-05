@@ -1,9 +1,9 @@
 'use client';
 
-import { createAuthor, deleteAuthor, getAuthors, updateAuthor } from '@/lib/api/author';
+import { createAuthor, deleteAuthor, getAuthors, updateAuthor, uploadAuthorImage } from '@/lib/api/author';
 import { Author, GetAuthorsResponse } from '@/lib/api/types';
 import { useAuthContext } from '@/contexts/Auth';
-import { PlusOutlined, SearchOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { PlusOutlined, SearchOutlined, EditOutlined, DeleteOutlined, UploadOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDebounce } from '@uidotdev/usehooks';
 import {
@@ -17,7 +17,12 @@ import {
   Typography,
   type TableColumnsType,
   message,
-  DatePicker
+  DatePicker,
+  Upload,
+  UploadFile,
+  GetProp,
+  UploadProps,
+  Image
 } from 'antd';
 import { useState } from 'react';
 import { formatDateTime } from '@/utils/datetime';
@@ -35,6 +40,16 @@ interface AuthorFormField {
   slug: string;
 }
 
+type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
+
+const getBase64 = (file: FileType): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
+
 export default function AuthorsPage() {
   const { accessToken } = useAuthContext();
   const queryClient = useQueryClient();
@@ -48,6 +63,22 @@ export default function AuthorsPage() {
   const [editingAuthor, setEditingAuthor] = useState<Author | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [uploadingAuthorSlug, setUploadingAuthorSlug] = useState<string | null>(null);
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState('');
+
+  const handlePreview = async (file: UploadFile) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj as FileType);
+    }
+
+    setPreviewImage(file.url || (file.preview as string));
+    setPreviewOpen(true);
+  };
+
+  const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) => setFileList(newFileList);
 
   const { data: authors, isLoading } = useQuery({
     queryKey: ['authors', page, limit, debouncedSearchTerm],
@@ -113,6 +144,21 @@ export default function AuthorsPage() {
     }
   });
 
+  const uploadAuthorImageMutation = useMutation({
+    mutationFn: (data: { authorSlug: string; file: File }) =>
+      uploadAuthorImage(accessToken, data.authorSlug, data.file),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['authors'] });
+      messageApi.success('Author image uploaded successfully');
+      setIsUploadModalOpen(false);
+      setUploadingAuthorSlug(null);
+      setFileList([]);
+    },
+    onError: (error) => {
+      messageApi.error(error.message);
+    }
+  });
+
   const onCreateAuthorFinish = (values: AuthorFormField) => {
     const authorData = {
       ...values,
@@ -159,6 +205,18 @@ export default function AuthorsPage() {
 
   const columns: TableColumnsType<Author> = [
     {
+      title: 'Image',
+      dataIndex: 'image_url',
+      width: 100,
+      render: (text) =>
+        text ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={text} alt="Author Photo" width={50} height={50} />
+        ) : (
+          <p>No Image</p>
+        )
+    },
+    {
       title: 'Name',
       dataIndex: 'name',
       width: 200
@@ -194,12 +252,21 @@ export default function AuthorsPage() {
     },
     {
       title: 'Actions',
-      width: 120,
+      width: 150,
       fixed: 'right',
       dataIndex: 'actions',
       render: (_, record) => (
         <Flex gap="small">
           <Button type="default" size="small" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
+          <Button
+            type="primary"
+            size="small"
+            icon={<UploadOutlined />}
+            onClick={() => {
+              setUploadingAuthorSlug(record.slug);
+              setIsUploadModalOpen(true);
+            }}
+          />
           <Button
             type="primary"
             size="small"
@@ -365,6 +432,68 @@ export default function AuthorsPage() {
             Update
           </Button>
         </Form>
+      </Modal>
+
+      {/* Upload Image Modal */}
+      <Modal
+        title="Upload Author Image"
+        open={isUploadModalOpen}
+        onCancel={() => {
+          setIsUploadModalOpen(false);
+          setUploadingAuthorSlug(null);
+          setFileList([]);
+          setPreviewImage('');
+        }}
+        footer={null}>
+        <Upload
+          maxCount={1}
+          listType="picture-card"
+          fileList={fileList}
+          onPreview={handlePreview}
+          onChange={handleChange}
+          beforeUpload={(file: FileType) => {
+            setFileList([file]); // Keep only latest file
+            return false; // Prevent auto upload
+          }}>
+          {fileList.length >= 1 ? null : (
+            <div>
+              <PlusOutlined />
+              <div style={{ marginTop: 8 }}>Upload</div>
+            </div>
+          )}
+        </Upload>
+
+        {previewImage && (
+          <Image
+            style={{ display: 'none' }}
+            alt="Preview"
+            preview={{
+              open: previewOpen,
+              onOpenChange: (visible) => setPreviewOpen(visible),
+              afterOpenChange: (visible) => !visible && setPreviewImage('')
+            }}
+            src={previewImage}
+          />
+        )}
+
+        <Button
+          type="primary"
+          className="mt-5"
+          disabled={fileList.length === 0 || !uploadingAuthorSlug}
+          icon={<UploadOutlined />}
+          loading={uploadAuthorImageMutation.isPending}
+          onClick={() => {
+            const file = fileList[0]?.originFileObj;
+            if (file && uploadingAuthorSlug) {
+              uploadAuthorImageMutation.mutate({
+                authorSlug: uploadingAuthorSlug,
+                file
+              });
+            }
+          }}
+          style={{ marginTop: 16 }}>
+          Upload Image
+        </Button>
       </Modal>
     </>
   );

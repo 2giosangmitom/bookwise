@@ -9,7 +9,7 @@ const AuthorEntitySchema = Type.Object({
   date_of_birth: Type.Union([Type.String({ format: 'date-time' }), Type.Null()]),
   date_of_death: Type.Union([Type.String({ format: 'date-time' }), Type.Null()]),
   nationality: Type.Union([Type.String(), Type.Null()]),
-  image_url: Type.Union([Type.String({ format: 'url' }), Type.Null()]),
+  image_url: Type.Union([Type.String(), Type.Null()]),
   slug: Type.String(),
   created_at: Type.String({ format: 'date-time' }),
   updated_at: Type.String({ format: 'date-time' })
@@ -109,6 +109,23 @@ export const GetAuthorsSchema = {
       data: Type.Array(AuthorEntitySchema)
     }),
     400: { $ref: 'HttpError' },
+    403: { $ref: 'HttpError' },
+    500: { $ref: 'HttpError' }
+  }
+} as const satisfies FastifySchema;
+
+export const UploadAuthorImageSchema = {
+  summary: 'Upload author image',
+  description: 'Endpoint to upload an image for a specific author.',
+  security: [{ JWT: [] }],
+  consumes: ['multipart/form-data'],
+  params: Type.Object({
+    author_slug: Type.String()
+  }),
+  response: {
+    200: Type.Object({
+      message: Type.String()
+    }),
     403: { $ref: 'HttpError' },
     500: { $ref: 'HttpError' }
   }

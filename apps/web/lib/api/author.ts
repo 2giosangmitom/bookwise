@@ -71,3 +71,13 @@ export function deleteAuthor(accessToken: string | null, authorId: string) {
     method: 'DELETE'
   });
 }
+
+export function uploadAuthorImage(accessToken: string | null, authorSlug: string, file: File) {
+  const formData = new FormData();
+  formData.append('image', file);
+
+  return fetchApiWithAutoRefresh<UpdateAuthorResponse>(`/staff/author/${authorSlug}/image`, accessToken, {
+    method: 'POST',
+    body: formData
+  });
+}

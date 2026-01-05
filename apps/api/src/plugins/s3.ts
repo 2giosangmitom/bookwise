@@ -47,14 +47,14 @@ export default fp(
               Effect: 'Allow',
               Principal: { AWS: ['*'] },
               Action: ['s3:GetObject'],
-              Resource: ['arn:aws:s3:::bookwise-publishers/*']
+              Resource: [`arn:aws:s3:::${bucket}/*`]
             },
             {
               Sid: '',
               Effect: 'Allow',
               Principal: { AWS: ['arn:aws:iam::*:root'] },
               Action: ['s3:DeleteObject', 's3:DeleteObjectTagging', 's3:PutObject', 's3:PutObjectTagging'],
-              Resource: ['arn:aws:s3:::bookwise-publishers/*']
+              Resource: [`arn:aws:s3:::${bucket}/*`]
             }
           ]
         })
