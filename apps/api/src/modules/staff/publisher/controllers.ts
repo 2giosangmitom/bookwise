@@ -105,6 +105,7 @@ export default class StaffPublisherController {
       },
       data: publishers.map((publisher) => ({
         ...publisher,
+        image_url: publisher.image_url ? `${process.env.RUSTFS_ENDPOINT}/${publisher.image_url}` : null,
         created_at: publisher.created_at.toISOString(),
         updated_at: publisher.updated_at.toISOString()
       }))
@@ -120,12 +121,16 @@ export default class StaffPublisherController {
     // Delete previous image from S3 if exists
     if (publisher.image_url) {
       const pathParts = publisher.image_url.split('/');
-      await this.s3Client.send(
-        new DeleteObjectCommand({
-          Bucket: pathParts[0],
-          Key: pathParts[1]
-        })
-      );
+      try {
+        await this.s3Client.send(
+          new DeleteObjectCommand({
+            Bucket: pathParts[0],
+            Key: pathParts[1]
+          })
+        );
+      } catch (error) {
+        req.log.error('Error deleting previous publisher image from S3: %s', error);
+      }
     }
 
     const data = await req.file();
@@ -147,10 +152,11 @@ export default class StaffPublisherController {
       })
     );
 
+    // Update publisher record with new image URL
     await req.server.prisma.publisher.update({
       where: { publisher_id: publisher.publisher_id },
       data: {
-        image_url: `bookwise-publishers/${publisher.slug}${path.extname(data.filename)}`
+        image_url: `bookwise-publishers/${publisher.publisher_id}${path.extname(data.filename)}`
       }
     });
 

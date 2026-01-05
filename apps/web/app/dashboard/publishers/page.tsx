@@ -1,6 +1,12 @@
 'use client';
 
-import { createPublisher, deletePublisher, getPublishers, updatePublisher } from '@/lib/api/publisher';
+import {
+  createPublisher,
+  deletePublisher,
+  getPublishers,
+  updatePublisher,
+  uploadPublisherImage
+} from '@/lib/api/publisher';
 import { Publisher, GetPublishersResponse } from '@/lib/api/types';
 import { useAuthContext } from '@/contexts/Auth';
 import {
@@ -9,11 +15,28 @@ import {
   EditOutlined,
   DeleteOutlined,
   CheckOutlined,
-  CloseOutlined
+  CloseOutlined,
+  UploadOutlined
 } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDebounce } from '@uidotdev/usehooks';
-import { Button, Card, Flex, Form, Input, Modal, Table, Typography, type TableColumnsType, message } from 'antd';
+import {
+  Button,
+  Card,
+  Flex,
+  Form,
+  Input,
+  Modal,
+  Table,
+  Typography,
+  type TableColumnsType,
+  message,
+  Upload,
+  UploadFile,
+  GetProp,
+  UploadProps,
+  Image
+} from 'antd';
 import { useState } from 'react';
 import { formatDateTime } from '@/utils/datetime';
 
@@ -24,6 +47,16 @@ interface PublisherFormField {
   website: string;
   slug: string;
 }
+
+type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
+
+const getBase64 = (file: FileType): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
 
 export default function PublishersPage() {
   const { accessToken } = useAuthContext();
@@ -37,6 +70,22 @@ export default function PublishersPage() {
   const [editForm] = Form.useForm<PublisherFormField>();
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [uploadingPublisherSlug, setUploadingPublisherSlug] = useState<string | null>(null);
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState('');
+
+  const handlePreview = async (file: UploadFile) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj as FileType);
+    }
+
+    setPreviewImage(file.url || (file.preview as string));
+    setPreviewOpen(true);
+  };
+
+  const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) => setFileList(newFileList);
 
   const { data: publishers, isLoading } = useQuery({
     queryKey: ['publishers', page, limit, debouncedSearchTerm],
@@ -76,6 +125,20 @@ export default function PublishersPage() {
     }
   });
 
+  const uploadPublisherImageMutation = useMutation({
+    mutationFn: (data: { publisherSlug: string; file: File }) =>
+      uploadPublisherImage(accessToken, data.publisherSlug, data.file),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['publishers'] });
+      messageApi.success('Publisher image uploaded successfully');
+      setIsUploadModalOpen(false);
+      setUploadingPublisherSlug(null);
+    },
+    onError: (error) => {
+      messageApi.error(error.message);
+    }
+  });
+
   const onCreatePublisherFinish = (values: PublisherFormField) => {
     createPublisherMutation.mutate(values);
     setCreateModalOpen(false);
@@ -99,6 +162,18 @@ export default function PublishersPage() {
   };
 
   const columns: TableColumnsType<Publisher> = [
+    {
+      title: 'Image',
+      dataIndex: 'image_url',
+      width: 100,
+      render: (text) =>
+        text ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={text} alt="Publisher Logo" width={50} height={50} />
+        ) : (
+          <p>No Image</p>
+        )
+    },
     {
       title: 'Name',
       dataIndex: 'name',
@@ -185,6 +260,15 @@ export default function PublishersPage() {
               danger
               onClick={() => handleDelete(record.publisher_id)}
             />
+            <Button
+              type="primary"
+              size="small"
+              icon={<UploadOutlined />}
+              onClick={() => {
+                setUploadingPublisherSlug(record.slug);
+                setIsUploadModalOpen(true);
+              }}
+            />
           </Flex>
         )
     }
@@ -241,6 +325,66 @@ export default function PublishersPage() {
                   Create
                 </Button>
               </Form>
+            </Modal>
+            <Modal
+              title="Upload Publisher Image"
+              open={isUploadModalOpen}
+              onCancel={() => {
+                setIsUploadModalOpen(false);
+                setUploadingPublisherSlug(null);
+                setFileList([]);
+                setPreviewImage('');
+              }}
+              footer={null}>
+              <Upload
+                maxCount={1}
+                listType="picture-card"
+                fileList={fileList}
+                onPreview={handlePreview}
+                onChange={handleChange}
+                beforeUpload={(file: FileType) => {
+                  setFileList([file]); // Keep only latest file
+                  return false; // Prevent auto upload
+                }}>
+                {fileList.length >= 1 ? null : (
+                  <div>
+                    <PlusOutlined />
+                    <div style={{ marginTop: 8 }}>Upload</div>
+                  </div>
+                )}
+              </Upload>
+
+              {previewImage && (
+                <Image
+                  style={{ display: 'none' }}
+                  alt="Preview"
+                  preview={{
+                    open: previewOpen,
+                    onOpenChange: (visible) => setPreviewOpen(visible),
+                    afterOpenChange: (visible) => !visible && setPreviewImage('')
+                  }}
+                  src={previewImage}
+                />
+              )}
+
+              <Button
+                type="primary"
+                className="mt-5"
+                disabled={fileList.length === 0 || !uploadingPublisherSlug}
+                icon={<UploadOutlined />}
+                loading={uploadPublisherImageMutation.isPending}
+                onClick={() => {
+                  const file = fileList[0]?.originFileObj;
+                  if (file && uploadingPublisherSlug) {
+                    uploadPublisherImageMutation.mutate({
+                      publisherSlug: uploadingPublisherSlug,
+                      file
+                    });
+                  }
+                }}
+                style={{ marginTop: 16 }}>
+                Upload Image
+              </Button>
             </Modal>
           </Flex>
           {isLoading || debouncedSearchTerm !== searchTerm ? (

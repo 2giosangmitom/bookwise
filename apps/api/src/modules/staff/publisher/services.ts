@@ -92,6 +92,9 @@ export default class StaffPublisherService {
       this.prisma.publisher.count({ where })
     ]);
 
-    return { publishers, total };
+    return {
+      publishers,
+      total
+    };
   }
 }

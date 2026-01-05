@@ -49,3 +49,13 @@ export function updatePublisher(
     }
   });
 }
+
+export function uploadPublisherImage(accessToken: string | null, publisherSlug: string, file: File) {
+  const formData = new FormData();
+  formData.append('image', file);
+
+  return fetchApiWithAutoRefresh<UpdatePublisherResponse>(`/staff/publisher/${publisherSlug}/image`, accessToken, {
+    method: 'POST',
+    body: formData
+  });
+}

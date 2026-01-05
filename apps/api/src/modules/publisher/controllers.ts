@@ -20,6 +20,7 @@ export default class PublisherController {
       message: 'Publisher retrieved successfully',
       data: {
         ...publisher,
+        image_url: publisher.image_url ? `${process.env.RUSTFS_ENDPOINT}/${publisher.image_url}` : null,
         created_at: publisher.created_at.toISOString(),
         updated_at: publisher.updated_at.toISOString()
       }
