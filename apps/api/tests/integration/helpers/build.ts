@@ -10,6 +10,7 @@ import sensible from '@/plugins/sensible';
 import cookie from '@/plugins/cookie';
 import auth from '@/plugins/auth';
 import awilix from '@/plugins/awilix';
+import s3 from '@/plugins/s3';
 
 import authRoutes from '@/modules/auth/routes';
 import authHooks from '@/modules/auth/autohooks';
@@ -54,6 +55,7 @@ export async function build(): Promise<FastifyTypeBox> {
   await app.register(sensible, config);
   await app.register(cookie, config);
   await app.register(jwtPlugin, config);
+  await app.register(s3, config);
 
   // Register routes
   await app.register(
