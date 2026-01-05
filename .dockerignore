@@ -1,0 +1,26 @@
+# dependencies
+**/node_modules
+**/.pnpm-store
+
+# build outputs
+**/dist
+**/.next
+**/coverage
+
+# tests
+**/tests
+**/__tests__
+
+# tooling
+.git
+.gitignore
+.vscode
+.idea
+
+# misc
+README.md
+AGENTS.md
+
+# environment files
+**/.env
+**/.env.*

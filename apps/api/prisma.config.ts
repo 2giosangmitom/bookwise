@@ -1,17 +1,16 @@
 import { defineConfig, env } from 'prisma/config';
-import process from 'node:process';
 
-const isTest = process.env.NODE_ENV === 'test';
-
-if (isTest) {
-  process.loadEnvFile('.env.test');
-} else {
-  process.loadEnvFile('.env');
+// Gracefully handle missing DATABASE_URL in certain environments
+let DATABASE_URL;
+try {
+  DATABASE_URL = env('DATABASE_URL');
+} catch {
+  // No action needed
 }
 
 export default defineConfig({
   schema: 'prisma/schema.prisma',
   datasource: {
-    url: env('DATABASE_URL')
+    url: DATABASE_URL
   }
 });

@@ -31,6 +31,20 @@ services:
     volumes:
       - rustfs-data:/data
 
+  api:
+    build:
+      context: .
+      dockerfile: docker/api.dockerfile
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - library-network
+    depends_on:
+      - postgres
+      - redis
+      - rustfs
+
 networks:
   library-network:
 
