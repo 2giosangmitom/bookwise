@@ -136,3 +136,20 @@ export const GetBooksSchema = {
     500: { $ref: 'HttpError' }
   }
 } as const satisfies FastifySchema;
+
+export const UploadBookImageSchema = {
+  summary: 'Upload book cover image',
+  description: 'Endpoint to upload a cover image for a specific book.',
+  security: [{ JWT: [] }],
+  consumes: ['multipart/form-data'],
+  params: Type.Object({
+    isbn: Type.String()
+  }),
+  response: {
+    200: Type.Object({
+      message: Type.String()
+    }),
+    403: { $ref: 'HttpError' },
+    500: { $ref: 'HttpError' }
+  }
+} as const satisfies FastifySchema;

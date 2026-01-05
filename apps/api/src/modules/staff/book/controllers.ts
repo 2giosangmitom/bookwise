@@ -1,12 +1,18 @@
-import { CreateBookSchema, DeleteBookSchema, UpdateBookSchema, GetBooksSchema } from './schemas';
+import { DeleteObjectCommand, PutObjectCommand, type S3Client } from '@aws-sdk/client-s3';
+import { CreateBookSchema, DeleteBookSchema, UpdateBookSchema, GetBooksSchema, UploadBookImageSchema } from './schemas';
 import type StaffBookService from './services';
 import { Prisma } from '@/generated/prisma/client';
+import { httpErrors } from '@fastify/sensible';
+import path from 'node:path';
+import { allowedImageTypes } from '@/constants';
 
 export default class StaffBookController {
   private staffBookService: StaffBookService;
+  private s3Client: S3Client;
 
-  public constructor({ staffBookService }: { staffBookService: StaffBookService }) {
+  public constructor({ staffBookService, s3Client }: { staffBookService: StaffBookService; s3Client: S3Client }) {
     this.staffBookService = staffBookService;
+    this.s3Client = s3Client;
   }
 
   public async createBook(
@@ -107,7 +113,7 @@ export default class StaffBookController {
         description: book.description,
         isbn: book.isbn,
         publisher_id: book.publisher_id,
-        image_url: book.image_url,
+        image_url: book.image_url ? `${process.env.RUSTFS_ENDPOINT}/${book.image_url}` : null,
         publisher_name: book.publisher?.name ?? null,
         authors: book.authors?.map((a) => ({ author_id: a.author.author_id, name: a.author.name })) ?? [],
         categories: book.categories?.map((c) => ({ category_id: c.category.category_id, name: c.category.name })) ?? [],
@@ -115,6 +121,65 @@ export default class StaffBookController {
         created_at: book.created_at.toISOString(),
         updated_at: book.updated_at.toISOString()
       }))
+    });
+  }
+
+  public async uploadBookImage(
+    req: FastifyRequestTypeBox<typeof UploadBookImageSchema>,
+    reply: FastifyReplyTypeBox<typeof UploadBookImageSchema>
+  ) {
+    const book = await req.server.prisma.book.findUnique({
+      where: { isbn: req.params.isbn }
+    });
+
+    if (!book) {
+      throw httpErrors.notFound('Book with the given ISBN does not exist.');
+    }
+
+    // Delete previous image from S3 if exists
+    if (book.image_url) {
+      const pathParts = book.image_url.split('/');
+      try {
+        await this.s3Client.send(
+          new DeleteObjectCommand({
+            Bucket: pathParts[0],
+            Key: pathParts[1]
+          })
+        );
+      } catch (error) {
+        req.log.error('Error deleting previous book image from S3: %s', error);
+      }
+    }
+
+    const data = await req.file();
+    if (!data) {
+      throw httpErrors.badRequest('File not provided');
+    }
+
+    if (!allowedImageTypes.includes(data.mimetype)) {
+      throw httpErrors.badRequest(`Invalid file type: ${data.mimetype}`);
+    }
+
+    const buffer = await data.toBuffer();
+    await this.s3Client.send(
+      new PutObjectCommand({
+        Bucket: 'bookwise-books',
+        Key: `${book.book_id}${path.extname(data.filename)}`,
+        Body: buffer,
+        ContentType: data.mimetype
+      })
+    );
+
+    // Update book record with new image URL
+    await req.server.prisma.book.update({
+      where: { book_id: book.book_id },
+      data: {
+        image_url: `bookwise-books/${book.book_id}${path.extname(data.filename)}`
+      }
+    });
+
+    return reply.status(200).send({
+      message: 'Book image uploaded successfully'
     });
   }
 }

@@ -1,12 +1,12 @@
 'use client';
 
-import { createBook, deleteBook, getBooks, updateBook } from '@/lib/api/book';
+import { createBook, deleteBook, getBooks, updateBook, uploadBookImage } from '@/lib/api/book';
 import { getAuthors } from '@/lib/api/author';
 import { getCategories } from '@/lib/api/category';
 import { getPublishers } from '@/lib/api/publisher';
 import { Book, GetBooksResponse } from '@/lib/api/types';
 import { useAuthContext } from '@/contexts/Auth';
-import { PlusOutlined, SearchOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { PlusOutlined, SearchOutlined, EditOutlined, DeleteOutlined, UploadOutlined } from '@ant-design/icons';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDebounce } from '@uidotdev/usehooks';
 import {
@@ -21,7 +21,12 @@ import {
   type TableColumnsType,
   message,
   Select,
-  DatePicker
+  DatePicker,
+  Upload,
+  UploadFile,
+  GetProp,
+  UploadProps,
+  Image
 } from 'antd';
 import { useState } from 'react';
 import { formatDateTime } from '@/utils/datetime';
@@ -39,6 +44,16 @@ interface BookFormField {
   authors?: string[];
   categories?: string[];
 }
+
+type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
+
+const getBase64 = (file: FileType): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
 
 export default function BooksPage() {
   const { accessToken } = useAuthContext();
@@ -59,6 +74,22 @@ export default function BooksPage() {
   const debouncedAuthorSearch = useDebounce(authorSearchTerm, 300);
   const debouncedPublisherSearch = useDebounce(publisherSearchTerm, 300);
   const debouncedCategorySearch = useDebounce(categorySearchTerm, 300);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [uploadingBookIsbn, setUploadingBookIsbn] = useState<string | null>(null);
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState('');
+
+  const handlePreview = async (file: UploadFile) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj as FileType);
+    }
+
+    setPreviewImage(file.url || (file.preview as string));
+    setPreviewOpen(true);
+  };
+
+  const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) => setFileList(newFileList);
 
   // Fetch books with search and pagination
   const { data: books, isLoading } = useQuery({
@@ -151,6 +182,20 @@ export default function BooksPage() {
     }
   });
 
+  const uploadBookImageMutation = useMutation({
+    mutationFn: (data: { isbn: string; file: File }) => uploadBookImage(accessToken, data.isbn, data.file),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['books'] });
+      messageApi.success('Book cover uploaded successfully');
+      setIsUploadModalOpen(false);
+      setUploadingBookIsbn(null);
+      setFileList([]);
+    },
+    onError: (error) => {
+      messageApi.error(error.message);
+    }
+  });
+
   const onCreateBookFinish = (values: BookFormField) => {
     createBookMutation.mutate({
       title: values.title,
@@ -212,6 +257,18 @@ export default function BooksPage() {
 
   const columns: TableColumnsType<Book> = [
     {
+      title: 'Cover',
+      dataIndex: 'image_url',
+      width: 100,
+      render: (text) =>
+        text ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={text} alt="Book Cover" width={50} height={50} style={{ objectFit: 'cover' }} />
+        ) : (
+          <p>No Image</p>
+        )
+    },
+    {
       title: 'Title',
       dataIndex: 'title',
       width: 250,
@@ -255,12 +312,21 @@ export default function BooksPage() {
     },
     {
       title: 'Actions',
-      width: 120,
+      width: 150,
       dataIndex: 'actions',
       fixed: 'right',
       render: (_, record) => (
         <Flex gap="small">
           <Button type="default" size="small" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
+          <Button
+            type="primary"
+            size="small"
+            icon={<UploadOutlined />}
+            onClick={() => {
+              setUploadingBookIsbn(record.isbn);
+              setIsUploadModalOpen(true);
+            }}
+          />
           <Button
             type="primary"
             size="small"
@@ -553,6 +619,68 @@ export default function BooksPage() {
           )}
         </Card>
       </Flex>
+
+      {/* Upload Image Modal */}
+      <Modal
+        title="Upload Book Cover"
+        open={isUploadModalOpen}
+        onCancel={() => {
+          setIsUploadModalOpen(false);
+          setUploadingBookIsbn(null);
+          setFileList([]);
+          setPreviewImage('');
+        }}
+        footer={null}>
+        <Upload
+          maxCount={1}
+          listType="picture-card"
+          fileList={fileList}
+          onPreview={handlePreview}
+          onChange={handleChange}
+          beforeUpload={(file: FileType) => {
+            setFileList([file]); // Keep only latest file
+            return false; // Prevent auto upload
+          }}>
+          {fileList.length >= 1 ? null : (
+            <div>
+              <PlusOutlined />
+              <div style={{ marginTop: 8 }}>Upload</div>
+            </div>
+          )}
+        </Upload>
+
+        {previewImage && (
+          <Image
+            style={{ display: 'none' }}
+            alt="Preview"
+            preview={{
+              open: previewOpen,
+              onOpenChange: (visible) => setPreviewOpen(visible),
+              afterOpenChange: (visible) => !visible && setPreviewImage('')
+            }}
+            src={previewImage}
+          />
+        )}
+
+        <Button
+          type="primary"
+          className="mt-5"
+          disabled={fileList.length === 0 || !uploadingBookIsbn}
+          icon={<UploadOutlined />}
+          loading={uploadBookImageMutation.isPending}
+          onClick={() => {
+            const file = fileList[0]?.originFileObj;
+            if (file && uploadingBookIsbn) {
+              uploadBookImageMutation.mutate({
+                isbn: uploadingBookIsbn,
+                file
+              });
+            }
+          }}
+          style={{ marginTop: 16 }}>
+          Upload Cover
+        </Button>
+      </Modal>
     </>
   );
 }

@@ -63,3 +63,13 @@ export function deleteBook(accessToken: string | null, bookId: string) {
     method: 'DELETE'
   });
 }
+
+export function uploadBookImage(accessToken: string | null, isbn: string, file: File) {
+  const formData = new FormData();
+  formData.append('image', file);
+
+  return fetchApiWithAutoRefresh<UpdateBookResponse>(`/staff/book/${isbn}/image`, accessToken, {
+    method: 'POST',
+    body: formData
+  });
+}
