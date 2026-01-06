@@ -6,6 +6,8 @@ import { httpErrors } from '@fastify/sensible';
 import path from 'node:path';
 import { allowedImageTypes } from '@/constants';
 
+const rustfsPublicEndpoint = process.env.RUSTFS_PUBLIC_ENDPOINT ?? process.env.RUSTFS_ENDPOINT;
+
 export default class StaffBookController {
   private staffBookService: StaffBookService;
   private s3Client: S3Client;
@@ -113,7 +115,7 @@ export default class StaffBookController {
         description: book.description,
         isbn: book.isbn,
         publisher_id: book.publisher_id,
-        image_url: book.image_url ? `${process.env.RUSTFS_ENDPOINT}/${book.image_url}` : null,
+        image_url: book.image_url ? `${rustfsPublicEndpoint}/${book.image_url}` : null,
         publisher_name: book.publisher?.name ?? null,
         authors: book.authors?.map((a) => ({ author_id: a.author.author_id, name: a.author.name })) ?? [],
         categories: book.categories?.map((c) => ({ category_id: c.category.category_id, name: c.category.name })) ?? [],

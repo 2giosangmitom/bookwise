@@ -10,3 +10,7 @@ run = "prettier --write ."
 [tasks.check-format]
 description = "Check code formatting using Prettier"
 run = "prettier --check ."
+
+[tasks.compose-dev]
+description = "Run postgres, redis, and rustfs"
+run = "docker compose -f compose.yml -f compose.dev.yml up postgres redis rustfs -d"

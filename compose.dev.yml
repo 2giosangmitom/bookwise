@@ -11,11 +11,3 @@ services:
     ports:
       - '9000:9000'
       - '9001:9001'
-
-  api:
-    environment:
-      CORS_ORIGINS: http://localhost:3000
-
-  web:
-    ports:
-      - '3000:3000'

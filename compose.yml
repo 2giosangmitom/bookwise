@@ -39,6 +39,7 @@ services:
       DATABASE_URL: postgres://bookwise:chiendeptrai@postgres:5432/bookwise
       REDIS_URL: redis://redis:6379
       RUSTFS_ENDPOINT: http://rustfs:9000
+      RUSTFS_PUBLIC_ENDPOINT: http://localhost/rustfs
       RUSTFS_ACCESS_KEY: rustfsadmin
       RUSTFS_SECRET_KEY: rustfsadmin
       JWT_SECRET: ngonluonmabanhmi

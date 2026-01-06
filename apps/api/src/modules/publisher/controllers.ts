@@ -1,6 +1,8 @@
 import { GetPublisherBySlugSchema } from './schemas';
 import type PublisherService from './services';
 
+const rustfsPublicEndpoint = process.env.RUSTFS_PUBLIC_ENDPOINT ?? process.env.RUSTFS_ENDPOINT;
+
 export default class PublisherController {
   private publisherService: PublisherService;
 
@@ -20,7 +22,7 @@ export default class PublisherController {
       message: 'Publisher retrieved successfully',
       data: {
         ...publisher,
-        image_url: publisher.image_url ? `${process.env.RUSTFS_ENDPOINT}/${publisher.image_url}` : null,
+        image_url: publisher.image_url ? `${rustfsPublicEndpoint}/${publisher.image_url}` : null,
         created_at: publisher.created_at.toISOString(),
         updated_at: publisher.updated_at.toISOString()
       }

@@ -12,6 +12,8 @@ import type PublisherService from '@/modules/publisher/services';
 import path from 'node:path';
 import { allowedImageTypes } from '@/constants';
 
+const rustfsPublicEndpoint = process.env.RUSTFS_PUBLIC_ENDPOINT ?? process.env.RUSTFS_ENDPOINT;
+
 export default class StaffPublisherController {
   private staffPublisherService: StaffPublisherService;
   private publisherService: PublisherService;
@@ -105,7 +107,7 @@ export default class StaffPublisherController {
       },
       data: publishers.map((publisher) => ({
         ...publisher,
-        image_url: publisher.image_url ? `${process.env.RUSTFS_ENDPOINT}/${publisher.image_url}` : null,
+        image_url: publisher.image_url ? `${rustfsPublicEndpoint}/${publisher.image_url}` : null,
         created_at: publisher.created_at.toISOString(),
         updated_at: publisher.updated_at.toISOString()
       }))

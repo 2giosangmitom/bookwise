@@ -12,6 +12,8 @@ import { httpErrors } from '@fastify/sensible';
 import path from 'node:path';
 import { allowedImageTypes } from '@/constants';
 
+const rustfsPublicEndpoint = process.env.RUSTFS_PUBLIC_ENDPOINT ?? process.env.RUSTFS_ENDPOINT;
+
 export default class StaffAuthorController {
   private staffAuthorService: StaffAuthorService;
   private authorService: AuthorService;
@@ -46,7 +48,7 @@ export default class StaffAuthorController {
   }) {
     return {
       ...author,
-      image_url: author.image_url ? `${process.env.RUSTFS_ENDPOINT}/${author.image_url}` : null,
+      image_url: author.image_url ? `${rustfsPublicEndpoint}/${author.image_url}` : null,
       date_of_birth: author.date_of_birth?.toISOString() ?? null,
       date_of_death: author.date_of_death?.toISOString() ?? null,
       created_at: author.created_at.toISOString(),
