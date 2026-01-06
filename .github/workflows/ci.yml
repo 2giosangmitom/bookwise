@@ -70,7 +70,7 @@ jobs:
         run: pnpm install
 
       - name: Setup containers
-        run: docker compose up redis postgres rustfs -d
+        run: mise compose-dev
 
       - name: Generate Prisma client
         run: pnpm --filter api prisma:generate
