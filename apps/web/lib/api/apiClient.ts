@@ -11,7 +11,7 @@ export class ApiError extends Error {
 }
 
 export async function fetchApi<T>(path: string, options?: Parameters<typeof fetch>[1]): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, options);
+  const response = await fetch(`${API_BASE_URL()}${path}`, options);
   const json = await response.json();
   if (!response.ok) {
     throw new ApiError(json.message || 'API request failed', response.status);
@@ -35,7 +35,7 @@ export async function fetchApiWithAutoRefresh<T>(
   } catch (error) {
     if (error instanceof ApiError && (error.status === 401 || error.status === 403)) {
       // Attempt to refresh token
-      const refreshResponse = await fetch(`${API_BASE_URL}/auth/refresh-token`, {
+      const refreshResponse = await fetch(`${API_BASE_URL()}/auth/refresh-token`, {
         method: 'POST',
         credentials: 'include'
       });

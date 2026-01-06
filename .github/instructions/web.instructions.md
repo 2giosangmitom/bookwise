@@ -43,7 +43,7 @@ app/
 contexts/
 └── Auth.ts                 # Auth context definition
 lib/
-├── constants.ts            # App constants (API_BASE_URL)
+├── constants.ts            # App constants
 ├── api/                    # API client layer
 │   ├── apiClient.ts        # Fetch wrapper with token refresh
 │   ├── types.ts            # API response types

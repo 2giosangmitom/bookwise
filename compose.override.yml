@@ -1,16 +1,21 @@
 services:
   postgres:
-    environment:
-      POSTGRES_USER: bookwise
-      POSTGRES_PASSWORD: chiendeptrai
+    ports:
+      - '5432:5432'
+
+  redis:
+    ports:
+      - '6379:6379'
+
+  rustfs:
+    ports:
+      - '9000:9000'
+      - '9001:9001'
 
   api:
     environment:
-      DATABASE_URL: postgres://bookwise:chiendeptrai@postgres:5432/bookwise
-      REDIS_URL: redis://redis:6379
-      RUSTFS_ENDPOINT: http://rustfs:9000
-      JWT_SECRET: ngonluonmabanhmi
-      COOKIE_SECRET: bandeptraingonluon
-      RUSTFS_ACCESS_KEY: rustfsadmin
-      RUSTFS_SECRET_KEY: rustfsadmin
-      FASTIFY_HOST: 0.0.0.0
+      CORS_ORIGINS: http://localhost:3000
+
+  web:
+    ports:
+      - '3000:3000'

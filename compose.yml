@@ -2,48 +2,84 @@ services:
   postgres:
     image: postgres:18-alpine
     restart: always
+    environment:
+      POSTGRES_USER: bookwise
+      POSTGRES_PASSWORD: chiendeptrai
+      POSTGRES_DB: bookwise
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
     networks:
       - library-network
-    ports:
-      - 5432:5432
-    volumes:
-      - postgres-data:/var/lib/postgresql
 
   redis:
     image: redis:8-alpine
     restart: always
-    networks:
-      - library-network
-    ports:
-      - 6379:6379
+    command: ['redis-server', '--appendonly', 'yes']
     volumes:
       - redis-data:/data
-    command: ['redis-server', '--appendonly', 'yes']
+    networks:
+      - library-network
 
   rustfs:
     image: rustfs/rustfs:1.0.0-alpha.78
     restart: always
-    networks:
-      - library-network
-    ports:
-      - 9000:9000
-      - 9001:9001
     volumes:
       - rustfs-data:/data
+    networks:
+      - library-network
 
   api:
     build:
       context: .
       dockerfile: docker/api.dockerfile
     restart: always
-    ports:
-      - 8080:8080
-    networks:
-      - library-network
+    expose:
+      - '8080'
+    environment:
+      DATABASE_URL: postgres://bookwise:chiendeptrai@postgres:5432/bookwise
+      REDIS_URL: redis://redis:6379
+      RUSTFS_ENDPOINT: http://rustfs:9000
+      RUSTFS_ACCESS_KEY: rustfsadmin
+      RUSTFS_SECRET_KEY: rustfsadmin
+      JWT_SECRET: ngonluonmabanhmi
+      COOKIE_SECRET: bandeptraingonluon
+      FASTIFY_HOST: 0.0.0.0
+      CORS_ORIGINS: http://localhost
     depends_on:
       - postgres
       - redis
       - rustfs
+    networks:
+      - library-network
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/web.dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: /api
+    restart: always
+    environment:
+      API_URL: http://api:8080/api
+    expose:
+      - '3000'
+    depends_on:
+      - api
+    networks:
+      - library-network
+
+  nginx:
+    image: nginx:alpine
+    restart: always
+    ports:
+      - '80:80'
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - web
+      - api
+    networks:
+      - library-network
 
 networks:
   library-network:

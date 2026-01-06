@@ -21,7 +21,7 @@ export async function validateRefreshToken(
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}/auth/refresh-token`, {
+    const response = await fetch(`${API_BASE_URL()}/auth/refresh-token`, {
       method: 'POST',
       headers: {
         cookie: `refreshToken=${refreshToken}`
