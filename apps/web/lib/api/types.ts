@@ -143,6 +143,13 @@ export type CreateBookResponse = ApiResponse<Book>;
 export type UpdateBookResponse = ApiResponse<Book>;
 export type DeleteBookResponse = ApiResponse<Pick<Book, 'book_id' | 'title'>>;
 
+export type BookWithAvailability = Book & {
+  available_copies: number;
+  total_copies: number;
+};
+
+export type GetNewBooksResponse = ApiResponse<BookWithAvailability[]>;
+
 // Book Clone-related API response types
 export type BookClone = {
   book_clone_id: string;

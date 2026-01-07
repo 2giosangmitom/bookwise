@@ -1,5 +1,11 @@
-import { fetchApiWithAutoRefresh } from './apiClient';
-import { GetBooksResponse, CreateBookResponse, UpdateBookResponse, DeleteBookResponse } from './types';
+import { fetchApiWithAutoRefresh, fetchApi } from './apiClient';
+import {
+  GetBooksResponse,
+  CreateBookResponse,
+  UpdateBookResponse,
+  DeleteBookResponse,
+  GetNewBooksResponse
+} from './types';
 
 export function getBooks(accessToken: string | null, query?: { page?: number; limit?: number; searchTerm?: string }) {
   const page = query?.page ?? 1;
@@ -71,5 +77,12 @@ export function uploadBookImage(accessToken: string | null, isbn: string, file: 
   return fetchApiWithAutoRefresh<UpdateBookResponse>(`/staff/book/${isbn}/image`, accessToken, {
     method: 'POST',
     body: formData
+  });
+}
+
+// Public API endpoints
+export function getNewBooks(limit: number = 8) {
+  return fetchApi<GetNewBooksResponse>(`/book/new?limit=${limit}`, {
+    method: 'GET'
   });
 }
