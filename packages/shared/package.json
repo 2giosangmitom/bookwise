@@ -10,6 +10,7 @@
     "zod": "^4.3.5"
   },
   "devDependencies": {
-    "@bookwise/eslint-config": "workspace:*"
+    "@bookwise/eslint-config": "workspace:*",
+    "eslint": "^9.39.2"
   }
 }
