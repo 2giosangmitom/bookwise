@@ -19,6 +19,7 @@
     "@nestjs/platform-fastify": "^11.1.11",
     "@nestjs/schedule": "^6.1.0",
     "@nestjs/swagger": "^11.2.4",
+    "@nestjs/testing": "^11.1.11",
     "@nestjs/typeorm": "^11.0.0",
     "reflect-metadata": "^0.2.2",
     "typeorm": "^0.3.28"
@@ -29,6 +30,7 @@
     "@swc/cli": "^0.7.9",
     "@swc/core": "^1.15.8",
     "@types/node": "^25.0.3",
+    "eslint": "^9.39.2",
     "typescript": "^5.9.3"
   }
 }
