@@ -1,15 +1,6 @@
 [tools]
 node = "25"
 pnpm = "10"
-prettier = "3"
-
-[tasks.format]
-description = "Format code using Prettier"
-run = "prettier --write ."
-
-[tasks.check-format]
-description = "Check code formatting using Prettier"
-run = "prettier --check ."
 
 [tasks.compose-dev]
 description = "Run postgres, redis, and rustfs"

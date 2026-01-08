@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    // Module settings
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+
+    // Type safety settings
+    "strict": true,
+
+    // Other settings
+    "skipLibCheck": true,
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "removeComments": true,
+    "incremental": true,
+    "verbatimModuleSyntax": true
+  },
+  "exclude": ["node_modules"]
+}

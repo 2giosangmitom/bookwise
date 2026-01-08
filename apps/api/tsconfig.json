@@ -1,0 +1,12 @@
+{
+  "extends": ["../../tsconfig.base.json"],
+  "compilerOptions": {
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "outDir": "./dist",
+    "rootDir": ".",
+    "baseUrl": "."
+  },
+  "include": ["src/**/*.ts", "tests/**/*.ts"]
+}
