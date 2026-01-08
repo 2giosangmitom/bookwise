@@ -1,0 +1,30 @@
+{
+  "name": "bookwise",
+  "description": "Monorepo for Bookwise project",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "prepare": "husky"
+  },
+  "packageManager": "pnpm@10.27.0",
+  "devDependencies": {
+    "eslint": "^9.39.2",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.7.4",
+    "turbo": "^2.7.3"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "prettier": {
+    "printWidth": 120
+  },
+  "lint-staged": {
+    "**/*.{ts,tsx,js,mjs,cjs,json}": [
+      "pnpm lint --"
+    ]
+  }
+}

@@ -1,0 +1,31 @@
+services:
+  postgres:
+    image: postgres:18-alpine
+    volumes:
+      - postgres-data:/var/lib/postgresql
+    networks:
+      - bookwise-network
+
+  redis:
+    image: redis:8-alpine
+    volumes:
+      - redis-data:/data
+    networks:
+      - bookwise-network
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD}"]
+
+  rustfs:
+    image: rustfs/rustfs:1.0.0-alpha.78
+    restart: always
+    volumes:
+      - rustfs-data:/data
+    networks:
+      - bookwise-network
+
+networks:
+  bookwise-network:
+
+volumes:
+  postgres-data:
+  redis-data:
+  rustfs-data:

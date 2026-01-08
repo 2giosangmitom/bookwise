@@ -1,0 +1,17 @@
+# Turborepo
+.turbo
+
+# Next.js
+next-env.d.ts
+.next/
+
+# Node.js
+node_modules/
+
+# Build output
+dist/
+
+# Environment variable
+.env
+.env.*
+!.env.example

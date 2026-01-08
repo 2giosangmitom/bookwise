@@ -1,0 +1,15 @@
+{
+  "name": "@bookwise/shared",
+  "version": "1.0.0",
+  "description": "Shared utilities and types for the Bookwise project",
+  "type": "module",
+  "scripts": {
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "zod": "^4.3.5"
+  },
+  "devDependencies": {
+    "@bookwise/eslint-config": "workspace:*"
+  }
+}

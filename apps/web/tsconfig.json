@@ -1,0 +1,10 @@
+{
+  "extends": ["../../tsconfig.base.json"],
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "jsx": "react-jsx",
+    "plugins": [{ "name": "next" }],
+    "baseUrl": "."
+  },
+  "include": ["next-env.d.ts", ".next/types/**/*.ts", ".next/dev/types/**/*.ts", "**/*.ts", "**/*.tsx"]
+}
