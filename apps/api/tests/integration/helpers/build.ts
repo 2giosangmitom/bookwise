@@ -18,6 +18,12 @@ import authorRoutes from '@/modules/author/routes';
 import authorHooks from '@/modules/author/autohooks';
 import publisherRoutes from '@/modules/publisher/routes';
 import publisherHooks from '@/modules/publisher/autohooks';
+import bookRoutes from '@/modules/book/routes';
+import bookHooks from '@/modules/book/autohooks';
+import categoryRoutes from '@/modules/category/routes';
+import categoryHooks from '@/modules/category/autohooks';
+import ratingRoutes from '@/modules/rating/routes';
+import ratingHooks from '@/modules/rating/autohooks';
 import userRoutes from '@/modules/user/routes';
 import userHooks from '@/modules/user/autohooks';
 import adminHooks from '@/modules/admin/autohooks';
@@ -84,6 +90,30 @@ export async function build(): Promise<FastifyTypeBox> {
           instance.register(fp(publisherRoutes));
         },
         { prefix: '/publisher' }
+      );
+
+      apiInstance.register(
+        (instance) => {
+          instance.register(fp(bookHooks));
+          instance.register(fp(bookRoutes));
+        },
+        { prefix: '/book' }
+      );
+
+      apiInstance.register(
+        (instance) => {
+          instance.register(fp(categoryHooks));
+          instance.register(fp(categoryRoutes));
+        },
+        { prefix: '/category' }
+      );
+
+      apiInstance.register(
+        (instance) => {
+          instance.register(fp(ratingHooks));
+          instance.register(fp(ratingRoutes));
+        },
+        { prefix: '/rating' }
       );
 
       apiInstance.register(
