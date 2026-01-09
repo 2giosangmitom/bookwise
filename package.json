@@ -1,11 +1,14 @@
 {
   "name": "bookwise",
   "description": "Monorepo for Bookwise project",
+  "type": "module",
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
-    "prepare": "husky"
+    "prepare": "husky",
+    "format": "prettier --write",
+    "format:check": "prettier -c"
   },
   "packageManager": "pnpm@10.27.0",
   "devDependencies": {
@@ -23,7 +26,8 @@
   },
   "lint-staged": {
     "**/*.{ts,tsx,js,mjs}": [
-      "pnpm lint --"
+      "pnpm lint --",
+      "pnpm format:check"
     ]
   }
 }

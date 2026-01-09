@@ -16,7 +16,7 @@ export default defineConfig(
       sourceType: "module",
       parserOptions: {
         projectService: {
-          allowDefaultProject: ["*.mjs", "*.js"],
+          allowDefaultProject: ["*.mjs", "*.js", "*.cjs"],
         },
         tsconfigRootDir: process.cwd(),
       },

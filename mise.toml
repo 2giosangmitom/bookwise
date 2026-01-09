@@ -1,5 +1,5 @@
 [tools]
-node = "25"
+node = "22"
 pnpm = "10"
 
 [tasks.compose-dev]

@@ -3,11 +3,17 @@
   "version": "1.0.0",
   "description": "API server for the Bookwise project",
   "private": true,
-  "type": "commonjs",
   "scripts": {
     "build": "nest build",
     "dev": "nest start --watch",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "node --test",
+    "test:unit": "node --test 'src/**/*.test.ts'",
+    "test:e2e": "node --test 'tests/**/*.test.ts'",
+    "typeorm": "typeorm-ts-node-commonjs -d src/database/datasource.ts",
+    "migration:generate": "dotenv -e .env -- pnpm typeorm migration:generate --pretty",
+    "migration:run": "dotenv -e .env -- pnpm typeorm migration:run",
+    "migration:show": "dotenv -e .env -- pnpm typeorm migration:show"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.965.0",
@@ -26,16 +32,20 @@
     "@nestjs/swagger": "^11.2.4",
     "@nestjs/testing": "^11.1.11",
     "@nestjs/typeorm": "^11.0.0",
+    "pg": "^8.16.3",
     "reflect-metadata": "^0.2.2",
-    "typeorm": "^0.3.28"
+    "typeorm": "^0.3.28",
+    "zod": "^4.3.5"
   },
   "devDependencies": {
     "@nestjs/cli": "^11.0.14",
     "@nestjs/schematics": "^11.0.9",
     "@swc/cli": "^0.7.9",
     "@swc/core": "^1.15.8",
-    "@types/node": "^25.0.3",
+    "@types/node": "^22.19.3",
+    "dotenv-cli": "^11.0.0",
     "eslint": "^9.39.2",
+    "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   }
 }
