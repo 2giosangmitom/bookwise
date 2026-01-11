@@ -1,4 +1,5 @@
 [tools]
+dotenvx = "1"
 node = "22"
 pnpm = "10"
 
