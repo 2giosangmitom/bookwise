@@ -2,25 +2,12 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable } from "t
 import { Book } from "./book";
 
 @Entity()
-export class Publisher {
+export class Category {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
-  @Column({
-    type: "text",
-  })
-  description!: string;
-
   @Column()
-  website!: string;
-
-  @Column({
-    unique: true,
-  })
-  slug!: string;
-
-  @Column()
-  photoFileName!: string;
+  name!: string;
 
   @ManyToMany(() => Book, (book) => book.id, {
     nullable: false,
