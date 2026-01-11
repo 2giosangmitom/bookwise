@@ -11,9 +11,9 @@
     "test:unit": "node --test 'src/**/*.test.ts'",
     "test:e2e": "node --test 'tests/**/*.test.ts'",
     "typeorm": "typeorm-ts-node-commonjs -d src/database/datasource.ts",
-    "migration:generate": "dotenv -e .env -- pnpm typeorm migration:generate --pretty",
-    "migration:run": "dotenv -e .env -- pnpm typeorm migration:run",
-    "migration:show": "dotenv -e .env -- pnpm typeorm migration:show"
+    "migration:generate": "dotenvx run -- pnpm typeorm migration:generate --pretty",
+    "migration:run": "dotenvx run -- pnpm typeorm migration:run",
+    "migration:show": "dotenvx run -- pnpm typeorm migration:show"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.966.0",
@@ -43,7 +43,6 @@
     "@swc/cli": "^0.7.9",
     "@swc/core": "^1.15.8",
     "@types/node": "^22.19.5",
-    "dotenv-cli": "^11.0.0",
     "eslint": "^9.39.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"

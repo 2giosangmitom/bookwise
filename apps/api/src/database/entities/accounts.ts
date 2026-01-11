@@ -1,6 +1,11 @@
 import { Entity, Column, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./user";
 
+enum AccountStatus {
+  ACTIVE = "ACTIVE",
+  BANNED = "BANNED",
+}
+
 @Entity()
 export class Account {
   @PrimaryGeneratedColumn("uuid")
@@ -17,4 +22,11 @@ export class Account {
 
   @Column()
   passwordSalt!: string;
+
+  @Column({
+    type: "enum",
+    enum: AccountStatus,
+    default: AccountStatus.ACTIVE,
+  })
+  status!: AccountStatus;
 }

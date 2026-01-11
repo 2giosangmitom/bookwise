@@ -1,5 +1,11 @@
 import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 
+export enum Role {
+  ADMIN = "ADMIN",
+  LIBRARIAN = "LIBRARIAN",
+  MEMBER = "MEMBER",
+}
+
 @Entity()
 export class User {
   @PrimaryGeneratedColumn("uuid")
@@ -18,4 +24,11 @@ export class User {
 
   @Column()
   photoFileName!: string;
+
+  @Column({
+    type: "enum",
+    enum: Role,
+    default: Role.MEMBER,
+  })
+  role!: Role;
 }
