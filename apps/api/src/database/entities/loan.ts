@@ -17,6 +17,11 @@ export class Loan {
   })
   dueDate!: Date;
 
+  @Column({
+    type: "date",
+  })
+  returnDate!: Date;
+
   @ManyToMany(() => BookCopy, (bookCopy) => bookCopy.id, {
     nullable: false,
   })
