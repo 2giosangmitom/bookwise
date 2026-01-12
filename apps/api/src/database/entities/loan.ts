@@ -1,6 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne, JoinTable } from "typeorm";
-import { BookCopy } from "./bookCopy";
-import { User } from "./user";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne, JoinTable, type Relation } from "typeorm";
+import { BookCopy } from "./bookCopy.js";
+import { User } from "./user.js";
+import { LoanStatus } from "@bookwise/shared/enums";
 
 @Entity()
 export class Loan {
@@ -26,10 +27,17 @@ export class Loan {
     nullable: false,
   })
   @JoinTable()
-  bookCopies!: BookCopy[];
+  bookCopies!: Relation<BookCopy[]>;
 
   @ManyToOne(() => User, (user) => user.id, {
     nullable: false,
   })
-  user!: User;
+  user!: Relation<User>;
+
+  @Column({
+    type: "enum",
+    enum: LoanStatus,
+    default: LoanStatus.BORROWED,
+  })
+  status!: LoanStatus;
 }

@@ -1,5 +1,5 @@
-import { Column, Entity, ManyToOne, PrimaryColumn } from "typeorm";
-import { User } from "./user";
+import { Column, Entity, ManyToOne, PrimaryColumn, type Relation } from "typeorm";
+import { User } from "./user.js";
 
 @Entity()
 export class Session {
@@ -19,5 +19,5 @@ export class Session {
     nullable: false,
     onDelete: "CASCADE",
   })
-  user!: User;
+  user!: Relation<User>;
 }

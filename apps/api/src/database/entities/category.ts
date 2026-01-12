@@ -1,5 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable } from "typeorm";
-import { Book } from "./book";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable, type Relation } from "typeorm";
+import { Book } from "./book.js";
 
 @Entity()
 export class Category {
@@ -13,5 +13,5 @@ export class Category {
     nullable: false,
   })
   @JoinTable()
-  books!: Book[];
+  books!: Relation<Book[]>;
 }
