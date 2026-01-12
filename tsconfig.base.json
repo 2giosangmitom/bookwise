@@ -6,15 +6,14 @@
     "moduleResolution": "bundler",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
 
     // Type safety settings
     "strict": true,
 
     // Other settings
     "skipLibCheck": true,
-    "noEmit": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
     "removeComments": true,
     "incremental": true,
     "verbatimModuleSyntax": true
