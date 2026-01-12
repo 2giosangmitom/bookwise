@@ -9,28 +9,27 @@ export class Author {
   @Column()
   name!: string;
 
-  @Column({
-    type: "text",
-  })
+  @Column("text")
   biography!: string;
 
-  @Column({
-    type: "date",
-  })
+  @Column("date")
   dateOfBirth!: Date;
 
-  @Column({
-    type: "date",
+  @Column("date", {
+    nullable: true,
   })
-  dateOfDeath!: Date;
+  dateOfDeath!: Date | null;
 
   @Column({
     unique: true,
   })
   slug!: string;
 
-  @Column()
-  photoFileName!: string;
+  @Column({
+    type: String,
+    nullable: true,
+  })
+  photoFileName!: string | null;
 
   @ManyToMany(() => Book, (book) => book.id, {
     onDelete: "CASCADE",

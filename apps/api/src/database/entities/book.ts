@@ -17,8 +17,11 @@ export class Book {
   })
   description!: string;
 
-  @Column()
-  photoFileName!: string;
+  @Column({
+    type: String,
+    nullable: true,
+  })
+  photoFileName!: string | null;
 
   @Column({
     unique: true,

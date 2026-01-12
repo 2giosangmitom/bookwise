@@ -7,6 +7,14 @@
     "./enums": {
       "default": "./dist/enums.js",
       "types": "./dist/enums.d.ts"
+    },
+    "./schemas/*": {
+      "default": "./dist/schemas/*.js",
+      "types": "./dist/schemas/*.d.ts"
+    },
+    "./dtos/*": {
+      "default": "./dist/dtos/*.js",
+      "types": "./dist/dtos/*.d.ts"
     }
   },
   "scripts": {
