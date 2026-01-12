@@ -19,8 +19,11 @@ export class Publisher {
   })
   slug!: string;
 
-  @Column()
-  photoFileName!: string;
+  @Column({
+    type: String,
+    nullable: true,
+  })
+  photoFileName!: string | null;
 
   @ManyToMany(() => Book, (book) => book.id, {
     nullable: false,

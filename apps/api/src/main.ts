@@ -7,11 +7,13 @@ import packageJson from "../package.json" with { type: "json" };
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter());
 
+  app.setGlobalPrefix("/api");
+
   const config = new DocumentBuilder()
     .setTitle("Bookwise API")
     .setDescription("Bookwise API documentation")
     .setVersion(packageJson.version)
-    .addTag("🔒Auth", "Authentication module")
+    .addTag("Account", "Authentication module")
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("api", app, documentFactory);

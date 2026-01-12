@@ -9,16 +9,22 @@ export class User {
   @Column()
   firstName!: string;
 
-  @Column()
-  lastName!: string;
+  @Column({
+    type: String,
+    nullable: true,
+  })
+  lastName!: string | null;
 
   @Column({
     unique: true,
   })
   email!: string;
 
-  @Column()
-  photoFileName!: string;
+  @Column({
+    type: String,
+    nullable: true,
+  })
+  photoFileName!: string | null;
 
   @Column({
     type: "enum",

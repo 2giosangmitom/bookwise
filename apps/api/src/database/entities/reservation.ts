@@ -4,7 +4,7 @@ import { Book } from "./book.js";
 
 @Entity()
 export class Reservation {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn()
   id!: string;
 
   @ManyToOne(() => User, (user) => user.id, {
