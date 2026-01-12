@@ -1,10 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
-
-export enum Role {
-  ADMIN = "ADMIN",
-  LIBRARIAN = "LIBRARIAN",
-  MEMBER = "MEMBER",
-}
+import { Role } from "@bookwise/shared/enums";
 
 @Entity()
 export class User {

@@ -1,6 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, ManyToMany, JoinTable } from "typeorm";
-import { User } from "./user";
-import { Book } from "./book";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, ManyToMany, JoinTable, type Relation } from "typeorm";
+import { User } from "./user.js";
+import { Book } from "./book.js";
 
 @Entity()
 export class Reservation {
@@ -11,7 +11,7 @@ export class Reservation {
     nullable: false,
     onDelete: "CASCADE",
   })
-  user!: User;
+  user!: Relation<User>;
 
   @Column({
     type: "timestamp",
@@ -23,5 +23,5 @@ export class Reservation {
     onDelete: "RESTRICT",
   })
   @JoinTable()
-  books!: Book[];
+  books!: Relation<Book[]>;
 }
