@@ -1,7 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne, JoinTable, type Relation } from "typeorm";
 import { BookCopy } from "./bookCopy.js";
 import { User } from "./user.js";
-import { LoanStatus } from "@bookwise/shared/enums";
 
 @Entity()
 export class Loan {
@@ -19,6 +18,7 @@ export class Loan {
   dueDate!: Date;
 
   @Column({
+    nullable: true,
     type: "date",
   })
   returnDate!: Date;
@@ -33,11 +33,4 @@ export class Loan {
     nullable: false,
   })
   user!: Relation<User>;
-
-  @Column({
-    type: "enum",
-    enum: LoanStatus,
-    default: LoanStatus.BORROWED,
-  })
-  status!: LoanStatus;
 }
