@@ -32,6 +32,9 @@ importers:
       '@bookwise/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
+      '@bookwise/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       '@fastify/cookie':
         specifier: ^11.0.2
         version: 11.0.2
@@ -203,6 +206,9 @@ importers:
       eslint:
         specifier: ^9.39.2
         version: 9.39.2(jiti@2.6.1)
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
 
 packages:
 
