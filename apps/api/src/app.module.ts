@@ -30,6 +30,8 @@ const envSchema = z.object({
         type: "postgres",
         url: configService.get("DATABASE_URL"),
         synchronize: false,
+        migrationsRun: false,
+        entities: ["./database/entities/*"],
       }),
     }),
   ],
