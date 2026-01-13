@@ -4,8 +4,11 @@
   "description": "Shared utilities and types for the Bookwise project",
   "type": "module",
   "exports": {
-    "default": "./dist/index.cjs",
-    "types": "./dist/index.d.cts"
+    ".": {
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
   },
   "scripts": {
     "dev": "tsdown --watch",
@@ -21,5 +24,8 @@
     "eslint": "^9.39.2",
     "tsdown": "0.20.0-beta.1",
     "typescript": "^5.9.3"
-  }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.cts"
 }
