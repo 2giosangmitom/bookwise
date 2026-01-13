@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "description": "ESLint configuration for the Bookwise project",
   "scripts": {
-    "lint": "eslint",
-    "typecheck": "tsc --noEmit"
+    "lint": "eslint"
   },
   "exports": {
     "./base": {
