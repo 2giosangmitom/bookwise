@@ -1,8 +1,8 @@
 import { ConflictException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { User } from "@/database/entities/user.js";
-import { createUserDTO } from "@bookwise/shared/schemas/user";
+import { User } from "@/database/entities/user";
+import { createUserDTO } from "@bookwise/shared";
 
 @Injectable()
 export class UserService {

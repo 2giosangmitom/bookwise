@@ -4,21 +4,12 @@
   "description": "Shared utilities and types for the Bookwise project",
   "type": "module",
   "exports": {
-    "./enums": {
-      "default": "./dist/enums.js",
-      "types": "./dist/enums.d.ts"
-    },
-    "./schemas/*": {
-      "default": "./dist/schemas/*.js",
-      "types": "./dist/schemas/*.d.ts"
-    },
-    "./dtos/*": {
-      "default": "./dist/dtos/*.js",
-      "types": "./dist/dtos/*.d.ts"
-    }
+    "default": "./dist/index.cjs",
+    "types": "./dist/index.d.cts"
   },
   "scripts": {
-    "build": "tsc",
+    "dev": "tsdown --watch",
+    "build": "tsdown",
     "lint": "eslint"
   },
   "dependencies": {
@@ -27,6 +18,7 @@
   "devDependencies": {
     "@bookwise/eslint-config": "workspace:*",
     "eslint": "^9.39.2",
+    "tsdown": "0.20.0-beta.1",
     "typescript": "^5.9.3"
   }
 }

@@ -1,6 +1,6 @@
-import { Entity, Column, ManyToOne, PrimaryGeneratedColumn, type Relation } from "typeorm";
-import { User } from "./user.js";
-import { AccountStatus } from "@bookwise/shared/enums";
+import { Entity, Column, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "./user";
+import { AccountStatus } from "@bookwise/shared";
 
 @Entity()
 export class Account {
@@ -11,7 +11,7 @@ export class Account {
     onDelete: "CASCADE",
     nullable: false,
   })
-  user!: Relation<User>;
+  user!: User;
 
   @Column()
   passwordHash!: string;

@@ -3,10 +3,10 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { z } from "zod";
 import { APP_FILTER } from "@nestjs/core";
-import { DatabaseExceptionFilter } from "./filters/database.js";
-import { AccountModule } from "./modules/account/account.module.js";
-import { UserModule } from "./modules/user/user.module.js";
-import { ZodExceptionFilter } from "./filters/zod.js";
+import { DatabaseExceptionFilter } from "./filters/database";
+import { AccountModule } from "./modules/account/account.module";
+import { UserModule } from "./modules/user/user.module";
+import { ZodExceptionFilter } from "./filters/zod";
 
 const envSchema = z.object({
   DATABASE_URL: z.string(),

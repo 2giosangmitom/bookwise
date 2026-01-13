@@ -1,9 +1,9 @@
-import { Account } from "@/database/entities/accounts.js";
+import { Account } from "@/database/entities/accounts";
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { UserModule } from "../user/user.module.js";
-import { AccountService } from "./account.service.js";
-import { AccountController } from "./account.controller.js";
+import { UserModule } from "../user/user.module";
+import { AccountService } from "./account.service";
+import { AccountController } from "./account.controller";
 
 @Module({
   imports: [TypeOrmModule.forFeature([Account]), UserModule],

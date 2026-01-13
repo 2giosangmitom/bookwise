@@ -2,22 +2,21 @@
   "name": "@bookwise/eslint-config",
   "version": "1.0.0",
   "description": "ESLint configuration for the Bookwise project",
-  "private": true,
-  "type": "module",
   "scripts": {
-    "lint": "eslint"
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit"
   },
   "exports": {
     "./base": {
-      "default": "./base.js",
+      "default": "./src/base.mjs",
       "types": "./index.d.ts"
     },
     "./web": {
-      "default": "./web.js",
+      "default": "./src/web.mjs",
       "types": "./index.d.ts"
     },
     "./api": {
-      "default": "./api.js",
+      "default": "./src/api.mjs",
       "types": "./index.d.ts"
     }
   },
@@ -26,7 +25,7 @@
     "@types/node": "^22.19.5",
     "eslint": "^9.39.2",
     "eslint-config-next": "^16.1.1",
-    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
     "globals": "^17.0.0",
     "typescript-eslint": "^8.52.0"
   },

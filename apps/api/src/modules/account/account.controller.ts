@@ -1,8 +1,8 @@
 import { Body, Controller, Post, UsePipes } from "@nestjs/common";
-import { AccountService } from "./account.service.js";
-import { signUpSchema, type signUpDTO } from "@bookwise/shared/schemas/account";
-import { ZodValidationPipe } from "@/pipes/zod.js";
-import { SignUpResponse } from "@bookwise/shared/dtos/account";
+import { AccountService } from "./account.service";
+import { signUpSchema, type signUpDTO } from "@bookwise/shared";
+import { ZodValidationPipe } from "@/pipes/zod";
+import { SignUpResponse } from "@bookwise/shared";
 
 @Controller("/account")
 export class AccountController {

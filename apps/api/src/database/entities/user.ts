@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
-import { Role } from "@bookwise/shared/enums";
+import { Role } from "@bookwise/shared";
 
 @Entity()
 export class User {

@@ -1,5 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable, type Relation } from "typeorm";
-import { Book } from "./book.js";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable } from "typeorm";
+import { Book } from "./book";
 
 @Entity()
 export class Publisher {
@@ -29,5 +29,5 @@ export class Publisher {
     nullable: false,
   })
   @JoinTable()
-  books!: Relation<Book[]>;
+  books!: Book[];
 }

@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
-import { UserService } from "../user/user.service.js";
+import { UserService } from "../user/user.service";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Account } from "@/database/entities/accounts.js";
+import { Account } from "@/database/entities/accounts";
 import { Repository } from "typeorm";
-import { signUpDTO } from "@bookwise/shared/schemas/account";
-import { generateHash } from "@/utils/hashing.js";
+import { signUpDTO } from "@bookwise/shared";
+import { generateHash } from "@/utils/hashing";
 
 @Injectable()
 export class AccountService {
