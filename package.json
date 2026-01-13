@@ -5,6 +5,8 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
     "prepare": "husky",
     "format": "prettier --write"
   },
@@ -24,9 +26,7 @@
   },
   "lint-staged": {
     "**/*.{ts,tsx,js,mjs}": [
-      "pnpm lint --",
-      "pnpm test --",
-      "pnpm typecheck --"
+      "pnpm lint --"
     ]
   }
 }

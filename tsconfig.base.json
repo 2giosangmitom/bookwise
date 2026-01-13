@@ -15,7 +15,8 @@
 
     // Other settings
     "skipLibCheck": true,
-    "removeComments": true
+    "removeComments": true,
+    "allowJs": true
   },
   "exclude": ["node_modules", "dist"]
 }
