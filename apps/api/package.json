@@ -19,6 +19,7 @@
     "@bookwise/eslint-config": "workspace:*",
     "@bookwise/shared": "workspace:*",
     "@fastify/cookie": "^11.0.2",
+    "@fastify/helmet": "^13.0.2",
     "@fastify/multipart": "^9.3.0",
     "@fastify/redis": "^7.1.0",
     "@fastify/static": "^9.0.0",

@@ -10,6 +10,9 @@ import { ZodExceptionFilter } from "./filters/zod";
 
 const envSchema = z.object({
   DATABASE_URL: z.string(),
+  REDIS_URL: z.string(),
+  CORS_METHODS: z.string(),
+  CORS_ORIGIN: z.string(),
 });
 
 @Module({
