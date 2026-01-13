@@ -9,6 +9,8 @@ describe("UserService", () => {
   let userService: UserService;
   const mockUserRepository = {
     existsBy: jest.fn(() => false),
+    create: jest.fn(),
+    save: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -36,6 +38,19 @@ describe("UserService", () => {
           firstName: "Test",
         }),
       ).rejects.toThrow(ConflictException);
+    });
+
+    it("should save the user to database if email is available", async () => {
+      await userService.create({
+        email: "test@email.com",
+        firstName: "Test",
+      });
+
+      expect(mockUserRepository.create).toHaveBeenCalledWith({
+        email: "test@email.com",
+        firstName: "Test",
+      });
+      expect(mockUserRepository.save).toHaveBeenCalledTimes(1);
     });
   });
 });

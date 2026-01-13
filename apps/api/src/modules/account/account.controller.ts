@@ -22,6 +22,7 @@ export class AccountController {
     const createdAccount = await this.accountServive.signUp(body);
 
     res.code(201);
+
     return {
       message: "Account created successfully",
       data: { userId: createdAccount.user.id },
