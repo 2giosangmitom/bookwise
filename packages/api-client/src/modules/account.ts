@@ -1,4 +1,4 @@
-import { type signUpDTO, type SignUpResponse } from "@bookwise/shared";
+import { signUpDTO, SignUpResponse } from "@bookwise/shared";
 import { HttpClient } from "../http";
 
 function signUp(client: HttpClient, body: signUpDTO): Promise<SignUpResponse> {
