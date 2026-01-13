@@ -2,7 +2,6 @@
   "name": "@bookwise/web",
   "version": "1.0.0",
   "description": "Web client for the Bookwise project",
-  "private": true,
   "type": "module",
   "scripts": {
     "dev": "next dev",

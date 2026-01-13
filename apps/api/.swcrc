@@ -1,14 +1,8 @@
 {
   "$schema": "https://swc.rs/schema.json",
-  "minify": true,
-  "jsc": {
-    "target": "esnext",
-    "experimental": {
-      "keepImportAttributes": true
-    }
-  },
+  "minify": false,
   "module": {
-    "type": "nodenext"
+    "type": "commonjs"
   },
-  "exclude": ["src/database/datasource\\.ts", "src/database/migrations/.*", ".*\\.test\\.ts"]
+  "exclude": ["src/database/datasource\\.ts", "src/database/migrations/.*"]
 }

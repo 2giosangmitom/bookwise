@@ -1,7 +1,7 @@
-import { Entity, Column, ManyToOne, PrimaryGeneratedColumn, ManyToMany, type Relation } from "typeorm";
-import { Book } from "./book.js";
-import { Loan } from "./loan.js";
-import { BookCondition } from "@bookwise/shared/enums";
+import { Entity, Column, ManyToOne, PrimaryGeneratedColumn, ManyToMany } from "typeorm";
+import { Book } from "./book";
+import { Loan } from "./loan";
+import { BookCondition } from "@bookwise/shared";
 
 @Entity()
 export class BookCopy {
@@ -12,7 +12,7 @@ export class BookCopy {
     nullable: false,
     onDelete: "CASCADE",
   })
-  book!: Relation<Book>;
+  book!: Book;
 
   @Column({
     unique: true,
@@ -29,5 +29,5 @@ export class BookCopy {
   @ManyToMany(() => Loan, (loan) => loan.id, {
     nullable: false,
   })
-  loans!: Relation<Loan>;
+  loans!: Loan;
 }

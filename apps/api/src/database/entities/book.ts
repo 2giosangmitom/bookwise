@@ -1,8 +1,8 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, type Relation } from "typeorm";
-import { Reservation } from "./reservation.js";
-import { Author } from "./author.js";
-import { Category } from "./category.js";
-import { Publisher } from "./publisher.js";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany } from "typeorm";
+import { Reservation } from "./reservation";
+import { Author } from "./author";
+import { Category } from "./category";
+import { Publisher } from "./publisher";
 
 @Entity()
 export class Book {
@@ -36,20 +36,20 @@ export class Book {
   @ManyToMany(() => Reservation, (reservation) => reservation.id, {
     nullable: false,
   })
-  reservations!: Relation<Reservation[]>;
+  reservations!: Reservation[];
 
   @ManyToMany(() => Author, (author) => author.id, {
     nullable: false,
   })
-  authors!: Relation<Author[]>;
+  authors!: Author[];
 
   @ManyToMany(() => Category, (category) => category.id, {
     nullable: false,
   })
-  categories!: Relation<Category[]>;
+  categories!: Category[];
 
   @ManyToMany(() => Publisher, (publisher) => publisher.id, {
     nullable: false,
   })
-  publishers!: Relation<Publisher[]>;
+  publishers!: Publisher[];
 }
