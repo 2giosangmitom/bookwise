@@ -13,7 +13,6 @@ async function bootstrap() {
     .setTitle("Bookwise API")
     .setDescription("Bookwise API documentation")
     .setVersion(packageJson.version)
-    .addTag("Account", "Authentication module")
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("api", app, documentFactory);
