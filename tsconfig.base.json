@@ -8,7 +8,6 @@
     "allowSyntheticDefaultImports": true,
     "isolatedModules": true,
     "resolveJsonModule": true,
-    "verbatimModuleSyntax": true,
 
     // Type safety settings
     "strict": true,
