@@ -1,11 +1,10 @@
 import { Body, Controller, Post, UsePipes } from "@nestjs/common";
 import { AccountService } from "./account.service";
-import { signUpResponseSchema, signUpSchema, type signUpDTO } from "@bookwise/shared";
+import { signUpSchema, type signUpDTO } from "@bookwise/shared";
 import { ZodValidationPipe } from "@/pipes/zod";
 import { SignUpResponse } from "@bookwise/shared";
-import { ApiBody, ApiCreatedResponse } from "@nestjs/swagger";
-import { SchemaObject } from "@/types";
-import z from "zod";
+import { ApiBadRequestResponse, ApiBody, ApiConflictResponse, ApiCreatedResponse } from "@nestjs/swagger";
+import { ApiErrorResponseJsonSchema, SignUpBodyJsonSchema, SignUpResponseJsonSchema } from "@/constants";
 
 @Controller("/account")
 export class AccountController {
@@ -13,13 +12,13 @@ export class AccountController {
 
   @Post("/signup")
   @UsePipes(new ZodValidationPipe(signUpSchema))
-  @ApiBody({
-    schema: z.toJSONSchema(signUpSchema) as SchemaObject,
-  })
+  @ApiBody({ schema: SignUpBodyJsonSchema })
   @ApiCreatedResponse({
-    schema: z.toJSONSchema(signUpResponseSchema) as SchemaObject,
+    schema: SignUpResponseJsonSchema,
     description: "Account has been created successfully",
   })
+  @ApiConflictResponse({ schema: ApiErrorResponseJsonSchema, description: "Email already in use" })
+  @ApiBadRequestResponse({ schema: ApiErrorResponseJsonSchema, description: "Validation failed" })
   async signUp(@Body() body: signUpDTO): Promise<SignUpResponse> {
     const createdAccount = await this.accountServive.signUp(body);
 
