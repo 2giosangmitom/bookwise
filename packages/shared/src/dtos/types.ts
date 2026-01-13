@@ -1,4 +1,7 @@
-export type ApiResponse<T> = {
-  message: string;
-  data: T;
-};
+import z from "zod";
+
+export const apiResponseSchema = z.object({
+  message: z.string(),
+  data: z.any(),
+});
+export type ApiResponse = z.infer<typeof apiResponseSchema>;

@@ -1,5 +1,9 @@
-import { type ApiResponse } from "./types.js";
+import z from "zod";
+import { apiResponseSchema } from "./types.js";
 
-export type SignUpResponse = ApiResponse<{
-  userId: string;
-}>;
+export const signUpResponseSchema = apiResponseSchema.extend({
+  data: z.object({
+    userId: z.string(),
+  }),
+});
+export type SignUpResponse = z.infer<typeof signUpResponseSchema>;

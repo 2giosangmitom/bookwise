@@ -9,7 +9,6 @@
       "options": {
         "swcrcPath": ".swcrc.build.json"
       }
-    },
-    "plugins": ["@nestjs/swagger"]
+    }
   }
 }
