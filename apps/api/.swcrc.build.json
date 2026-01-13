@@ -19,5 +19,5 @@
       "@/*": ["src/*"]
     }
   },
-  "exclude": ["src/database/datasource\\.ts", "src/database/migrations/.*"]
+  "exclude": ["src/database/datasource\\.ts", "src/database/migrations/.*", ".*\\.test\\.ts$"]
 }
