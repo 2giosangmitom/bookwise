@@ -12,5 +12,13 @@ describe("utils.hashing", () => {
 
       expect(hash1).toBe(hash2);
     });
+
+    it("should produce different hashes when using different salts", async () => {
+      const input = "thisIsAPassword";
+      const { hash: hash1 } = await hashingUtils.generateHash(input);
+      const { hash: hash2 } = await hashingUtils.generateHash(input);
+
+      expect(hash1).not.toBe(hash2);
+    });
   });
 });
