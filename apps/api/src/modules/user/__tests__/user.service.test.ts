@@ -8,7 +8,7 @@ import { ConflictException } from "@nestjs/common";
 describe("UserService", () => {
   let userService: UserService;
   const mockUserRepository = {
-    existsBy: jest.fn(() => false),
+    existsBy: jest.fn(),
     create: jest.fn(),
     save: jest.fn(),
   };
@@ -25,11 +25,11 @@ describe("UserService", () => {
     }).compile();
 
     userService = moduleRef.get(UserService);
+    jest.clearAllMocks();
   });
 
   describe("create", () => {
     it("should throw conflict error when email is already in use", async () => {
-      // Mock exists method
       mockUserRepository.existsBy.mockImplementationOnce(() => true);
 
       await expect(
@@ -38,18 +38,31 @@ describe("UserService", () => {
           firstName: "Test",
         }),
       ).rejects.toThrow(ConflictException);
+      expect(mockUserRepository.save).not.toHaveBeenCalled();
+    });
+
+    it("should check email existence using existsBy with correct filter", async () => {
+      await userService.create({
+        email: "available@email.com",
+        firstName: "Test",
+      });
+
+      expect(mockUserRepository.existsBy).toHaveBeenCalledWith({
+        email: "available@email.com",
+      });
     });
 
     it("should save the user to database if email is available", async () => {
-      await userService.create({
-        email: "test@email.com",
-        firstName: "Test",
-      });
+      mockUserRepository.existsBy.mockImplementationOnce(() => false);
 
-      expect(mockUserRepository.create).toHaveBeenCalledWith({
+      const dto = {
         email: "test@email.com",
         firstName: "Test",
-      });
+      };
+
+      await userService.create(dto);
+
+      expect(mockUserRepository.create).toHaveBeenCalledWith(dto);
       expect(mockUserRepository.save).toHaveBeenCalledTimes(1);
     });
   });

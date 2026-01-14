@@ -39,13 +39,16 @@ describe("AccountService", () => {
     }).compile();
 
     accountService = moduleRef.get(AccountService);
+    jest.clearAllMocks();
   });
 
   describe("signUp", () => {
-    it("should save hashed password before save to database", async () => {
+    it("should save hashed password before saving to database", async () => {
       mockHashingUtils.generateHash.mockImplementationOnce(() => ({ hash: "mockHash", salt: "mockSalt" }));
+      const createdAccount = { id: "account-id" };
+      mockAccountRepository.save.mockImplementationOnce(() => createdAccount);
 
-      await accountService.signUp({
+      const result = await accountService.signUp({
         email: "test@email.com",
         firstName: "Test",
         password: "ThisIsPassword",
@@ -59,6 +62,20 @@ describe("AccountService", () => {
         }),
       );
       expect(mockAccountRepository.save).toHaveBeenCalledTimes(1);
+      expect(result).toBe(createdAccount);
+    });
+
+    it("should delegate user creation to UserService with given DTO", async () => {
+      mockHashingUtils.generateHash.mockImplementationOnce(() => ({ hash: "mockHash", salt: "mockSalt" }));
+      const dto = {
+        email: "another@email.com",
+        firstName: "Another",
+        password: "Password123",
+      };
+
+      await accountService.signUp(dto);
+
+      expect(mockUserService.create).toHaveBeenCalledWith(dto);
     });
   });
 });
