@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne, JoinTable } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne, JoinTable, type Relation } from "typeorm";
 import { BookCopy } from "./bookCopy";
 import { User } from "./user";
 
@@ -27,10 +27,10 @@ export class Loan {
     nullable: false,
   })
   @JoinTable()
-  bookCopies!: BookCopy[];
+  bookCopies!: Relation<BookCopy[]>;
 
   @ManyToOne(() => User, (user) => user.id, {
     nullable: false,
   })
-  user!: User;
+  user!: Relation<User>;
 }
