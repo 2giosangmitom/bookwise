@@ -7,6 +7,13 @@ import { DatabaseExceptionFilter } from "./filters/database";
 import { AccountModule } from "./modules/account/account.module";
 import { UserModule } from "./modules/user/user.module";
 import { ZodExceptionFilter } from "./filters/zod";
+import { AuthorModule } from "./modules/author/author.module";
+import { BookModule } from "./modules/book/book.module";
+import { LoanModule } from "./modules/loan/loan.module";
+import { CategoryModule } from "./modules/category/category.module";
+import { BookCopyModule } from "./modules/bookCopy/bookCopy.module";
+import { ReservationModule } from "./modules/reservation/reservation.module";
+import { PublisherModule } from "./modules/publisher/publisher.module";
 
 const envSchema = z.object({
   DATABASE_URL: z.string(),
@@ -44,6 +51,13 @@ const envSchema = z.object({
     }),
     AccountModule,
     UserModule,
+    BookModule,
+    AuthorModule,
+    LoanModule,
+    CategoryModule,
+    BookCopyModule,
+    ReservationModule,
+    PublisherModule,
   ],
   providers: [
     {
