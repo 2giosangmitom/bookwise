@@ -6,6 +6,9 @@ export class Publisher {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
+  @Column()
+  name!: string;
+
   @Column({
     type: "text",
   })

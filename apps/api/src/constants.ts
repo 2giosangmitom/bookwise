@@ -5,6 +5,8 @@ import {
   createAuthorSchema,
   createAuthorResponseSchema,
   deleteAuthorResponseSchema,
+  createPublisherSchema,
+  createPublisherResponseSchema,
 } from "@bookwise/shared";
 import { SchemaObject } from "./types";
 import z from "zod";
@@ -17,3 +19,6 @@ export const SignUpResponseJsonSchema = z.toJSONSchema(signUpResponseSchema) as 
 export const CreateAuthorBodyJsonSchema = z.toJSONSchema(createAuthorSchema) as SchemaObject;
 export const CreateAuthorResponseJsonSchema = z.toJSONSchema(createAuthorResponseSchema) as SchemaObject;
 export const DeleteAuthorResponseJsonSchema = z.toJSONSchema(deleteAuthorResponseSchema) as SchemaObject;
+
+export const CreatePublisherBodyJsonSchema = z.toJSONSchema(createPublisherSchema) as SchemaObject;
+export const CreatePublisherResponseJsonSchema = z.toJSONSchema(createPublisherResponseSchema) as SchemaObject;
