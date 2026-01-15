@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne, PrimaryGeneratedColumn, ManyToMany } from "typeorm";
+import { Entity, Column, ManyToOne, PrimaryGeneratedColumn, ManyToMany, type Relation } from "typeorm";
 import { Book } from "./book";
 import { Loan } from "./loan";
 import { BookCondition } from "@bookwise/shared";
@@ -12,7 +12,7 @@ export class BookCopy {
     nullable: false,
     onDelete: "CASCADE",
   })
-  book!: Book;
+  book!: Relation<Book>;
 
   @Column({
     unique: true,
@@ -29,5 +29,5 @@ export class BookCopy {
   @ManyToMany(() => Loan, (loan) => loan.id, {
     nullable: false,
   })
-  loans!: Loan;
+  loans!: Relation<Loan[]>;
 }

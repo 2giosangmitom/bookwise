@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, type Relation } from "typeorm";
 import { Reservation } from "./reservation";
 import { Author } from "./author";
 import { Category } from "./category";
@@ -36,20 +36,20 @@ export class Book {
   @ManyToMany(() => Reservation, (reservation) => reservation.id, {
     nullable: false,
   })
-  reservations!: Reservation[];
+  reservations!: Relation<Reservation[]>;
 
   @ManyToMany(() => Author, (author) => author.id, {
     nullable: false,
   })
-  authors!: Author[];
+  authors!: Relation<Author[]>;
 
   @ManyToMany(() => Category, (category) => category.id, {
     nullable: false,
   })
-  categories!: Category[];
+  categories!: Relation<Category[]>;
 
   @ManyToMany(() => Publisher, (publisher) => publisher.id, {
     nullable: false,
   })
-  publishers!: Publisher[];
+  publishers!: Relation<Publisher[]>;
 }

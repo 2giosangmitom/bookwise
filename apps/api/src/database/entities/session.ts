@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryColumn, type Relation } from "typeorm";
 import { User } from "./user";
 
 @Entity()
@@ -19,5 +19,5 @@ export class Session {
     nullable: false,
     onDelete: "CASCADE",
   })
-  user!: User;
+  user!: Relation<User>;
 }
