@@ -7,7 +7,7 @@ This monorepo uses **pnpm** workspaces and **Turbo**. It contains a NestJS API, 
 - `apps/api`: NestJS backend (Fastify, TypeORM, Postgres).
 - `apps/web`: Next.js App Router frontend with Tailwind.
 - `packages/shared`: Shared Zod schemas, DTOs, and enums.
-- `packages/api-client`: Typed API client for the web app.
+- `packages/sdk`: SDK for the Bookwise API.
 - `packages/eslint-config`: Shared ESLint configuration (`@bookwise/eslint-config`).
 
 ## 🚀 Build, Lint, Typecheck & Test
@@ -16,22 +16,22 @@ This monorepo uses **pnpm** workspaces and **Turbo**. It contains a NestJS API, 
 
 Run these from the repo root:
 
-- `pnpm build` – `turbo run build` across all apps/packages.
-- `pnpm dev` – `turbo run dev` (usually API + Web).
-- `pnpm lint` – `turbo run lint` using shared ESLint config.
-- `pnpm typecheck` – `turbo run typecheck` using `tsc --noEmit`.
-- `pnpm test` – `turbo run test` (primarily API Jest tests).
-- `pnpm format` – `prettier --write` (uses root `prettier` config).
+- `pnpm build` - `turbo run build` across all apps/packages.
+- `pnpm dev` - `turbo run dev` (usually API + Web).
+- `pnpm lint` - `turbo run lint` using shared ESLint config.
+- `pnpm typecheck` - `turbo run typecheck` using `tsc --noEmit`.
+- `pnpm test` - `turbo run test` (primarily API Jest tests).
+- `pnpm format` - `prettier --write` (uses root `prettier` config).
 
 ### API (`apps/api`)
 
 From `apps/api`:
 
-- `pnpm dev` – `nest start --watch`.
-- `pnpm build` – `nest build`.
-- `pnpm lint` – `eslint` (uses `@bookwise/eslint-config/api`).
-- `pnpm typecheck` – `tsc --noEmit`.
-- `pnpm test` – `jest` (NestJS + SWC).
+- `pnpm dev` - `nest start --watch`.
+- `pnpm build` - `nest build`.
+- `pnpm lint` - `eslint` (uses `@bookwise/eslint-config/api`).
+- `pnpm typecheck` - `tsc --noEmit`.
+- `pnpm test` - `jest` (NestJS + SWC).
 
 **Run a single test file (API/Jest):**
 
@@ -50,11 +50,11 @@ pnpm test -- src/modules/auth/auth.service.spec.ts -t "should create user"
 
 From `apps/web`:
 
-- `pnpm dev` – `next dev`.
-- `pnpm build` – `next build`.
-- `pnpm start` – `next start`.
-- `pnpm lint` – `eslint` (uses `@bookwise/eslint-config/web`).
-- `pnpm typecheck` – `tsc --noEmit`.
+- `pnpm dev` - `next dev`.
+- `pnpm build` - `next build`.
+- `pnpm start` - `next start`.
+- `pnpm lint` - `eslint` (uses `@bookwise/eslint-config/web`).
+- `pnpm typecheck` - `tsc --noEmit`.
 
 (Currently there are no project-specific Jest/Playwright tests configured in `apps/web`; add new tests close to features if needed.)
 
@@ -80,7 +80,7 @@ From `apps/web`:
 - **Shared packages**: Import from `@bookwise/*` workspaces.
   ```ts
   import { signUpSchema } from "@bookwise/shared";
-  import { apiClient } from "@bookwise/api-client";
+  import { createApiClient } from "@bookwise/sdk";
   ```
 - **Web imports**:
   - Use path aliases defined in `apps/web/tsconfig.json` (e.g. `@/components/...`, `@/lib/...`) instead of deep `../../../`.
