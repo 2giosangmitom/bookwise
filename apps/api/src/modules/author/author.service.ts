@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from "@nestjs/common";
+import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Author } from "@/database/entities/author";
@@ -29,5 +29,15 @@ export class AuthorService {
     });
 
     return this.authorRepository.save(author);
+  }
+
+  async delete(id: string): Promise<Author> {
+    const author = await this.authorRepository.findOneBy({ id });
+
+    if (!author) {
+      throw new NotFoundException("Author not found");
+    }
+
+    return this.authorRepository.remove(author);
   }
 }
