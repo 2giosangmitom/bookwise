@@ -11,7 +11,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@bookwise/api-client": "workspace:*",
+    "@bookwise/sdk": "workspace:*",
     "@bookwise/eslint-config": "workspace:*",
     "@bookwise/shared": "workspace:*",
     "@radix-ui/react-alert-dialog": "^1.1.15",
@@ -25,6 +25,8 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "@tailwindcss/postcss": "^4.1.18",
     "@tanstack/react-form": "^1.27.7",
+    "@tanstack/react-pacer": "^0.19.2",
+    "@tanstack/react-query": "^5.90.17",
     "@tanstack/react-table": "^8.21.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

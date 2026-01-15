@@ -1,7 +1,7 @@
 {
-  "name": "@bookwise/api-client",
+  "name": "@bookwise/sdk",
   "version": "1.0.0",
-  "description": "API client for the Bookwise project",
+  "description": "SDK for the Bookwise API",
   "type": "module",
   "exports": {
     ".": {
