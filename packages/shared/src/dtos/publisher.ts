@@ -7,3 +7,14 @@ export const createPublisherResponseSchema = apiResponseSchema.extend({
   }),
 });
 export type CreatePublisherResponse = z.infer<typeof createPublisherResponseSchema>;
+
+export const deletePublisherResponseSchema = apiResponseSchema.extend({
+  data: z.object({
+    name: z.string(),
+    description: z.string(),
+    website: z.string(),
+    slug: z.string(),
+    photoFileName: z.string().nullable(),
+  }),
+});
+export type DeletePublisherResponse = z.infer<typeof deletePublisherResponseSchema>;
