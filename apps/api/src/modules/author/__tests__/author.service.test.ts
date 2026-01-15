@@ -3,7 +3,7 @@ import { Test } from "@nestjs/testing";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { Author } from "@/database/entities/author";
 import { AuthorService } from "../author.service";
-import { ConflictException } from "@nestjs/common";
+import { ConflictException, NotFoundException } from "@nestjs/common";
 
 describe("AuthorService", () => {
   let authorService: AuthorService;
@@ -11,6 +11,8 @@ describe("AuthorService", () => {
     existsBy: jest.fn(),
     create: jest.fn(),
     save: jest.fn(),
+    findOneBy: jest.fn(),
+    remove: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -68,7 +70,7 @@ describe("AuthorService", () => {
         slug: "author-name",
       };
 
-      mockAuthorRepository.create.mockImplementation((input) => input);
+      mockAuthorRepository.create.mockReturnValueOnce(dto);
 
       await authorService.create(dto);
 
@@ -80,6 +82,30 @@ describe("AuthorService", () => {
         slug: "author-name",
       });
       expect(mockAuthorRepository.save).toHaveBeenCalledTimes(1);
+    });
+
+    it("should throw NotFoundException when deleting non-existent author", async () => {
+      mockAuthorRepository.findOneBy.mockImplementationOnce(async () => null);
+
+      await expect(authorService.delete("non-existent-id")).rejects.toThrow(NotFoundException);
+      expect(mockAuthorRepository.remove).not.toHaveBeenCalled();
+    });
+
+    it("should delete author successfully when found", async () => {
+      const mockAuthor = {
+        id: "author-id",
+        name: "Test Author",
+        slug: "test-author",
+      };
+
+      mockAuthorRepository.findOneBy.mockImplementationOnce(async () => mockAuthor);
+      mockAuthorRepository.remove.mockImplementationOnce(async () => mockAuthor);
+
+      const result = await authorService.delete("author-id");
+
+      expect(mockAuthorRepository.findOneBy).toHaveBeenCalledWith({ id: "author-id" });
+      expect(mockAuthorRepository.remove).toHaveBeenCalledWith(mockAuthor);
+      expect(result).toBe(mockAuthor);
     });
   });
 });
