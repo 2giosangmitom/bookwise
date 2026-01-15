@@ -3,7 +3,7 @@ import { Test } from "@nestjs/testing";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { Publisher } from "@/database/entities/publisher";
 import { PublisherService } from "../publisher.service";
-import { ConflictException } from "@nestjs/common";
+import { ConflictException, NotFoundException } from "@nestjs/common";
 
 describe("PublisherService", () => {
   let publisherService: PublisherService;
@@ -11,6 +11,8 @@ describe("PublisherService", () => {
     existsBy: jest.fn(),
     create: jest.fn(),
     save: jest.fn(),
+    findOneBy: jest.fn(),
+    remove: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -79,6 +81,35 @@ describe("PublisherService", () => {
         slug: "publisher-slug",
       });
       expect(mockPublisherRepository.save).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("delete", () => {
+    it("should throw NotFoundException when deleting non-existent publisher", async () => {
+      mockPublisherRepository.findOneBy.mockImplementationOnce(async () => null);
+
+      await expect(publisherService.delete("non-existent-id")).rejects.toThrow(NotFoundException);
+      expect(mockPublisherRepository.remove).not.toHaveBeenCalled();
+    });
+
+    it("should delete publisher successfully when found", async () => {
+      const mockPublisher = {
+        id: "publisher-id",
+        name: "Test Publisher",
+        description: "Test Description",
+        website: "https://test.com",
+        slug: "test-publisher",
+        photoFileName: null,
+      };
+
+      mockPublisherRepository.findOneBy.mockImplementationOnce(async () => mockPublisher);
+      mockPublisherRepository.remove.mockImplementationOnce(async () => mockPublisher);
+
+      const result = await publisherService.delete("publisher-id");
+
+      expect(mockPublisherRepository.findOneBy).toHaveBeenCalledWith({ id: "publisher-id" });
+      expect(mockPublisherRepository.remove).toHaveBeenCalledWith(mockPublisher);
+      expect(result).toBe(mockPublisher);
     });
   });
 });
