@@ -1,7 +1,7 @@
 import { describe, it, expect } from "@jest/globals";
 import { HashingUtils } from "../hashing";
 
-describe("utils.hashing", () => {
+describe("HashingUtils", () => {
   const hashingUtils = new HashingUtils();
 
   describe("generateHash", () => {
