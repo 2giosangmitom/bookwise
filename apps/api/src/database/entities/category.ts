@@ -9,6 +9,11 @@ export class Category {
   @Column()
   name!: string;
 
+  @Column({
+    unique: true,
+  })
+  slug!: string;
+
   @ManyToMany(() => Book, (book) => book.id, {
     nullable: false,
   })
