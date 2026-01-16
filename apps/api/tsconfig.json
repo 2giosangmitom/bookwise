@@ -11,7 +11,19 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
-    }
+    },
+    "plugins": [
+      {
+        "transform": "@nestia/core/lib/transform",
+        "validate": "validate",
+        "stringify": "assert"
+      },
+      { "transform": "typia/lib/transform" },
+      { "transform": "@nestia/sdk/lib/transform" }
+    ],
+    "skipLibCheck": true,
+    "strictNullChecks": true,
+    "strict": true
   },
   "include": ["src/**/*.ts", "tests/**/*.ts"]
 }

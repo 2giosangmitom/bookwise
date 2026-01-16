@@ -1,11 +1,15 @@
-/** @type {import("jest").Config} */
-const config = {
-  testMatch: ["**/__tests__/**/*.test.ts", "**/?(*.)+(spec|test).ts"],
-  transform: {
-    "^.+\\.ts$": ["@swc/jest"],
-  },
-  testPathIgnorePatterns: ["/node_modules/", "/dist/"],
-  testEnvironment: "node",
-};
+const { createDefaultPreset, pathsToModuleNameMapper } = require("ts-jest");
+const { compilerOptions } = require("./tsconfig.json");
 
-module.exports = config;
+const tsJestTransformCfg = createDefaultPreset().transform;
+
+/** @type {import("jest").Config} **/
+module.exports = {
+  testEnvironment: "node",
+  transform: {
+    ...tsJestTransformCfg,
+  },
+  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths),
+  modulePaths: [compilerOptions.baseUrl],
+  testPathIgnorePatterns: ["/node_modules/", "/dist/"],
+};

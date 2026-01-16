@@ -3,8 +3,8 @@ import { UserService } from "../user/user.service";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Account } from "@/database/entities/account";
 import { Repository } from "typeorm";
-import { signUpDTO } from "@bookwise/shared";
 import { HashingUtils } from "@/utils/hashing";
+import { SignUpBody } from "./account.dto";
 
 @Injectable()
 export class AccountService {
@@ -14,7 +14,7 @@ export class AccountService {
     private hashingUtils: HashingUtils,
   ) {}
 
-  async signUp(data: signUpDTO) {
+  async signUp(data: SignUpBody) {
     const createdUser = await this.userService.create(data);
 
     const { hash, salt } = await this.hashingUtils.generateHash(data.password);

@@ -1,10 +1,10 @@
 import { NestFactory } from "@nestjs/core";
 import { FastifyAdapter, NestFastifyApplication } from "@nestjs/platform-fastify";
 import { AppModule } from "./app.module";
-import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import helmet from "@fastify/helmet";
-import packageJson from "../package.json";
 import { ConfigService } from "@nestjs/config";
+import { SwaggerModule } from "@nestjs/swagger";
+import { NestiaSwaggerComposer } from "@nestia/sdk";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter());
@@ -22,14 +22,17 @@ async function bootstrap() {
 
   app.setGlobalPrefix("/api");
 
-  const config = new DocumentBuilder()
-    .setTitle("Bookwise API")
-    .setDescription("Bookwise API documentation")
-    .setVersion(packageJson.version)
-    .build();
-
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup("api", app, document);
+  const document = await NestiaSwaggerComposer.document(app, {
+    openapi: "3.1",
+    servers: [
+      {
+        url: "http://localhost:3000",
+        description: "Localhost",
+      },
+    ],
+  });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  SwaggerModule.setup("api", app, document as any);
 
   await app.listen(process.env.PORT ?? 8080);
 }

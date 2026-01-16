@@ -1,25 +1,14 @@
-import { Body, Controller, Post, UsePipes } from "@nestjs/common";
+import { Controller } from "@nestjs/common";
 import { AccountService } from "./account.service";
-import { signUpSchema, type signUpDTO } from "@bookwise/shared";
-import { ZodValidationPipe } from "@/pipes/zod";
-import { SignUpResponse } from "@bookwise/shared";
-import { ApiBadRequestResponse, ApiBody, ApiConflictResponse, ApiCreatedResponse } from "@nestjs/swagger";
-import { ApiErrorResponseJsonSchema, SignUpBodyJsonSchema, SignUpResponseJsonSchema } from "@/constants";
+import { TypedRoute, TypedBody } from "@nestia/core";
+import { SignUpResponse, type SignUpBody } from "./account.dto";
 
 @Controller("/account")
 export class AccountController {
   constructor(private accountServive: AccountService) {}
 
-  @Post("/signup")
-  @UsePipes(new ZodValidationPipe(signUpSchema))
-  @ApiBody({ schema: SignUpBodyJsonSchema })
-  @ApiCreatedResponse({
-    schema: SignUpResponseJsonSchema,
-    description: "Account has been created successfully",
-  })
-  @ApiConflictResponse({ schema: ApiErrorResponseJsonSchema, description: "Email already in use" })
-  @ApiBadRequestResponse({ schema: ApiErrorResponseJsonSchema, description: "Validation failed" })
-  async signUp(@Body() body: signUpDTO): Promise<SignUpResponse> {
+  @TypedRoute.Post("/signup")
+  async signUp(@TypedBody() body: SignUpBody): Promise<SignUpResponse> {
     const createdAccount = await this.accountServive.signUp(body);
 
     return {

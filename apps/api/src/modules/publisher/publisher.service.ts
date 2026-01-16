@@ -2,7 +2,7 @@ import { ConflictException, Injectable, NotFoundException } from "@nestjs/common
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Publisher } from "@/database/entities/publisher";
-import { type createPublisherDTO } from "@bookwise/shared";
+import { type CreatePublisherBody } from "./publisher.dto";
 
 @Injectable()
 export class PublisherService {
@@ -11,7 +11,7 @@ export class PublisherService {
     private readonly publisherRepository: Repository<Publisher>,
   ) {}
 
-  async create(data: createPublisherDTO): Promise<Publisher> {
+  async create(data: CreatePublisherBody): Promise<Publisher> {
     const existed = await this.publisherRepository.existsBy({
       slug: data.slug,
     });

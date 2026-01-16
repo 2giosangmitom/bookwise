@@ -2,7 +2,7 @@ import { ConflictException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { User } from "@/database/entities/user";
-import { createUserDTO } from "@bookwise/shared";
+import { CreateUserBody } from "./user.dto";
 
 @Injectable()
 export class UserService {
@@ -11,7 +11,7 @@ export class UserService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async create(data: createUserDTO) {
+  async create(data: CreateUserBody) {
     const existed = await this.userRepository.existsBy({
       email: data.email,
     });
@@ -20,11 +20,7 @@ export class UserService {
       throw new ConflictException("Email already in use");
     }
 
-    const user = this.userRepository.create({
-      email: data.email,
-      firstName: data.firstName,
-      lastName: data.lastName,
-    });
+    const user = this.userRepository.create(data);
 
     return this.userRepository.save(user);
   }

@@ -2,7 +2,7 @@ import { ConflictException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Category } from "@/database/entities/category";
-import { type createCategoryDTO } from "@bookwise/shared";
+import { CreateCategoryBody } from "./category.dto";
 
 @Injectable()
 export class CategoryService {
@@ -11,7 +11,7 @@ export class CategoryService {
     private readonly categoryRepository: Repository<Category>,
   ) {}
 
-  async create(data: createCategoryDTO): Promise<Category> {
+  async create(data: CreateCategoryBody): Promise<Category> {
     const existed = await this.categoryRepository.existsBy({
       slug: data.slug,
     });
@@ -20,10 +20,7 @@ export class CategoryService {
       throw new ConflictException("Slug already in use");
     }
 
-    const category = this.categoryRepository.create({
-      name: data.name,
-      slug: data.slug,
-    });
+    const category = this.categoryRepository.create(data);
 
     return this.categoryRepository.save(category);
   }

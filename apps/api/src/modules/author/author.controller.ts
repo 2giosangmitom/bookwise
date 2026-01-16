@@ -1,41 +1,14 @@
-import { Body, Controller, Delete, Param, Post, UsePipes, ParseUUIDPipe } from "@nestjs/common";
+import { Controller, Param, ParseUUIDPipe } from "@nestjs/common";
 import { AuthorService } from "./author.service";
-import {
-  type createAuthorDTO,
-  createAuthorSchema,
-  type CreateAuthorResponse,
-  type DeleteAuthorResponse,
-} from "@bookwise/shared";
-import { ZodValidationPipe } from "@/pipes/zod";
-import {
-  ApiBadRequestResponse,
-  ApiBody,
-  ApiConflictResponse,
-  ApiCreatedResponse,
-  ApiNotFoundResponse,
-  ApiOkResponse,
-} from "@nestjs/swagger";
-import {
-  ApiErrorResponseJsonSchema,
-  CreateAuthorBodyJsonSchema,
-  CreateAuthorResponseJsonSchema,
-  DeleteAuthorResponseJsonSchema,
-} from "@/constants";
+import { TypedBody, TypedRoute } from "@nestia/core";
+import { CreateAuthorResponse, DeleteAuthorResponse, type CreateAuthorBody } from "./author.dto";
 
 @Controller("/author")
 export class AuthorController {
   constructor(private readonly authorService: AuthorService) {}
 
-  @Post()
-  @UsePipes(new ZodValidationPipe(createAuthorSchema))
-  @ApiBody({ schema: CreateAuthorBodyJsonSchema })
-  @ApiCreatedResponse({
-    schema: CreateAuthorResponseJsonSchema,
-    description: "Author has been created successfully",
-  })
-  @ApiConflictResponse({ schema: ApiErrorResponseJsonSchema, description: "Slug already in use" })
-  @ApiBadRequestResponse({ schema: ApiErrorResponseJsonSchema, description: "Validation failed" })
-  async createAuthor(@Body() body: createAuthorDTO): Promise<CreateAuthorResponse> {
+  @TypedRoute.Post()
+  async createAuthor(@TypedBody() body: CreateAuthorBody): Promise<CreateAuthorResponse> {
     const createdAuthor = await this.authorService.create(body);
 
     return {
@@ -44,12 +17,7 @@ export class AuthorController {
     };
   }
 
-  @Delete("/:id")
-  @ApiOkResponse({
-    schema: DeleteAuthorResponseJsonSchema,
-    description: "Author has been deleted successfully",
-  })
-  @ApiNotFoundResponse({ schema: ApiErrorResponseJsonSchema, description: "Author not found" })
+  @TypedRoute.Delete("/:id")
   async deleteAuthor(@Param("id", ParseUUIDPipe) id: string): Promise<DeleteAuthorResponse> {
     const deletedAuthor = await this.authorService.delete(id);
 
