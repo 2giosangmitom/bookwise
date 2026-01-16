@@ -1,9 +1,12 @@
-import { Controller, Param, ParseUUIDPipe } from "@nestjs/common";
+import { Controller } from "@nestjs/common";
 import { AuthorService } from "./author.service";
-import { TypedBody, TypedRoute } from "@nestia/core";
+import { TypedBody, TypedParam, TypedRoute } from "@nestia/core";
 import { CreateAuthorResponse, DeleteAuthorResponse, type CreateAuthorBody } from "./author.dto";
+import { tags } from "typia";
+import { ApiTags } from "@nestjs/swagger";
 
 @Controller("/author")
+@ApiTags("Author")
 export class AuthorController {
   constructor(private readonly authorService: AuthorService) {}
 
@@ -18,7 +21,7 @@ export class AuthorController {
   }
 
   @TypedRoute.Delete("/:id")
-  async deleteAuthor(@Param("id", ParseUUIDPipe) id: string): Promise<DeleteAuthorResponse> {
+  async deleteAuthor(@TypedParam("id") id: string & tags.Format<"uuid">): Promise<DeleteAuthorResponse> {
     const deletedAuthor = await this.authorService.delete(id);
 
     return {

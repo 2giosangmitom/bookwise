@@ -15,25 +15,26 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
 
   app.enableCors({
-    methods: configService.get("CORS_METHODS").split(","),
-    origin: configService.get("CORS_ORIGIN").split(","),
+    methods: configService.getOrThrow<string>("CORS_METHODS").split(","),
+    origin: configService.getOrThrow<string>("CORS_ORIGIN").split(","),
     credentials: true,
   });
 
   app.setGlobalPrefix("/api");
 
+  const PORT = configService.get<number>("PORT") ?? 8080;
   const document = await NestiaSwaggerComposer.document(app, {
-    openapi: "3.1",
     servers: [
       {
-        url: "http://localhost:3000",
-        description: "Localhost",
+        url: `http://localhost:${PORT}`,
+        description: "Local Server",
       },
     ],
+    beautify: true,
   });
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   SwaggerModule.setup("api", app, document as any);
 
-  await app.listen(process.env.PORT ?? 8080);
+  await app.listen(PORT);
 }
 bootstrap();

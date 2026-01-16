@@ -1,14 +1,16 @@
-import { Body, Controller } from "@nestjs/common";
+import { Controller } from "@nestjs/common";
 import { CategoryService } from "./category.service";
-import { TypedRoute } from "@nestia/core";
+import { TypedBody, TypedRoute } from "@nestia/core";
 import { CreateCategoryResponse, type CreateCategoryBody } from "./category.dto";
+import { ApiTags } from "@nestjs/swagger";
 
 @Controller("/category")
+@ApiTags("Category")
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @TypedRoute.Post()
-  async createCategory(@Body() body: CreateCategoryBody): Promise<CreateCategoryResponse> {
+  async createCategory(@TypedBody() body: CreateCategoryBody): Promise<CreateCategoryResponse> {
     const createdCategory = await this.categoryService.create(body);
 
     return {
