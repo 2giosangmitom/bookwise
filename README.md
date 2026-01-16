@@ -16,14 +16,16 @@ Bookwise is a comprehensive library management solution that allows users to bro
 - 🔍 **Search & Discovery**: Find books by title, author, or category
 - 🎨 **Modern UI**: Built with Next.js and Tailwind CSS
 - 🚀 **High Performance**: Fast API with Fastify and optimized database queries
+- 🔧 **Type-Safe API**: Auto-generated SDK and OpenAPI docs via Nestia
 
 ## Tech Stack
 
 ### Backend (apps/api)
 
 - **Framework**: NestJS with Fastify
+- **API Generation**: Nestia (typed SDK and OpenAPI generation)
 - **Database**: PostgreSQL with TypeORM
-- **Validation**: Zod schemas
+- **Validation**: Typia with nestia decorators
 - **Authentication**: JWT tokens
 - **File Storage**: AWS S3
 - **Caching**: Redis
@@ -40,8 +42,8 @@ Bookwise is a comprehensive library management solution that allows users to bro
 
 ### Shared Packages
 
-- **@bookwise/shared**: Common Zod schemas and DTOs
-- **@bookwise/sdk**: SDK for the Bookwise API
+- **@bookwise/shared**: Common types.
+- **@bookwise/sdk**: Auto-generated SDK for the Bookwise API (via Nestia)
 - **@bookwise/eslint-config**: Shared ESLint configuration
 
 ### Infrastructure
