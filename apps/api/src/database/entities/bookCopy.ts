@@ -1,7 +1,7 @@
 import { Entity, Column, ManyToOne, PrimaryGeneratedColumn, ManyToMany, type Relation } from "typeorm";
 import { Book } from "./book";
 import { Loan } from "./loan";
-import { BookCondition } from "@bookwise/shared";
+import { BookCondition, BookStatus } from "@bookwise/shared";
 
 @Entity()
 export class BookCopy {
@@ -18,6 +18,9 @@ export class BookCopy {
     unique: true,
   })
   barcode!: string;
+
+  @Column("enum", { enum: BookStatus, default: BookStatus.AVAILABLE })
+  status!: BookStatus;
 
   @Column({
     type: "enum",

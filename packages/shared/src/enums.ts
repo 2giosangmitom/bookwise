@@ -11,6 +11,11 @@ export enum BookCondition {
   LOST = "LOST",
 }
 
+export enum BookStatus {
+  AVAILABLE = "AVAILABLE",
+  BORROWED = "BORROWED",
+}
+
 export enum LoanStatus {
   BORROWED = "BORROWED",
   RETURNED = "RETURNED",
