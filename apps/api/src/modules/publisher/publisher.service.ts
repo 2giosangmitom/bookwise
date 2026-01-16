@@ -30,13 +30,13 @@ export class PublisherService {
     return this.publisherRepository.save(publisher);
   }
 
-  async delete(id: string): Promise<Publisher> {
+  async delete(id: string): Promise<void> {
     const publisher = await this.publisherRepository.findOneBy({ id });
 
     if (!publisher) {
       throw new NotFoundException("Publisher not found");
     }
 
-    return this.publisherRepository.remove(publisher);
+    await this.publisherRepository.delete(id);
   }
 }

@@ -12,7 +12,7 @@ describe("AuthorService", () => {
     create: jest.fn(),
     save: jest.fn(),
     findOneBy: jest.fn(),
-    remove: jest.fn(),
+    delete: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -88,7 +88,7 @@ describe("AuthorService", () => {
       mockAuthorRepository.findOneBy.mockImplementationOnce(async () => null);
 
       await expect(authorService.delete("non-existent-id")).rejects.toThrow(NotFoundException);
-      expect(mockAuthorRepository.remove).not.toHaveBeenCalled();
+      expect(mockAuthorRepository.delete).not.toHaveBeenCalled();
     });
 
     it("should delete author successfully when found", async () => {
@@ -99,13 +99,11 @@ describe("AuthorService", () => {
       };
 
       mockAuthorRepository.findOneBy.mockImplementationOnce(async () => mockAuthor);
-      mockAuthorRepository.remove.mockImplementationOnce(async () => mockAuthor);
 
-      const result = await authorService.delete("author-id");
+      await authorService.delete("author-id");
 
       expect(mockAuthorRepository.findOneBy).toHaveBeenCalledWith({ id: "author-id" });
-      expect(mockAuthorRepository.remove).toHaveBeenCalledWith(mockAuthor);
-      expect(result).toBe(mockAuthor);
+      expect(mockAuthorRepository.delete).toHaveBeenCalledWith("author-id");
     });
   });
 });

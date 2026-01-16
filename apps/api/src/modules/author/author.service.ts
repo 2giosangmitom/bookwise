@@ -31,13 +31,13 @@ export class AuthorService {
     return this.authorRepository.save(author);
   }
 
-  async delete(id: string): Promise<Author> {
+  async delete(id: string): Promise<void> {
     const author = await this.authorRepository.findOneBy({ id });
 
     if (!author) {
       throw new NotFoundException("Author not found");
     }
 
-    return this.authorRepository.remove(author);
+    await this.authorRepository.delete(id);
   }
 }

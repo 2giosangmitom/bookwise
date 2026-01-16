@@ -12,7 +12,7 @@ describe("PublisherService", () => {
     create: jest.fn(),
     save: jest.fn(),
     findOneBy: jest.fn(),
-    remove: jest.fn(),
+    delete: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -89,7 +89,7 @@ describe("PublisherService", () => {
       mockPublisherRepository.findOneBy.mockImplementationOnce(async () => null);
 
       await expect(publisherService.delete("non-existent-id")).rejects.toThrow(NotFoundException);
-      expect(mockPublisherRepository.remove).not.toHaveBeenCalled();
+      expect(mockPublisherRepository.delete).not.toHaveBeenCalled();
     });
 
     it("should delete publisher successfully when found", async () => {
@@ -103,13 +103,11 @@ describe("PublisherService", () => {
       };
 
       mockPublisherRepository.findOneBy.mockImplementationOnce(async () => mockPublisher);
-      mockPublisherRepository.remove.mockImplementationOnce(async () => mockPublisher);
 
-      const result = await publisherService.delete("publisher-id");
+      await publisherService.delete("publisher-id");
 
       expect(mockPublisherRepository.findOneBy).toHaveBeenCalledWith({ id: "publisher-id" });
-      expect(mockPublisherRepository.remove).toHaveBeenCalledWith(mockPublisher);
-      expect(result).toBe(mockPublisher);
+      expect(mockPublisherRepository.delete).toHaveBeenCalledWith("publisher-id");
     });
   });
 });

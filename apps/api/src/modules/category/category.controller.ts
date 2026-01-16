@@ -1,4 +1,4 @@
-import { Controller } from "@nestjs/common";
+import { Controller, HttpCode } from "@nestjs/common";
 import { CategoryService } from "./category.service";
 import { TypedBody, TypedParam, TypedRoute } from "@nestia/core";
 import { CreateCategoryResponse, type CreateCategoryBody } from "./category.dto";
@@ -21,6 +21,7 @@ export class CategoryController {
   }
 
   @TypedRoute.Delete(":id")
+  @HttpCode(204)
   async deleteCategory(@TypedParam("id") id: string & tags.Format<"uuid">): Promise<void> {
     await this.categoryService.delete(id);
   }

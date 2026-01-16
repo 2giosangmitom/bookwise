@@ -14,15 +14,3 @@ export type CreateAuthorResponse = {
     authorId: string & tags.Format<"uuid">;
   };
 };
-
-export type DeleteAuthorResponse = {
-  message: string;
-  data: {
-    name: string;
-    biography: string;
-    dateOfBirth: string & tags.Format<"date">;
-    dateOfDeath: (string & tags.Format<"date">) | null;
-    photoFileName: string | null;
-    slug: string;
-  };
-};
