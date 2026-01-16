@@ -1,8 +1,9 @@
 import { Controller } from "@nestjs/common";
 import { CategoryService } from "./category.service";
-import { TypedBody, TypedRoute } from "@nestia/core";
+import { TypedBody, TypedParam, TypedRoute } from "@nestia/core";
 import { CreateCategoryResponse, type CreateCategoryBody } from "./category.dto";
 import { ApiTags } from "@nestjs/swagger";
+import { tags } from "typia";
 
 @Controller("/category")
 @ApiTags("Category")
@@ -17,5 +18,10 @@ export class CategoryController {
       message: "Category has been created successfully",
       data: { categoryId: createdCategory.id },
     };
+  }
+
+  @TypedRoute.Delete(":id")
+  async deleteCategory(@TypedParam("id") id: string & tags.Format<"uuid">): Promise<void> {
+    await this.categoryService.delete(id);
   }
 }

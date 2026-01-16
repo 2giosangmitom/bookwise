@@ -3,7 +3,7 @@ import { Test } from "@nestjs/testing";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { Category } from "@/database/entities/category";
 import { CategoryService } from "../category.service";
-import { ConflictException } from "@nestjs/common";
+import { ConflictException, NotFoundException } from "@nestjs/common";
 
 describe("CategoryService", () => {
   let categoryService: CategoryService;
@@ -11,6 +11,8 @@ describe("CategoryService", () => {
     existsBy: jest.fn(),
     create: jest.fn(),
     save: jest.fn(),
+    findOneBy: jest.fn(),
+    delete: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -71,6 +73,47 @@ describe("CategoryService", () => {
         slug: "fiction",
       });
       expect(mockCategoryRepository.save).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("delete", () => {
+    it("should throw NotFoundException when category does not exist", async () => {
+      mockCategoryRepository.findOneBy.mockImplementationOnce(async () => null);
+
+      await expect(categoryService.delete("non-existent-id")).rejects.toThrow(NotFoundException);
+      expect(mockCategoryRepository.findOneBy).toHaveBeenCalledWith({
+        id: "non-existent-id",
+      });
+      expect(mockCategoryRepository.delete).not.toHaveBeenCalled();
+    });
+
+    it("should check category existence using findOneBy with correct filter", async () => {
+      mockCategoryRepository.findOneBy.mockImplementationOnce(async () => ({
+        id: "test-id",
+        name: "Test Category",
+        slug: "test-category",
+      }));
+
+      await categoryService.delete("test-id");
+
+      expect(mockCategoryRepository.findOneBy).toHaveBeenCalledWith({
+        id: "test-id",
+      });
+    });
+
+    it("should delete the category when it exists", async () => {
+      const existingCategory = {
+        id: "test-id",
+        name: "Test Category",
+        slug: "test-category",
+      };
+
+      mockCategoryRepository.findOneBy.mockImplementationOnce(async () => existingCategory);
+
+      await categoryService.delete("test-id");
+
+      expect(mockCategoryRepository.delete).toHaveBeenCalledWith("test-id");
+      expect(mockCategoryRepository.delete).toHaveBeenCalledTimes(1);
     });
   });
 });

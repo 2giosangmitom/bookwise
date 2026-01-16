@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from "@nestjs/common";
+import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Category } from "@/database/entities/category";
@@ -23,5 +23,15 @@ export class CategoryService {
     const category = this.categoryRepository.create(data);
 
     return this.categoryRepository.save(category);
+  }
+
+  async delete(id: string): Promise<void> {
+    const category = await this.categoryRepository.findOneBy({ id });
+
+    if (!category) {
+      throw new NotFoundException("Category not found");
+    }
+
+    await this.categoryRepository.delete(id);
   }
 }
