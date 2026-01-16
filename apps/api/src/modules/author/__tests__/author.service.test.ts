@@ -12,6 +12,7 @@ describe("AuthorService", () => {
     create: jest.fn(),
     save: jest.fn(),
     findOneBy: jest.fn(),
+    update: jest.fn(),
     delete: jest.fn(),
   };
 
@@ -104,6 +105,58 @@ describe("AuthorService", () => {
 
       expect(mockAuthorRepository.findOneBy).toHaveBeenCalledWith({ id: "author-id" });
       expect(mockAuthorRepository.delete).toHaveBeenCalledWith("author-id");
+    });
+  });
+
+  describe("update", () => {
+    it("should throw NotFoundException when updating non-existent author", async () => {
+      mockAuthorRepository.findOneBy.mockImplementationOnce(async () => null);
+
+      await expect(authorService.update("non-existent-id", { name: "New Name" })).rejects.toThrow(NotFoundException);
+      expect(mockAuthorRepository.update).not.toHaveBeenCalled();
+    });
+
+    it("should throw ConflictException when updating with existing slug", async () => {
+      const existingAuthor = { id: "author-id", slug: "old-slug" };
+      mockAuthorRepository.findOneBy.mockImplementationOnce(async () => existingAuthor);
+      mockAuthorRepository.existsBy.mockImplementationOnce(async () => true);
+
+      await expect(authorService.update("author-id", { slug: "existing-slug" })).rejects.toThrow(ConflictException);
+      expect(mockAuthorRepository.update).not.toHaveBeenCalled();
+    });
+
+    it("should update author successfully", async () => {
+      const existingAuthor = {
+        id: "author-id",
+        name: "Old Name",
+        biography: "Old Bio",
+        slug: "old-slug",
+      };
+      const updatedAuthor = {
+        id: "author-id",
+        name: "New Name",
+        biography: "New Bio",
+        slug: "new-slug",
+      };
+
+      mockAuthorRepository.findOneBy
+        .mockImplementationOnce(async () => existingAuthor)
+        .mockImplementationOnce(async () => updatedAuthor);
+      mockAuthorRepository.update.mockImplementationOnce(async () => ({
+        affected: 1,
+      }));
+
+      await authorService.update("author-id", {
+        name: "New Name",
+        biography: "New Bio",
+        slug: "new-slug",
+      });
+
+      expect(mockAuthorRepository.update).toHaveBeenCalledWith("author-id", {
+        name: "New Name",
+        biography: "New Bio",
+        slug: "new-slug",
+      });
     });
   });
 });

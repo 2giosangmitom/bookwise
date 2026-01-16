@@ -1,7 +1,7 @@
 import { Controller, HttpCode } from "@nestjs/common";
 import { AuthorService } from "./author.service";
 import { TypedBody, TypedParam, TypedRoute } from "@nestia/core";
-import { CreateAuthorResponse, type CreateAuthorBody } from "./author.dto";
+import { CreateAuthorResponse, type CreateAuthorBody, type UpdateAuthorBody } from "./author.dto";
 import { tags } from "typia";
 import { ApiTags } from "@nestjs/swagger";
 
@@ -18,6 +18,15 @@ export class AuthorController {
       message: "Author has been created successfully",
       data: { authorId: createdAuthor.id },
     };
+  }
+
+  @TypedRoute.Patch("/:id")
+  @HttpCode(204)
+  async updateAuthor(
+    @TypedParam("id") id: string & tags.Format<"uuid">,
+    @TypedBody() body: UpdateAuthorBody,
+  ): Promise<void> {
+    await this.authorService.update(id, body);
   }
 
   @TypedRoute.Delete("/:id")

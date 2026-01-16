@@ -14,3 +14,11 @@ export type CreateAuthorResponse = {
     authorId: string & tags.Format<"uuid">;
   };
 };
+
+export type UpdateAuthorBody = {
+  name?: string;
+  biography?: string;
+  dateOfBirth?: string & tags.Format<"date">;
+  dateOfDeath?: (string & tags.Format<"date">) | null;
+  slug?: string & tags.MinLength<1>;
+};
