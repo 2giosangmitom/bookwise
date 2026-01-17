@@ -50,7 +50,6 @@ export class BookService {
       description: data.description,
       isbn: data.isbn,
       publishedDate: new Date(data.publishedDate),
-      photoFileName: data.photoFileName ?? null,
       authors: data.authorIds.map((id) => ({ id })),
       categories: data.categoryIds.map((id) => ({ id })),
       publishers: data.publisherIds.map((id) => ({ id })),
@@ -110,9 +109,6 @@ export class BookService {
     }
     if (data.publishedDate !== undefined) {
       updateData.publishedDate = new Date(data.publishedDate);
-    }
-    if (data.photoFileName !== undefined) {
-      updateData.photoFileName = data.photoFileName;
     }
     if (data.authorIds !== undefined) {
       const authors = await this.authorService.findByIds(...data.authorIds);

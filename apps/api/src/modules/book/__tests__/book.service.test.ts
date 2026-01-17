@@ -173,7 +173,6 @@ describe("BookService", () => {
         description: "Test Description",
         isbn: "978-0123456789",
         publishedDate: new Date("2024-01-01"),
-        photoFileName: null,
         authors: [{ id: "author-1" }, { id: "author-2" }],
         categories: [{ id: "category-1" }],
         publishers: [{ id: "publisher-1" }],
@@ -273,14 +272,13 @@ describe("BookService", () => {
       mockCategoryService.findByIds.mockImplementationOnce(async () => mockCategories);
       mockPublisherService.existsById.mockImplementationOnce(async () => true);
       mockPublisherService.findByIds.mockImplementationOnce(async () => mockPublishers);
-      mockBookRepository.findOneBy.mockImplementationOnce(async () => ({}) as Book);
+      mockBookRepository.findOneBy.mockImplementationOnce(async () => ({}));
 
       const result = await bookService.update("book-id", {
         title: "New Title",
         description: "New Description",
         isbn: "new-isbn",
         publishedDate: "2024-02-01",
-        photoFileName: "new-photo.jpg",
         authorIds: ["author-1", "author-2"],
         categoryIds: ["category-1"],
         publisherIds: ["publisher-1"],
@@ -291,7 +289,6 @@ describe("BookService", () => {
         description: "New Description",
         isbn: "new-isbn",
         publishedDate: new Date("2024-02-01"),
-        photoFileName: "new-photo.jpg",
         authors: mockAuthors,
         categories: mockCategories,
         publishers: mockPublishers,

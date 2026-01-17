@@ -5,7 +5,6 @@ export type CreateBookBody = {
   description: string;
   isbn: string;
   publishedDate: string & tags.Format<"date">;
-  photoFileName?: string | null;
   authorIds: string[] & tags.MinItems<1>;
   categoryIds: string[] & tags.MinItems<1>;
   publisherIds: string[] & tags.MinItems<1>;
@@ -23,7 +22,6 @@ export type UpdateBookBody = {
   description?: string;
   isbn?: string;
   publishedDate?: string & tags.Format<"date">;
-  photoFileName?: string | null;
   authorIds?: string[] & tags.MinItems<1>;
   categoryIds?: string[] & tags.MinItems<1>;
   publisherIds?: string[] & tags.MinItems<1>;
