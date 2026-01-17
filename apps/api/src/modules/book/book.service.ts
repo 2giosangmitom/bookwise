@@ -137,4 +137,8 @@ export class BookService {
 
     await this.bookRepository.delete(id);
   }
+
+  async findById(id: string): Promise<Book | null> {
+    return this.bookRepository.findOneBy({ id });
+  }
 }

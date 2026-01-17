@@ -11,5 +11,6 @@ import { PublisherModule } from "../publisher/publisher.module";
   imports: [TypeOrmModule.forFeature([Book]), AuthorModule, CategoryModule, PublisherModule],
   providers: [BookService],
   controllers: [BookController],
+  exports: [BookService],
 })
 export class BookModule {}
