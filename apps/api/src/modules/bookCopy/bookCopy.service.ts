@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, ConflictException } from "@nestjs/common
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { BookCopy } from "@/database/entities/bookCopy";
-import { CreateBookCopyBody } from "./bookCopy.dto";
+import { CreateBookCopyBody, UpdateBookCopyBody } from "./bookCopy.dto";
 import { BookStatus, BookCondition } from "@bookwise/shared";
 import { BookService } from "../book/book.service";
 
@@ -37,6 +37,54 @@ export class BookCopyService {
     });
 
     return this.bookCopyRepository.save(bookCopy);
+  }
+
+  async update(id: string, data: UpdateBookCopyBody): Promise<number> {
+    const bookCopy = await this.bookCopyRepository.findOneBy({ id });
+
+    if (!bookCopy) {
+      throw new NotFoundException("Book copy not found");
+    }
+
+    if (data.bookId && data.bookId !== bookCopy.book.id) {
+      const book = await this.bookService.findById(data.bookId);
+      if (!book) {
+        throw new NotFoundException("Book not found");
+      }
+    }
+
+    if (data.barcode && data.barcode !== bookCopy.barcode) {
+      const existingBookCopy = await this.bookCopyRepository.existsBy({
+        barcode: data.barcode,
+      });
+
+      if (existingBookCopy) {
+        throw new ConflictException("Barcode already exists");
+      }
+    }
+
+    const updateData: Partial<BookCopy> = {};
+
+    if (data.bookId !== undefined) {
+      const book = await this.bookService.findById(data.bookId);
+      if (!book) {
+        throw new NotFoundException("Book not found");
+      }
+      updateData.book = book;
+    }
+    if (data.barcode !== undefined) {
+      updateData.barcode = data.barcode;
+    }
+    if (data.status !== undefined) {
+      updateData.status = data.status;
+    }
+    if (data.condition !== undefined) {
+      updateData.condition = data.condition;
+    }
+
+    const updateResult = await this.bookCopyRepository.update(id, updateData);
+
+    return updateResult.affected!;
   }
 
   async delete(id: string): Promise<void> {

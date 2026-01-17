@@ -39,6 +39,7 @@ describe("BookCopyService", () => {
             save: jest.fn(),
             findOneBy: jest.fn(),
             delete: jest.fn(),
+            update: jest.fn(),
           },
         },
         {
@@ -165,6 +166,120 @@ describe("BookCopyService", () => {
       await expect(service.delete(nonExistentId)).rejects.toThrow(NotFoundException);
       expect(bookCopyRepository.findOneBy).toHaveBeenCalledWith({ id: nonExistentId });
       expect(bookCopyRepository.delete).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("update", () => {
+    const mockUpdatedBook = {
+      id: "updated-book-uuid",
+      title: "Updated Test Book",
+    } as Book;
+
+    it("should update a book copy successfully", async () => {
+      const bookCopyId = "copy-uuid";
+      const updateData = {
+        barcode: "UPDATED123",
+        status: BookStatus.BORROWED,
+        condition: BookCondition.GOOD,
+      };
+
+      bookCopyRepository.findOneBy.mockResolvedValue(mockBookCopy);
+      bookCopyRepository.update.mockResolvedValue({ affected: 1, raw: {}, generatedMaps: [] });
+      bookService.findById.mockResolvedValue(mockBook);
+
+      const result = await service.update(bookCopyId, updateData);
+
+      expect(bookCopyRepository.findOneBy).toHaveBeenCalledWith({ id: bookCopyId });
+      expect(bookCopyRepository.update).toHaveBeenCalledWith(bookCopyId, {
+        barcode: "UPDATED123",
+        status: BookStatus.BORROWED,
+        condition: BookCondition.GOOD,
+      });
+      expect(result).toBe(1);
+    });
+
+    it("should update only provided fields", async () => {
+      const bookCopyId = "copy-uuid";
+      const updateData = {
+        condition: BookCondition.WORN,
+      };
+
+      bookCopyRepository.findOneBy.mockResolvedValue(mockBookCopy);
+      bookCopyRepository.update.mockResolvedValue({ affected: 1, raw: {}, generatedMaps: [] });
+
+      await service.update(bookCopyId, updateData);
+
+      expect(bookCopyRepository.update).toHaveBeenCalledWith(bookCopyId, {
+        condition: BookCondition.WORN,
+      });
+    });
+
+    it("should throw NotFoundException when book copy does not exist", async () => {
+      const nonExistentId = "nonexistent-uuid";
+      const updateData = { barcode: "NEW123" };
+
+      bookCopyRepository.findOneBy.mockResolvedValue(null);
+
+      await expect(service.update(nonExistentId, updateData)).rejects.toThrow(NotFoundException);
+      expect(bookCopyRepository.findOneBy).toHaveBeenCalledWith({ id: nonExistentId });
+      expect(bookCopyRepository.update).not.toHaveBeenCalled();
+    });
+
+    it("should throw NotFoundException when updating to non-existent book", async () => {
+      const bookCopyId = "copy-uuid";
+      const updateData = { bookId: "nonexistent-book-uuid" };
+
+      bookCopyRepository.findOneBy.mockResolvedValue(mockBookCopy);
+      bookService.findById.mockResolvedValue(null);
+
+      await expect(service.update(bookCopyId, updateData)).rejects.toThrow(NotFoundException);
+      expect(bookCopyRepository.findOneBy).toHaveBeenCalledWith({ id: bookCopyId });
+      expect(bookService.findById).toHaveBeenCalledWith(updateData.bookId);
+      expect(bookCopyRepository.update).not.toHaveBeenCalled();
+    });
+
+    it("should throw ConflictException when updating to existing barcode", async () => {
+      const bookCopyId = "copy-uuid";
+      const updateData = { barcode: "EXISTING123" };
+
+      bookCopyRepository.findOneBy.mockResolvedValue(mockBookCopy);
+      bookCopyRepository.existsBy.mockResolvedValue(true);
+
+      await expect(service.update(bookCopyId, updateData)).rejects.toThrow(ConflictException);
+      expect(bookCopyRepository.findOneBy).toHaveBeenCalledWith({ id: bookCopyId });
+      expect(bookCopyRepository.existsBy).toHaveBeenCalledWith({ barcode: updateData.barcode });
+      expect(bookCopyRepository.update).not.toHaveBeenCalled();
+    });
+
+    it("should allow updating to same barcode", async () => {
+      const bookCopyId = "copy-uuid";
+      const updateData = { barcode: "TEST123" }; // Same as existing
+
+      bookCopyRepository.findOneBy.mockResolvedValue(mockBookCopy);
+      bookCopyRepository.update.mockResolvedValue({ affected: 1, raw: {}, generatedMaps: [] });
+
+      await service.update(bookCopyId, updateData);
+
+      expect(bookCopyRepository.existsBy).not.toHaveBeenCalled();
+      expect(bookCopyRepository.update).toHaveBeenCalledWith(bookCopyId, {
+        barcode: "TEST123",
+      });
+    });
+
+    it("should update book when bookId is provided", async () => {
+      const bookCopyId = "copy-uuid";
+      const updateData = { bookId: "updated-book-uuid" };
+
+      bookCopyRepository.findOneBy.mockResolvedValue(mockBookCopy);
+      bookService.findById.mockResolvedValue(mockUpdatedBook);
+      bookCopyRepository.update.mockResolvedValue({ affected: 1, raw: {}, generatedMaps: [] });
+
+      await service.update(bookCopyId, updateData);
+
+      expect(bookService.findById).toHaveBeenCalledWith(updateData.bookId);
+      expect(bookCopyRepository.update).toHaveBeenCalledWith(bookCopyId, {
+        book: mockUpdatedBook,
+      });
     });
   });
 });

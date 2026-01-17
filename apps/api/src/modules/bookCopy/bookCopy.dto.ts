@@ -14,3 +14,10 @@ export type CreateBookCopyResponse = {
     bookCopyId: string & tags.Format<"uuid">;
   };
 };
+
+export type UpdateBookCopyBody = {
+  bookId?: string & tags.Format<"uuid">;
+  barcode?: string & tags.MinLength<1>;
+  status?: BookStatus;
+  condition?: BookCondition;
+};
