@@ -139,6 +139,9 @@ export class BookService {
   }
 
   async findById(id: string): Promise<Book | null> {
-    return this.bookRepository.findOneBy({ id });
+    return this.bookRepository.findOne({
+      where: { id },
+      relations: ["authors", "categories", "publishers"],
+    });
   }
 }

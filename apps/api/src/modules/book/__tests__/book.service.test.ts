@@ -15,6 +15,7 @@ describe("BookService", () => {
     existsBy: jest.fn(),
     create: jest.fn(),
     save: jest.fn(),
+    findOne: jest.fn(),
     findOneBy: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
@@ -294,6 +295,45 @@ describe("BookService", () => {
         publishers: mockPublishers,
       });
       expect(result).toBe(1);
+    });
+  });
+
+  describe("findById", () => {
+    it("should return book with relations when found", async () => {
+      const mockBook = {
+        id: "book-id",
+        title: "Test Book",
+        description: "Test Description",
+        photoFileName: null,
+        isbn: "978-0123456789",
+        publishedDate: new Date("2024-01-01"),
+        authors: [{ id: "author-1", name: "Author 1", slug: "author-1" }],
+        categories: [{ id: "category-1", name: "Category 1", slug: "category-1" }],
+        publishers: [{ id: "publisher-1", name: "Publisher 1", slug: "publisher-1" }],
+        reservations: [],
+      };
+
+      mockBookRepository.findOne.mockImplementationOnce(() => mockBook);
+
+      const result = await bookService.findById("book-id");
+
+      expect(mockBookRepository.findOne).toHaveBeenCalledWith({
+        where: { id: "book-id" },
+        relations: ["authors", "categories", "publishers"],
+      });
+      expect(result).toEqual(mockBook);
+    });
+
+    it("should return null when book not found", async () => {
+      mockBookRepository.findOne.mockImplementationOnce(() => null);
+
+      const result = await bookService.findById("nonexistent-id");
+
+      expect(mockBookRepository.findOne).toHaveBeenCalledWith({
+        where: { id: "nonexistent-id" },
+        relations: ["authors", "categories", "publishers"],
+      });
+      expect(result).toBeNull();
     });
   });
 });
