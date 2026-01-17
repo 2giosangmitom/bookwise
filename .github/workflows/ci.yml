@@ -9,7 +9,7 @@ on:
       - master
 
 jobs:
-  # Lint the codebase with ESLint
+  # Run lint and type-check
   lint:
     runs-on: ubuntu-latest
     steps:
