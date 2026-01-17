@@ -13,12 +13,16 @@ import { BookCopyModule } from "./modules/bookCopy/bookCopy.module";
 import { ReservationModule } from "./modules/reservation/reservation.module";
 import { PublisherModule } from "./modules/publisher/publisher.module";
 import z from "zod";
+import { S3UtilsModule } from "./utils/s3";
 
 const envSchema = z.object({
   DATABASE_URL: z.string(),
   REDIS_URL: z.string(),
   CORS_METHODS: z.string(),
   CORS_ORIGIN: z.string(),
+  S3_URL: z.string(),
+  S3_ACCESS_KEY: z.string(),
+  S3_SECRET_KEY: z.string(),
 });
 
 @Module({
@@ -46,6 +50,19 @@ const envSchema = z.object({
         synchronize: false,
         migrationsRun: false,
         autoLoadEntities: true,
+      }),
+    }),
+    S3UtilsModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        endpoint: configService.getOrThrow("S3_URL"),
+        region: "us-east-1",
+        credentials: {
+          accessKeyId: configService.getOrThrow("S3_ACCESS_KEY"),
+          secretAccessKey: configService.getOrThrow("S3_SECRET_KEY"),
+        },
+        forcePathStyle: true, // Must be enabled for RustFS compatibility
       }),
     }),
     AccountModule,
