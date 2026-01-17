@@ -132,16 +132,8 @@ describe("AuthorService", () => {
         biography: "Old Bio",
         slug: "old-slug",
       };
-      const updatedAuthor = {
-        id: "author-id",
-        name: "New Name",
-        biography: "New Bio",
-        slug: "new-slug",
-      };
 
-      mockAuthorRepository.findOneBy
-        .mockImplementationOnce(async () => existingAuthor)
-        .mockImplementationOnce(async () => updatedAuthor);
+      mockAuthorRepository.findOneBy.mockImplementationOnce(async () => existingAuthor);
       mockAuthorRepository.update.mockImplementationOnce(async () => ({
         affected: 1,
       }));
