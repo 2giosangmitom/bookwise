@@ -1,7 +1,7 @@
-import { Controller, HttpCode } from "@nestjs/common";
+import { Controller, HttpCode, NotFoundException } from "@nestjs/common";
 import { AuthorService } from "./author.service";
 import { TypedBody, TypedParam, TypedRoute } from "@nestia/core";
-import { CreateAuthorResponse, type CreateAuthorBody, type UpdateAuthorBody } from "./author.dto";
+import { CreateAuthorResponse, GetAuthorResponse, type CreateAuthorBody, type UpdateAuthorBody } from "./author.dto";
 import { tags } from "typia";
 import { ApiTags } from "@nestjs/swagger";
 
@@ -17,6 +17,32 @@ export class AuthorController {
     return {
       message: "Author has been created successfully",
       data: { authorId: createdAuthor.id },
+    };
+  }
+
+  @TypedRoute.Get("/:id")
+  async getAuthor(@TypedParam("id") id: string & tags.Format<"uuid">): Promise<GetAuthorResponse> {
+    const author = await this.authorService.findById(id);
+
+    if (!author) {
+      throw new NotFoundException("Author not found");
+    }
+
+    return {
+      id: author.id,
+      name: author.name,
+      biography: author.biography,
+      dateOfBirth: author.dateOfBirth.toISOString().split("T")[0] as string & tags.Format<"date">,
+      dateOfDeath: author.dateOfDeath
+        ? (author.dateOfDeath.toISOString().split("T")[0] as string & tags.Format<"date">)
+        : null,
+      slug: author.slug,
+      photoFileName: author.photoFileName,
+      books: author.books.map((book) => ({
+        id: book.id,
+        title: book.title,
+        isbn: book.isbn,
+      })),
     };
   }
 

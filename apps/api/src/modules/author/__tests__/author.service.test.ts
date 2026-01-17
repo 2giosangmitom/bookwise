@@ -11,6 +11,7 @@ describe("AuthorService", () => {
     existsBy: jest.fn(),
     create: jest.fn(),
     save: jest.fn(),
+    findOne: jest.fn(),
     findOneBy: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
@@ -149,6 +150,43 @@ describe("AuthorService", () => {
         biography: "New Bio",
         slug: "new-slug",
       });
+    });
+  });
+
+  describe("findById", () => {
+    it("should return author with books relation when found", async () => {
+      const mockAuthor = {
+        id: "author-id",
+        name: "Author Name",
+        biography: "Bio",
+        dateOfBirth: new Date("1990-01-01"),
+        dateOfDeath: null,
+        slug: "author-name",
+        photoFileName: null,
+        books: [{ id: "book-1", title: "Book 1", isbn: "978-0123456789" }],
+      };
+
+      mockAuthorRepository.findOne.mockImplementationOnce(() => mockAuthor);
+
+      const result = await authorService.findById("author-id");
+
+      expect(mockAuthorRepository.findOne).toHaveBeenCalledWith({
+        where: { id: "author-id" },
+        relations: ["books"],
+      });
+      expect(result).toEqual(mockAuthor);
+    });
+
+    it("should return null when author not found", async () => {
+      mockAuthorRepository.findOne.mockImplementationOnce(() => null);
+
+      const result = await authorService.findById("nonexistent-id");
+
+      expect(mockAuthorRepository.findOne).toHaveBeenCalledWith({
+        where: { id: "nonexistent-id" },
+        relations: ["books"],
+      });
+      expect(result).toBeNull();
     });
   });
 });

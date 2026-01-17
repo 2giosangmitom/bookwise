@@ -92,4 +92,11 @@ export class AuthorService {
       id: In(ids),
     });
   }
+
+  async findById(id: string): Promise<Author | null> {
+    return this.authorRepository.findOne({
+      where: { id },
+      relations: ["books"],
+    });
+  }
 }

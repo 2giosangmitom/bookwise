@@ -16,3 +16,18 @@ export type CreateAuthorResponse = {
 };
 
 export type UpdateAuthorBody = Partial<CreateAuthorBody>;
+
+export type GetAuthorResponse = {
+  id: string & tags.Format<"uuid">;
+  name: string;
+  biography: string;
+  dateOfBirth: string & tags.Format<"date">;
+  dateOfDeath: (string & tags.Format<"date">) | null;
+  slug: string;
+  photoFileName: string | null;
+  books: Array<{
+    id: string & tags.Format<"uuid">;
+    title: string;
+    isbn: string;
+  }>;
+};
