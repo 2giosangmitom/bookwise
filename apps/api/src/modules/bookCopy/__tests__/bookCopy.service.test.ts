@@ -37,6 +37,8 @@ describe("BookCopyService", () => {
             existsBy: jest.fn(),
             create: jest.fn(),
             save: jest.fn(),
+            findOneBy: jest.fn(),
+            delete: jest.fn(),
           },
         },
         {
@@ -139,6 +141,30 @@ describe("BookCopyService", () => {
         condition: BookCondition.NEW,
       });
       expect(result).toEqual(expectedBookCopy);
+    });
+  });
+
+  describe("delete", () => {
+    it("should delete a book copy successfully", async () => {
+      const bookCopyId = "copy-uuid";
+
+      bookCopyRepository.findOneBy.mockResolvedValue(mockBookCopy);
+      bookCopyRepository.delete.mockResolvedValue({ affected: 1, raw: {} });
+
+      await service.delete(bookCopyId);
+
+      expect(bookCopyRepository.findOneBy).toHaveBeenCalledWith({ id: bookCopyId });
+      expect(bookCopyRepository.delete).toHaveBeenCalledWith(bookCopyId);
+    });
+
+    it("should throw NotFoundException when book copy does not exist", async () => {
+      const nonExistentId = "nonexistent-uuid";
+
+      bookCopyRepository.findOneBy.mockResolvedValue(null);
+
+      await expect(service.delete(nonExistentId)).rejects.toThrow(NotFoundException);
+      expect(bookCopyRepository.findOneBy).toHaveBeenCalledWith({ id: nonExistentId });
+      expect(bookCopyRepository.delete).not.toHaveBeenCalled();
     });
   });
 });

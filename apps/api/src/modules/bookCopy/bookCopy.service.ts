@@ -38,4 +38,14 @@ export class BookCopyService {
 
     return this.bookCopyRepository.save(bookCopy);
   }
+
+  async delete(id: string): Promise<void> {
+    const bookCopy = await this.bookCopyRepository.findOneBy({ id });
+
+    if (!bookCopy) {
+      throw new NotFoundException("Book copy not found");
+    }
+
+    await this.bookCopyRepository.delete(id);
+  }
 }
