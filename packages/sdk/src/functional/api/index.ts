@@ -5,6 +5,8 @@
  */
 //================================================================
 export * as account from "./account/index";
+export * as book from "./book/index";
 export * as author from "./author/index";
 export * as category from "./category/index";
 export * as publisher from "./publisher/index";
+export * as book_copy from "./book_copy/index";

@@ -12,7 +12,8 @@
     "migration:generate": "dotenvx run -- pnpm typeorm migration:generate --pretty",
     "migration:run": "dotenvx run -- pnpm typeorm migration:run",
     "migration:show": "dotenvx run -- pnpm typeorm migration:show",
-    "prepare": "ts-patch install"
+    "prepare": "ts-patch install",
+    "sdk:gen": "nestia sdk"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.971.0",
