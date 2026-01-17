@@ -96,4 +96,11 @@ export class BookCopyService {
 
     await this.bookCopyRepository.delete(id);
   }
+
+  async findById(id: string): Promise<BookCopy | null> {
+    return this.bookCopyRepository.findOne({
+      where: { id },
+      relations: ["book"],
+    });
+  }
 }

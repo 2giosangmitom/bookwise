@@ -1,7 +1,12 @@
-import { Controller, HttpCode } from "@nestjs/common";
+import { Controller, HttpCode, NotFoundException } from "@nestjs/common";
 import { TypedBody, TypedRoute, TypedParam } from "@nestia/core";
 import { BookCopyService } from "./bookCopy.service";
-import { CreateBookCopyResponse, type CreateBookCopyBody, type UpdateBookCopyBody } from "./bookCopy.dto";
+import {
+  CreateBookCopyResponse,
+  GetBookCopyResponse,
+  type CreateBookCopyBody,
+  type UpdateBookCopyBody,
+} from "./bookCopy.dto";
 import { ApiTags } from "@nestjs/swagger";
 import { tags } from "typia";
 
@@ -17,6 +22,27 @@ export class BookCopyController {
     return {
       message: "Book copy has been created successfully",
       data: { bookCopyId: createdBookCopy.id },
+    };
+  }
+
+  @TypedRoute.Get("/:id")
+  async getBookCopy(@TypedParam("id") id: string & tags.Format<"uuid">): Promise<GetBookCopyResponse> {
+    const bookCopy = await this.bookCopyService.findById(id);
+
+    if (!bookCopy) {
+      throw new NotFoundException("Book copy not found");
+    }
+
+    return {
+      id: bookCopy.id,
+      barcode: bookCopy.barcode,
+      status: bookCopy.status,
+      condition: bookCopy.condition,
+      book: {
+        id: bookCopy.book.id,
+        title: bookCopy.book.title,
+        isbn: bookCopy.book.isbn,
+      },
     };
   }
 
