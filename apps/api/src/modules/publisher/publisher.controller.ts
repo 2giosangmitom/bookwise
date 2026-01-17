@@ -1,7 +1,7 @@
 import { Controller, HttpCode } from "@nestjs/common";
 import { PublisherService } from "./publisher.service";
 import { TypedRoute, TypedBody, TypedParam } from "@nestia/core";
-import { type CreatePublisherBody, CreatePublisherResponse } from "./publisher.dto";
+import { type CreatePublisherBody, CreatePublisherResponse, type UpdatePublisherBody } from "./publisher.dto";
 import { tags } from "typia";
 import { ApiTags } from "@nestjs/swagger";
 
@@ -18,6 +18,15 @@ export class PublisherController {
       message: "Publisher has been created successfully",
       data: { publisherId: createdPublisher.id },
     };
+  }
+
+  @TypedRoute.Patch("/:id")
+  @HttpCode(204)
+  async updatePublisher(
+    @TypedParam("id") id: string & tags.Format<"uuid">,
+    @TypedBody() body: UpdatePublisherBody,
+  ): Promise<void> {
+    await this.publisherService.update(id, body);
   }
 
   @TypedRoute.Delete("/:id")

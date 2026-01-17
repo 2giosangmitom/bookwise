@@ -12,6 +12,7 @@ describe("PublisherService", () => {
     create: jest.fn(),
     save: jest.fn(),
     findOneBy: jest.fn(),
+    update: jest.fn(),
     delete: jest.fn(),
   };
 
@@ -108,6 +109,55 @@ describe("PublisherService", () => {
 
       expect(mockPublisherRepository.findOneBy).toHaveBeenCalledWith({ id: "publisher-id" });
       expect(mockPublisherRepository.delete).toHaveBeenCalledWith("publisher-id");
+    });
+  });
+
+  describe("update", () => {
+    it("should throw NotFoundException when updating non-existent publisher", async () => {
+      mockPublisherRepository.findOneBy.mockImplementationOnce(async () => null);
+
+      await expect(publisherService.update("non-existent-id", { name: "New Name" })).rejects.toThrow(NotFoundException);
+      expect(mockPublisherRepository.update).not.toHaveBeenCalled();
+    });
+
+    it("should throw ConflictException when updating with existing slug", async () => {
+      const existingPublisher = { id: "publisher-id", slug: "old-slug" };
+      mockPublisherRepository.findOneBy.mockImplementationOnce(async () => existingPublisher);
+      mockPublisherRepository.existsBy.mockImplementationOnce(async () => true);
+
+      await expect(publisherService.update("publisher-id", { slug: "existing-slug" })).rejects.toThrow(
+        ConflictException,
+      );
+      expect(mockPublisherRepository.update).not.toHaveBeenCalled();
+    });
+
+    it("should update publisher successfully", async () => {
+      const existingPublisher = {
+        id: "publisher-id",
+        name: "Old Name",
+        description: "Old Description",
+        website: "https://old-website.com",
+        slug: "old-slug",
+      };
+
+      mockPublisherRepository.findOneBy.mockImplementationOnce(async () => existingPublisher);
+      mockPublisherRepository.update.mockImplementationOnce(async () => ({
+        affected: 1,
+      }));
+
+      await publisherService.update("publisher-id", {
+        name: "New Name",
+        description: "New Description",
+        website: "https://new-website.com",
+        slug: "new-slug",
+      });
+
+      expect(mockPublisherRepository.update).toHaveBeenCalledWith("publisher-id", {
+        name: "New Name",
+        description: "New Description",
+        website: "https://new-website.com",
+        slug: "new-slug",
+      });
     });
   });
 });
