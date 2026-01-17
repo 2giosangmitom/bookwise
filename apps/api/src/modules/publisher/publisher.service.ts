@@ -88,4 +88,11 @@ export class PublisherService {
       id: In(ids),
     });
   }
+
+  async findById(id: string): Promise<Publisher | null> {
+    return this.publisherRepository.findOne({
+      where: { id },
+      relations: ["books"],
+    });
+  }
 }

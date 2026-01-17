@@ -13,3 +13,17 @@ export type CreatePublisherResponse = {
 };
 
 export type UpdatePublisherBody = Partial<CreatePublisherBody>;
+
+export type GetPublisherResponse = {
+  id: string;
+  name: string;
+  description: string;
+  website: string;
+  slug: string;
+  photoFileName: string | null;
+  books: Array<{
+    id: string;
+    title: string;
+    isbn: string;
+  }>;
+};

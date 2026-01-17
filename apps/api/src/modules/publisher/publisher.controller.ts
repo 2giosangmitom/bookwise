@@ -1,7 +1,12 @@
-import { Controller, HttpCode } from "@nestjs/common";
+import { Controller, HttpCode, NotFoundException } from "@nestjs/common";
 import { PublisherService } from "./publisher.service";
 import { TypedRoute, TypedBody, TypedParam } from "@nestia/core";
-import { type CreatePublisherBody, CreatePublisherResponse, type UpdatePublisherBody } from "./publisher.dto";
+import {
+  type CreatePublisherBody,
+  CreatePublisherResponse,
+  GetPublisherResponse,
+  type UpdatePublisherBody,
+} from "./publisher.dto";
 import { tags } from "typia";
 import { ApiTags } from "@nestjs/swagger";
 
@@ -17,6 +22,29 @@ export class PublisherController {
     return {
       message: "Publisher has been created successfully",
       data: { publisherId: createdPublisher.id },
+    };
+  }
+
+  @TypedRoute.Get("/:id")
+  async getPublisher(@TypedParam("id") id: string & tags.Format<"uuid">): Promise<GetPublisherResponse> {
+    const publisher = await this.publisherService.findById(id);
+
+    if (!publisher) {
+      throw new NotFoundException("Publisher not found");
+    }
+
+    return {
+      id: publisher.id,
+      name: publisher.name,
+      description: publisher.description,
+      website: publisher.website,
+      slug: publisher.slug,
+      photoFileName: publisher.photoFileName,
+      books: publisher.books.map((book) => ({
+        id: book.id,
+        title: book.title,
+        isbn: book.isbn,
+      })),
     };
   }
 
