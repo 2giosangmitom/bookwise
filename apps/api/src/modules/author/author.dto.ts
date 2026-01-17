@@ -15,10 +15,4 @@ export type CreateAuthorResponse = {
   };
 };
 
-export type UpdateAuthorBody = {
-  name?: string;
-  biography?: string;
-  dateOfBirth?: string & tags.Format<"date">;
-  dateOfDeath?: (string & tags.Format<"date">) | null;
-  slug?: string & tags.MinLength<1>;
-};
+export type UpdateAuthorBody = Partial<CreateAuthorBody>;

@@ -12,9 +12,4 @@ export type CreatePublisherResponse = {
   };
 };
 
-export type UpdatePublisherBody = {
-  name?: string;
-  description?: string;
-  website?: string;
-  slug?: string;
-};
+export type UpdatePublisherBody = Partial<CreatePublisherBody>;

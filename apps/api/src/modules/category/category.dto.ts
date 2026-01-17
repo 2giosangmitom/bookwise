@@ -10,7 +10,4 @@ export type CreateCategoryResponse = {
   };
 };
 
-export type UpdateCategoryBody = {
-  name?: string;
-  slug?: string;
-};
+export type UpdateCategoryBody = Partial<CreateCategoryBody>;

@@ -15,9 +15,4 @@ export type CreateBookCopyResponse = {
   };
 };
 
-export type UpdateBookCopyBody = {
-  bookId?: string & tags.Format<"uuid">;
-  barcode?: string & tags.MinLength<1>;
-  status?: BookStatus;
-  condition?: BookCondition;
-};
+export type UpdateBookCopyBody = Partial<CreateBookCopyBody>;
