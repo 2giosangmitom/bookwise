@@ -82,4 +82,10 @@ export class PublisherService {
       id: In(ids),
     });
   }
+
+  async findByIds(...ids: string[]): Promise<Publisher[]> {
+    return this.publisherRepository.findBy({
+      id: In(ids),
+    });
+  }
 }

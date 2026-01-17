@@ -86,4 +86,10 @@ export class AuthorService {
       id: In(ids),
     });
   }
+
+  async findByIds(...ids: string[]): Promise<Author[]> {
+    return this.authorRepository.findBy({
+      id: In(ids),
+    });
+  }
 }

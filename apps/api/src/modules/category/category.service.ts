@@ -71,4 +71,10 @@ export class CategoryService {
       id: In(ids),
     });
   }
+
+  async findByIds(...ids: string[]): Promise<Category[]> {
+    return this.categoryRepository.findBy({
+      id: In(ids),
+    });
+  }
 }

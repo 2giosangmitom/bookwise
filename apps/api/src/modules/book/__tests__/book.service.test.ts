@@ -16,19 +16,23 @@ describe("BookService", () => {
     create: jest.fn(),
     save: jest.fn(),
     findOneBy: jest.fn(),
+    update: jest.fn(),
     delete: jest.fn(),
   };
 
   const mockAuthorService = {
     existsById: jest.fn(),
+    findByIds: jest.fn(),
   };
 
   const mockCategoryService = {
     existsById: jest.fn(),
+    findByIds: jest.fn(),
   };
 
   const mockPublisherService = {
     existsById: jest.fn(),
+    findByIds: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -156,6 +160,9 @@ describe("BookService", () => {
       mockAuthorService.existsById.mockImplementationOnce(async () => true);
       mockCategoryService.existsById.mockImplementationOnce(async () => true);
       mockPublisherService.existsById.mockImplementationOnce(async () => true);
+      mockAuthorService.findByIds.mockImplementationOnce(async () => [{ id: "author-1" }, { id: "author-2" }]);
+      mockCategoryService.findByIds.mockImplementationOnce(async () => [{ id: "category-1" }]);
+      mockPublisherService.findByIds.mockImplementationOnce(async () => [{ id: "publisher-1" }]);
       mockBookRepository.create.mockImplementationOnce(() => createdBook);
       mockBookRepository.save.mockImplementationOnce(() => createdBook);
 
@@ -198,6 +205,98 @@ describe("BookService", () => {
 
       expect(mockBookRepository.findOneBy).toHaveBeenCalledWith({ id: "book-id" });
       expect(mockBookRepository.delete).toHaveBeenCalledWith("book-id");
+    });
+  });
+
+  describe("update", () => {
+    it("should throw NotFoundException when updating non-existent book", async () => {
+      mockBookRepository.findOneBy.mockImplementationOnce(async () => null);
+
+      await expect(bookService.update("non-existent-id", { title: "New Title" })).rejects.toThrow(NotFoundException);
+      expect(mockBookRepository.update).not.toHaveBeenCalled();
+    });
+
+    it("should throw ConflictException when updating with existing ISBN", async () => {
+      const existingBook = { id: "book-id", isbn: "old-isbn" };
+      mockBookRepository.findOneBy.mockImplementationOnce(async () => existingBook);
+      mockBookRepository.existsBy.mockImplementationOnce(async () => true);
+
+      await expect(bookService.update("book-id", { isbn: "existing-isbn" })).rejects.toThrow(ConflictException);
+      expect(mockBookRepository.update).not.toHaveBeenCalled();
+    });
+
+    it("should throw NotFoundException when updating with non-existent authors", async () => {
+      const existingBook = { id: "book-id" };
+      mockBookRepository.findOneBy.mockImplementationOnce(async () => existingBook);
+      mockBookRepository.existsBy.mockImplementationOnce(async () => false);
+      mockAuthorService.existsById.mockImplementationOnce(async () => false);
+
+      await expect(bookService.update("book-id", { authorIds: ["author-1"] })).rejects.toThrow(NotFoundException);
+      expect(mockBookRepository.update).not.toHaveBeenCalled();
+    });
+
+    it("should throw NotFoundException when updating with non-existent categories", async () => {
+      const existingBook = { id: "book-id" };
+      mockBookRepository.findOneBy.mockImplementationOnce(async () => existingBook);
+      mockBookRepository.existsBy.mockImplementationOnce(async () => false);
+      mockAuthorService.existsById.mockImplementationOnce(async () => true);
+      mockCategoryService.existsById.mockImplementationOnce(async () => false);
+
+      await expect(bookService.update("book-id", { categoryIds: ["category-1"] })).rejects.toThrow(NotFoundException);
+      expect(mockBookRepository.update).not.toHaveBeenCalled();
+    });
+
+    it("should throw NotFoundException when updating with non-existent publishers", async () => {
+      const existingBook = { id: "book-id" };
+      mockBookRepository.findOneBy.mockImplementationOnce(async () => existingBook);
+      mockBookRepository.existsBy.mockImplementationOnce(async () => false);
+      mockAuthorService.existsById.mockImplementationOnce(async () => true);
+      mockCategoryService.existsById.mockImplementationOnce(async () => true);
+      mockPublisherService.existsById.mockImplementationOnce(async () => false);
+
+      await expect(bookService.update("book-id", { publisherIds: ["publisher-1"] })).rejects.toThrow(NotFoundException);
+      expect(mockBookRepository.update).not.toHaveBeenCalled();
+    });
+
+    it("should update book successfully", async () => {
+      const mockAuthors = [{ id: "author-1" }, { id: "author-2" }];
+      const mockCategories = [{ id: "category-1" }];
+      const mockPublishers = [{ id: "publisher-1" }];
+
+      mockBookRepository.findOneBy.mockImplementationOnce(async () => ({ id: "book-id" }));
+      mockBookRepository.update.mockImplementationOnce(async () => ({
+        affected: 1,
+      }));
+      mockAuthorService.findByIds.mockImplementationOnce(async () => mockAuthors);
+      mockAuthorService.existsById.mockImplementationOnce(async () => true);
+      mockCategoryService.existsById.mockImplementationOnce(async () => true);
+      mockCategoryService.findByIds.mockImplementationOnce(async () => mockCategories);
+      mockPublisherService.existsById.mockImplementationOnce(async () => true);
+      mockPublisherService.findByIds.mockImplementationOnce(async () => mockPublishers);
+      mockBookRepository.findOneBy.mockImplementationOnce(async () => ({}) as Book);
+
+      const result = await bookService.update("book-id", {
+        title: "New Title",
+        description: "New Description",
+        isbn: "new-isbn",
+        publishedDate: "2024-02-01",
+        photoFileName: "new-photo.jpg",
+        authorIds: ["author-1", "author-2"],
+        categoryIds: ["category-1"],
+        publisherIds: ["publisher-1"],
+      });
+
+      expect(mockBookRepository.update).toHaveBeenCalledWith("book-id", {
+        title: "New Title",
+        description: "New Description",
+        isbn: "new-isbn",
+        publishedDate: new Date("2024-02-01"),
+        photoFileName: "new-photo.jpg",
+        authors: mockAuthors,
+        categories: mockCategories,
+        publishers: mockPublishers,
+      });
+      expect(result).toBe(1);
     });
   });
 });
