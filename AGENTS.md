@@ -1,220 +1,288 @@
-# Bookwise Agent Guide
+# Bookwise Development Guidelines
 
-This monorepo uses **pnpm** workspaces and **Turbo**. It contains a NestJS API, a Next.js web app, and shared packages. These instructions are for any agentic coding tools (like this one) working in this repository.
+This document contains guidelines and commands for agentic coding agents working on the Bookwise monorepo.
 
-## 🧭 Project Layout
+## Project Structure
 
-- `apps/api`: NestJS backend (Fastify, TypeORM, Postgres, Nestia).
-- `apps/web`: Next.js App Router frontend with Tailwind.
-- `packages/shared`: Shared Typia schemas, DTOs, and enums.
-- `packages/sdk`: Auto-generated SDK for the Bookwise API (via Nestia).
-- `packages/eslint-config`: Shared ESLint configuration (`@bookwise/eslint-config`).
+This is a Turborepo monorepo with:
 
-## 🚀 Build, Lint, Typecheck & Test
+- `apps/web` - Next.js frontend application
+- `apps/api` - NestJS backend API with TypeORM and PostgreSQL
+- `packages/shared` - Shared utilities and types
+- `packages/sdk` - TypeScript SDK for API communication
+- `packages/eslint-config` - ESLint configurations
 
-### Root (Turbo / All Workspaces)
+## Build & Development Commands
 
-Run these from the repo root:
-
-- `pnpm build` - `turbo run build` across all apps/packages.
-- `pnpm dev` - `turbo run dev` (usually API + Web).
-- `pnpm lint` - `turbo run lint` using shared ESLint config.
-- `pnpm typecheck` - `turbo run typecheck` using `tsc --noEmit`.
-- `pnpm test` - `turbo run test` (primarily API Jest tests).
-- `pnpm format` - `prettier --write` (uses root `prettier` config).
-
-### API (`apps/api`)
-
-From `apps/api`:
-
-- `pnpm dev` - `nest start --watch`.
-- `pnpm build` - `nest build`.
-- `pnpm lint` - `eslint` (uses `@bookwise/eslint-config/api`).
-- `pnpm typecheck` - `tsc --noEmit`.
-- `pnpm test` - `jest` (NestJS + SWC).
-
-**Run a single test file (API/Jest):**
+### Root Level Commands
 
 ```bash
-# From apps/api directory
-pnpm test -- src/modules/auth/auth.service.spec.ts
+# Install dependencies
+pnpm install
 
-# Watch mode for a specific file
-pnpm test -- --watch src/modules/auth/auth.service.spec.ts
+# Start all development servers
+pnpm dev
 
-# Filter by test name (regex) in a file
-pnpm test -- src/modules/auth/auth.service.spec.ts -t "should create user"
+# Build all packages and apps
+pnpm build
+
+# Run linting across all packages
+pnpm lint
+
+# Run type checking across all packages
+pnpm typecheck
+
+# Run all tests
+pnpm test
+
+# Format code with Prettier
+pnpm format
 ```
 
-### Web (`apps/web`)
+### Individual Package Commands
 
-From `apps/web`:
+#### Web Frontend (apps/web)
 
-- `pnpm dev` - `next dev`.
-- `pnpm build` - `next build`.
-- `pnpm start` - `next start`.
-- `pnpm lint` - `eslint` (uses `@bookwise/eslint-config/web`).
-- `pnpm typecheck` - `tsc --noEmit`.
+```bash
+cd apps/web
 
-(Currently there are no project-specific Jest/Playwright tests configured in `apps/web`; add new tests close to features if needed.)
+# Development server
+pnpm dev
 
-## 📐 General Code Style
+# Build for production
+pnpm build
 
-- **Language**: Strict TypeScript across all workspaces.
-- **No `any`**: Avoid `any`. Prefer precise types, generics, or `unknown` + narrowing.
-- **Formatting**: Use Prettier (root `printWidth: 120`). Do not hand-wrap lines differently.
-- **Filenames**: Use kebab-case (e.g. `user-profile.service.ts`, `book-list-item.tsx`).
-- **Classes/Components**: Use PascalCase (`UserProfileService`, `BookList`, `AuthController`).
-- **Functions/Variables**: Use camelCase with descriptive names (`createSignedUrl`, `fetchCurrentUser`).
-- **Enums / Const Objects**: Use PascalCase for enums and SCREAMING_SNAKE_CASE for constant values.
-- **Modules**: Prefer one main concept per file (controller, service, component, etc.).
+# Start production server
+pnpm start
 
-## 📦 Imports & Module Boundaries
+# Lint code
+pnpm lint
 
-- **Root API imports**: Use `@/` alias within `apps/api` for internal modules.
-  ```ts
-  import { ZodValidationPipe } from "@/pipes/zod"; // Preferred
-  // Avoid deep relative traversal
-  import { ZodValidationPipe } from "../../pipes/zod"; // Avoid
-  ```
-- **Shared packages**: Import from `@bookwise/*` workspaces.
-  ```ts
-  import { signUpSchema } from "@bookwise/shared";
-  import { createApiClient } from "@bookwise/sdk";
-  ```
-- **Web imports**:
-  - Use path aliases defined in `apps/web/tsconfig.json` (e.g. `@/components/...`, `@/lib/...`) instead of deep `../../../`.
-  - Group imports: builtin -> third-party -> internal. Keep type-only imports as `import type` where appropriate.
-- **Side effects**: Keep side-effect imports explicit (e.g. polyfills, global styles).
+# Type checking
+pnpm typecheck
+```
 
-## 🧪 Testing Guidelines
+#### API Backend (apps/api)
 
-- Prefer **Jest** for backend unit/integration tests in `apps/api`.
-- Place API tests next to implementation modules under `src/modules/**` when possible.
-- Use clear test names (`it('returns 401 when token invalid', ...)`).
-- Mock external services (DB, S3, Redis) where necessary; avoid slow network calls.
-- For regression bugs, first add/extend a test that reproduces the issue, then fix.
+```bash
+cd apps/api
 
-## 🧱 Backend (apps/api) Conventions
+# Development server with hot reload
+pnpm dev
 
-- **Framework**: NestJS with Fastify adapter.
-- **API Generation**: **Nestia** for typed SDK and OpenAPI generation.
-  - Use `@TypedRoute`, `@TypedBody`, `@TypedQuery` decorators from `@nestia/core`.
-  - Define DTOs using **Typia** types with validation tags (not Zod).
-  - Nestia auto-generates SDK and OpenAPI docs from these typed controllers.
-- **Validation**: Prefer **Typia** schemas with validation tags, often from `@bookwise/shared`.
-  - Do NOT introduce `class-validator` / `class-transformer` unless absolutely required.
-  - Use Typia's `tags` for runtime validation (e.g. `string & tags.Format<"email">`).
-- **Database**: TypeORM with Postgres; keep entities in domain-specific modules.
-- **Migrations**:
-  - Use `pnpm migration:generate` / `pnpm migration:run` scripts in `apps/api`.
-  - All schema changes must go through migrations.
-- **Swagger / OpenAPI**:
-  - Use `@nestjs/swagger` decorators (`@ApiTags`, etc.) for documentation.
-  - Nestia automatically generates OpenAPI from typed controllers.
+# Build application
+pnpm build
 
-### API Error Handling
+# Run tests
+pnpm test
 
-- Use NestJS **Exception Filters** for cross-cutting concerns.
-- Throw NestJS HTTP exceptions (`BadRequestException`, `UnauthorizedException`, etc.) rather than generic `Error`.
-- For validation issues, rely on Nestia's runtime validation instead of manual checks wherever possible.
-- When catching errors:
-  - Log relevant context (user id, request id) via Nest logger.
-  - Re-throw as a proper HTTP exception with a safe, non-sensitive message.
+# Run specific test file
+pnpm test -- user.service.test.ts
 
-## 🚀 Nestia Development Guidelines
+# Run tests in watch mode
+pnpm test -- --watch
 
-### Controller Development
+# Run tests with coverage
+pnpm test -- --coverage
 
-- Use `@TypedRoute.Get()`, `@TypedRoute.Post()`, etc. instead of `@Get()`, `@Post()`
-- Use `@TypedBody()` for request bodies, `@TypedQuery()` for query parameters
-- Define DTOs as TypeScript types with Typia validation tags:
-  ```ts
-  export type CreateUserBody = {
-    email: string & tags.Format<"email">;
-    name: string & tags.MinLength<1>;
-    age?: number & tags.Minimum<18> & tags.Maximum<120>;
-  };
-  ```
+# Database migrations
+pnpm migration:generate --name migration_name
+pnpm migration:run
+pnpm migration:show
 
-### DTO and Schema Development
+# Generate SDK from API
+pnpm sdk:gen
 
-- **Prefer Typia over Zod**: Use Typia's `tags` for runtime validation
-- Place DTOs in dedicated `.dto.ts` files alongside controllers
-- Import validation tags from `typia`: `import { tags } from "typia"`
-- Use shared types from `@bookwise/shared` when possible
-- Common validation tags:
-  - `tags.Format<"email">` - Email validation
-  - `tags.MinLength<N>` - Minimum string length
-  - `tags.Minimum<N>` - Minimum number value
-  - `tags.Format<"uuid">` - UUID validation
-  - `tags.Nullable<T>` - Optional nullable fields
+# Lint code
+pnpm lint
 
-### SDK Generation
+# Type checking
+pnpm typecheck
+```
 
-- The SDK is auto-generated by Nestia in `packages/sdk/`
-- Run `pnpm build` in the API workspace to regenerate the SDK
-- The SDK includes typed HTTP clients for all API endpoints
-- Import and use the SDK in frontend applications:
-  ```ts
-  import { createApiClient } from "@bookwise/sdk";
-  const client = createApiClient({ baseURL: "http://localhost:8080/api" });
-  ```
+#### Shared Packages
 
-### Breaking Changes Considerations
+```bash
+cd packages/shared  # or packages/sdk
 
-- **Major Breaking Change**: Migration from Zod to Typia validation
-- **Package Rename**: `@bookwise/api-client` → `@bookwise/sdk` (auto-generated)
-- **Controller Decorators**: Standard decorators → `@Typed*` decorators from Nestia
-- **Validation Approach**: Manual Zod pipes → Automatic Typia runtime validation
+# Watch build
+pnpm dev
 
-## 🎨 Frontend (apps/web) Conventions
+# Build package
+pnpm build
 
-- **Framework**: Next.js App Router (`app/` directory).
-- **Components**: Functional React components only.
-- **Styling**: Tailwind CSS + `tailwind-merge`/utility helpers.
-- **Icons**: `lucide-react` is the standard icon set.
-- **Data fetching**:
-  - Prefer `@tanstack/react-query` for server state.
-  - Keep pure helpers in `@/lib` and UI-only concerns in `@/components`.
-- **Forms & validation**:
-  - Use Typia schemas (often shared from `@bookwise/shared`) and whatever form library is configured (e.g. `@tanstack/react-form`).
-  - Never duplicate validation logic; share Typia schemas between API and Web where possible.
-- **Client/server components**: Mark client components with `"use client"` only when needed.
+# Lint (shared only)
+pnpm lint
 
-### Frontend Error Handling
+# Type checking
+pnpm typecheck
+```
 
-- Use Next.js error boundaries (`error.tsx`) and not-found routes (`not-found.tsx`) for routing-related failures.
-- Prefer user-friendly error messages; never surface raw stack traces.
-- Use toast/notification components (e.g. `sonner`) for transient errors.
+## Code Style Guidelines
 
-## 🧾 ESLint & Formatting
+### General Principles
 
-- All workspaces use shared ESLint config from `@bookwise/eslint-config` (`./base`, `./web`, `./api`).
-- Treat ESLint errors as build blockers; do not add `eslint-disable` comments unless absolutely necessary and localized.
-- Prettier is integrated via `eslint-plugin-prettier` in the shared config; do not hand-format code.
-- Husky + lint-staged run `pnpm lint --` on staged `*.{ts,tsx,js,mjs}` files; keep changes small and passing lint.
+- Use TypeScript strictly with `strict: true`
+- Follow ESLint configurations in `packages/eslint-config`
+- Use Prettier for formatting (120 character line width)
+- Prefer explicit imports over namespace imports
+- Use functional programming patterns where appropriate
 
-## 📦 Package Management
+### Import Organization
 
-- Use `pnpm` only. **Never** use `npm` or `yarn`.
-- To add a dependency to a specific workspace:
-  ```bash
-  pnpm add <package> --filter @bookwise/api
-  pnpm add <package> --filter @bookwise/web
-  ```
-- Prefer workspace references (`workspace:*`) for internal packages.
+```typescript
+// External libraries first
+import { ConflictException, Injectable } from "@nestjs/common";
+import { Repository } from "typeorm";
 
-## 🧑‍💻 Git & Commits
+// Internal imports with @ aliases
+import { User } from "@/database/entities/user";
+import { CreateUserBody } from "./user.dto";
+```
 
-- Follow **Conventional Commits**:
-  - `feat: add user login`
-  - `fix: resolve db connection`
-  - `refactor: simplify book search`
-  - `chore: bump dependencies`
-- Keep commits focused and small; ensure lint, typecheck, and tests pass before committing.
-- Do not commit `.env*` or other secrets.
+### API (NestJS) Conventions
 
----
+- Use dependency injection pattern
+- Services handle business logic, controllers handle HTTP
+- DTOs for request/response validation
+- Use TypeORM decorators for entities
+- Throw appropriate HTTP exceptions
+- Follow `__tests__` directory structure within each module
 
-If you add new tools, scripts, or conventions, update this AGENTS.md so future agents can follow the same rules.
+#### File Structure for Modules
+
+```
+modules/user/
+├── user.module.ts
+├── user.service.ts
+├── user.controller.ts
+├── user.dto.ts
+└── __tests__/
+    └── user.service.test.ts
+```
+
+#### Testing Patterns
+
+```typescript
+import { beforeEach, describe, it, jest, expect } from "@jest/globals";
+import { Test } from "@nestjs/testing";
+
+describe("UserService", () => {
+  let service: UserService;
+  const mockRepo = { existsBy: jest.fn(), create: jest.fn(), save: jest.fn() };
+
+  beforeEach(async () => {
+    const moduleRef = await Test.createTestingModule({
+      providers: [UserService, { provide: getRepositoryToken(User), useValue: mockRepo }],
+    }).compile();
+    service = moduleRef.get(UserService);
+    jest.clearAllMocks();
+  });
+});
+```
+
+### Web (Next.js) Conventions
+
+- Use App Router structure
+- Components follow PascalCase file names
+- Custom hooks start with `use` and are camelCase
+- Use TypeScript generics for type safety
+- Prefer functional components with hooks
+- Use `clsx` for conditional classes
+
+#### Component Patterns
+
+```typescript
+import * as React from "react";
+
+export function ComponentName({ prop }: { prop: string }) {
+  return <div>{prop}</div>;
+}
+```
+
+### Type Definitions
+
+- Use explicit type annotations for function returns
+- Prefer interface for object shapes with implementation
+- Use type for unions, intersections, and utility types
+- Leverage Zod for runtime validation schemas
+
+### Error Handling
+
+- Use appropriate HTTP status codes and exceptions in API
+- Implement proper error boundaries in React
+- Log errors appropriately without exposing sensitive data
+- Use try-catch blocks for async operations that might fail
+
+### Database (TypeORM)
+
+- Use snake_case for column names in database
+- Use camelCase for TypeScript properties
+- Always define entities with proper decorators
+- Use migrations for schema changes
+- Index foreign keys and frequently queried columns
+
+### Naming Conventions
+
+- Files: kebab-case for utilities, PascalCase for components
+- Variables: camelCase
+- Constants: UPPER_SNAKE_CASE
+- Classes and Interfaces: PascalCase
+- Enums: PascalCase with descriptive names
+
+### Git Hooks
+
+- Pre-commit hooks run lint-staged to ensure code quality
+- Husky manages Git hooks automatically
+- Lint-staged runs ESLint on staged TypeScript files
+
+## Development Environment
+
+### Requirements
+
+- Node.js 22 (managed by mise)
+- pnpm 10 (package manager)
+- Docker for development services
+- dotenvx for environment variable management
+
+### Development Services
+
+```bash
+# Start required services (PostgreSQL, Redis, RustFS)
+mise task compose-dev
+```
+
+### Environment Variables
+
+Use `.env` files with dotenvx for environment management. Never commit secrets to the repository.
+
+## Testing Guidelines
+
+### API Testing
+
+- Unit tests for services with mocked repositories
+- Focus on business logic testing
+- Use Jest with ts-jest preset
+- Test both success and error scenarios
+
+### Frontend Testing
+
+- Component testing with appropriate tools
+- Integration tests for user flows
+- Accessibility testing considerations
+
+## Performance Considerations
+
+- Database queries should be optimized with proper indexing
+- Implement pagination for large datasets
+- Use React.memo and useMemo for expensive computations
+- Bundle size optimization in Next.js
+- Use caching strategies appropriately
+
+## Security Best Practices
+
+- Input validation with Zod schemas
+- Proper authentication and authorization
+- Environment-based configuration
+- Secure headers with Fastify Helmet
+- SQL injection prevention with TypeORM
