@@ -6,7 +6,7 @@ export type CreateBookBody = {
   description: string;
   isbn: string;
   publishedDate: string & Format<"date">;
-  authorIds: string[] & MinItems<1>;
-  categoryIds: string[] & MinItems<1>;
-  publisherIds: string[] & MinItems<1>;
+  authorIds: (string & Format<"uuid">)[] & MinItems<1>;
+  categoryIds: (string & Format<"uuid">)[] & MinItems<1>;
+  publisherIds: (string & Format<"uuid">)[] & MinItems<1>;
 };
