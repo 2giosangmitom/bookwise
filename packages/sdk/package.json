@@ -18,7 +18,6 @@
   "dependencies": {
     "@bookwise/shared": "workspace:*",
     "@nestia/fetcher": "^10.0.1",
-    "ofetch": "^1.5.1",
     "typia": "^11.0.0"
   },
   "devDependencies": {

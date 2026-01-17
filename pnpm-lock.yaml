@@ -295,9 +295,6 @@ importers:
       '@nestia/fetcher':
         specifier: ^10.0.1
         version: 10.0.1
-      ofetch:
-        specifier: ^1.5.1
-        version: 1.5.1
       typia:
         specifier: ^11.0.0
         version: 11.0.0(@types/node@25.0.9)(typescript@5.9.3)
