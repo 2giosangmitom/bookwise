@@ -1,6 +1,6 @@
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Repository, In } from "typeorm";
 import { Category } from "@/database/entities/category";
 import { CreateCategoryBody, UpdateCategoryBody } from "./category.dto";
 
@@ -64,5 +64,11 @@ export class CategoryService {
     }
 
     await this.categoryRepository.delete(id);
+  }
+
+  async existsById(...ids: string[]): Promise<boolean> {
+    return this.categoryRepository.existsBy({
+      id: In(ids),
+    });
   }
 }

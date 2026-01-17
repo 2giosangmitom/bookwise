@@ -1,6 +1,6 @@
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Repository, In } from "typeorm";
 import { Author } from "@/database/entities/author";
 import { CreateAuthorBody, UpdateAuthorBody } from "./author.dto";
 
@@ -79,5 +79,11 @@ export class AuthorService {
     }
 
     await this.authorRepository.delete(id);
+  }
+
+  async existsById(...ids: string[]): Promise<boolean> {
+    return this.authorRepository.existsBy({
+      id: In(ids),
+    });
   }
 }

@@ -6,6 +6,7 @@ import { PublisherController } from "./publisher.controller";
 
 @Module({
   imports: [TypeOrmModule.forFeature([Publisher])],
+  exports: [PublisherService],
   providers: [PublisherService],
   controllers: [PublisherController],
 })
