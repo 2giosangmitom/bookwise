@@ -77,4 +77,11 @@ export class CategoryService {
       id: In(ids),
     });
   }
+
+  async findById(id: string): Promise<Category | null> {
+    return this.categoryRepository.findOne({
+      where: { id },
+      relations: ["books"],
+    });
+  }
 }

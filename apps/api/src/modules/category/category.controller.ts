@@ -1,7 +1,12 @@
-import { Controller, HttpCode } from "@nestjs/common";
+import { Controller, HttpCode, NotFoundException } from "@nestjs/common";
 import { CategoryService } from "./category.service";
 import { TypedBody, TypedParam, TypedRoute } from "@nestia/core";
-import { CreateCategoryResponse, type CreateCategoryBody, type UpdateCategoryBody } from "./category.dto";
+import {
+  CreateCategoryResponse,
+  GetCategoryResponse,
+  type CreateCategoryBody,
+  type UpdateCategoryBody,
+} from "./category.dto";
 import { ApiTags } from "@nestjs/swagger";
 import { tags } from "typia";
 
@@ -17,6 +22,26 @@ export class CategoryController {
     return {
       message: "Category has been created successfully",
       data: { categoryId: createdCategory.id },
+    };
+  }
+
+  @TypedRoute.Get("/:id")
+  async getCategory(@TypedParam("id") id: string & tags.Format<"uuid">): Promise<GetCategoryResponse> {
+    const category = await this.categoryService.findById(id);
+
+    if (!category) {
+      throw new NotFoundException("Category not found");
+    }
+
+    return {
+      id: category.id,
+      name: category.name,
+      slug: category.slug,
+      books: category.books.map((book) => ({
+        id: book.id,
+        title: book.title,
+        isbn: book.isbn,
+      })),
     };
   }
 

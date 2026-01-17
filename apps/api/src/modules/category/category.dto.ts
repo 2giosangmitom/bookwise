@@ -11,3 +11,14 @@ export type CreateCategoryResponse = {
 };
 
 export type UpdateCategoryBody = Partial<CreateCategoryBody>;
+
+export type GetCategoryResponse = {
+  id: string;
+  name: string;
+  slug: string;
+  books: Array<{
+    id: string;
+    title: string;
+    isbn: string;
+  }>;
+};

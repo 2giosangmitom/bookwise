@@ -11,6 +11,7 @@ describe("CategoryService", () => {
     existsBy: jest.fn(),
     create: jest.fn(),
     save: jest.fn(),
+    findOne: jest.fn(),
     findOneBy: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
@@ -157,6 +158,39 @@ describe("CategoryService", () => {
         name: "New Name",
         slug: "new-slug",
       });
+    });
+  });
+
+  describe("findById", () => {
+    it("should return category with books relation when found", async () => {
+      const mockCategory = {
+        id: "category-id",
+        name: "Fiction",
+        slug: "fiction",
+        books: [{ id: "book-1", title: "Book 1", isbn: "978-0123456789" }],
+      };
+
+      mockCategoryRepository.findOne.mockImplementationOnce(() => mockCategory);
+
+      const result = await categoryService.findById("category-id");
+
+      expect(mockCategoryRepository.findOne).toHaveBeenCalledWith({
+        where: { id: "category-id" },
+        relations: ["books"],
+      });
+      expect(result).toEqual(mockCategory);
+    });
+
+    it("should return null when category not found", async () => {
+      mockCategoryRepository.findOne.mockImplementationOnce(() => null);
+
+      const result = await categoryService.findById("nonexistent-id");
+
+      expect(mockCategoryRepository.findOne).toHaveBeenCalledWith({
+        where: { id: "nonexistent-id" },
+        relations: ["books"],
+      });
+      expect(result).toBeNull();
     });
   });
 });
