@@ -15,6 +15,8 @@ describe("BookService", () => {
     existsBy: jest.fn(),
     create: jest.fn(),
     save: jest.fn(),
+    findOneBy: jest.fn(),
+    delete: jest.fn(),
   };
 
   const mockAuthorService = {
@@ -170,6 +172,32 @@ describe("BookService", () => {
         publishers: [{ id: "publisher-1" }],
       });
       expect(result).toEqual(createdBook);
+    });
+  });
+
+  describe("delete", () => {
+    it("should throw NotFoundException when deleting non-existent book", async () => {
+      mockBookRepository.findOneBy.mockImplementationOnce(async () => null);
+
+      await expect(bookService.delete("non-existent-id")).rejects.toThrow(NotFoundException);
+      expect(mockBookRepository.delete).not.toHaveBeenCalled();
+    });
+
+    it("should delete book successfully when found", async () => {
+      const mockBook = {
+        id: "book-id",
+        title: "Test Book",
+        description: "Test Description",
+        isbn: "978-0123456789",
+        publishedDate: new Date("2024-01-01"),
+      };
+
+      mockBookRepository.findOneBy.mockImplementationOnce(async () => mockBook);
+
+      await bookService.delete("book-id");
+
+      expect(mockBookRepository.findOneBy).toHaveBeenCalledWith({ id: "book-id" });
+      expect(mockBookRepository.delete).toHaveBeenCalledWith("book-id");
     });
   });
 });

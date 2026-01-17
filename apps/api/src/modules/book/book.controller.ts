@@ -1,8 +1,9 @@
-import { Controller } from "@nestjs/common";
+import { Controller, HttpCode } from "@nestjs/common";
 import { BookService } from "./book.service";
-import { TypedBody, TypedRoute } from "@nestia/core";
+import { TypedBody, TypedRoute, TypedParam } from "@nestia/core";
 import { CreateBookResponse, type CreateBookBody } from "./book.dto";
 import { ApiTags } from "@nestjs/swagger";
+import { tags } from "typia";
 
 @Controller("/book")
 @ApiTags("Book")
@@ -17,5 +18,11 @@ export class BookController {
       message: "Book has been created successfully",
       data: { bookId: createdBook.id },
     };
+  }
+
+  @TypedRoute.Delete("/:id")
+  @HttpCode(204)
+  async deleteBook(@TypedParam("id") id: string & tags.Format<"uuid">): Promise<void> {
+    await this.bookService.delete(id);
   }
 }
