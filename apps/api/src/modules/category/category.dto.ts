@@ -9,3 +9,8 @@ export type CreateCategoryResponse = {
     categoryId: string;
   };
 };
+
+export type UpdateCategoryBody = {
+  name?: string;
+  slug?: string;
+};

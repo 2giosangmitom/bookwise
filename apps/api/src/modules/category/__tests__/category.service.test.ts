@@ -12,6 +12,7 @@ describe("CategoryService", () => {
     create: jest.fn(),
     save: jest.fn(),
     findOneBy: jest.fn(),
+    update: jest.fn(),
     delete: jest.fn(),
   };
 
@@ -114,6 +115,48 @@ describe("CategoryService", () => {
 
       expect(mockCategoryRepository.delete).toHaveBeenCalledWith("test-id");
       expect(mockCategoryRepository.delete).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("update", () => {
+    it("should throw NotFoundException when updating non-existent category", async () => {
+      mockCategoryRepository.findOneBy.mockImplementationOnce(async () => null);
+
+      await expect(categoryService.update("non-existent-id", { name: "New Name" })).rejects.toThrow(NotFoundException);
+      expect(mockCategoryRepository.update).not.toHaveBeenCalled();
+    });
+
+    it("should throw ConflictException when updating with existing slug", async () => {
+      const existingCategory = { id: "category-id", slug: "old-slug" };
+      mockCategoryRepository.findOneBy.mockImplementationOnce(async () => existingCategory);
+      mockCategoryRepository.existsBy.mockImplementationOnce(async () => true);
+
+      await expect(categoryService.update("category-id", { slug: "existing-slug" })).rejects.toThrow(ConflictException);
+      expect(mockCategoryRepository.update).not.toHaveBeenCalled();
+    });
+
+    it("should update category successfully", async () => {
+      const existingCategory = {
+        id: "category-id",
+        name: "Old Name",
+        slug: "old-slug",
+      };
+
+      mockCategoryRepository.findOneBy.mockImplementationOnce(async () => existingCategory);
+
+      mockCategoryRepository.update.mockImplementationOnce(async () => ({
+        affected: 1,
+      }));
+
+      await categoryService.update("category-id", {
+        name: "New Name",
+        slug: "new-slug",
+      });
+
+      expect(mockCategoryRepository.update).toHaveBeenCalledWith("category-id", {
+        name: "New Name",
+        slug: "new-slug",
+      });
     });
   });
 });
