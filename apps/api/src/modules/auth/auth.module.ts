@@ -2,8 +2,8 @@ import { Account } from "@/database/entities/account";
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { UserModule } from "../user/user.module";
-import { AccountService } from "./account.service";
-import { AccountController } from "./account.controller";
+import { AuthService } from "./auth.service";
+import { AuthController } from "./auth.controller";
 import { HashingUtils } from "@/utils/hashing";
 import { JwtModule } from "@nestjs/jwt";
 import { ConfigModule, ConfigService } from "@nestjs/config";
@@ -22,7 +22,7 @@ import { SessionModule } from "../session/session.module";
     }),
     UserModule,
   ],
-  providers: [AccountService, HashingUtils],
-  controllers: [AccountController],
+  providers: [AuthService, HashingUtils],
+  controllers: [AuthController],
 })
-export class AccountModule {}
+export class AuthModule {}

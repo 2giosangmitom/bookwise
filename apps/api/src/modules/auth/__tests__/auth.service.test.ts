@@ -1,12 +1,12 @@
 import { describe, it, expect, beforeEach, jest } from "@jest/globals";
 import { Test } from "@nestjs/testing";
-import { AccountService } from "../account.service";
+import { AuthService } from "../auth.service";
 import { UserService } from "@/modules/user/user.service";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { Account } from "@/database/entities/account";
 import { HashingUtils } from "@/utils/hashing";
 
-describe("AccountService", () => {
+describe("AuthService", () => {
   const mockUserService = {
     create: jest.fn(),
   };
@@ -17,7 +17,7 @@ describe("AccountService", () => {
   const mockHashingUtils = {
     generateHash: jest.fn(),
   };
-  let accountService: AccountService;
+  let authService: AuthService;
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -30,7 +30,7 @@ describe("AccountService", () => {
           provide: UserService,
           useValue: mockUserService,
         },
-        AccountService,
+        AuthService,
         {
           provide: getRepositoryToken(Account),
           useValue: mockAccountRepository,
@@ -38,7 +38,7 @@ describe("AccountService", () => {
       ],
     }).compile();
 
-    accountService = moduleRef.get(AccountService);
+    authService = moduleRef.get(AuthService);
     jest.clearAllMocks();
   });
 
@@ -48,7 +48,7 @@ describe("AccountService", () => {
       const createdAccount = { id: "account-id" };
       mockAccountRepository.save.mockImplementationOnce(() => createdAccount);
 
-      const result = await accountService.signUp({
+      const result = await authService.signUp({
         email: "test@email.com",
         firstName: "Test",
         password: "ThisIsPassword",
@@ -73,7 +73,7 @@ describe("AccountService", () => {
         password: "Password123",
       };
 
-      await accountService.signUp(dto);
+      await authService.signUp(dto);
 
       expect(mockUserService.create).toHaveBeenCalledWith(dto);
     });

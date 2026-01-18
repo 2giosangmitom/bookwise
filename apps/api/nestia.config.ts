@@ -1,3 +1,5 @@
+/// <reference types="@fastify/cookie" />
+
 import { INestiaConfig } from "@nestia/sdk";
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./src/app.module";

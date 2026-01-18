@@ -4,10 +4,10 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Account } from "@/database/entities/account";
 import { Repository } from "typeorm";
 import { HashingUtils } from "@/utils/hashing";
-import { SignInBody, SignUpBody } from "./account.dto";
+import { SignInBody, SignUpBody } from "./auth.dto";
 
 @Injectable()
-export class AccountService {
+export class AuthService {
   constructor(
     private userService: UserService,
     @InjectRepository(Account) private accountRepository: Repository<Account>,

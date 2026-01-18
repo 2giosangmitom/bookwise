@@ -3,7 +3,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { APP_FILTER } from "@nestjs/core";
 import { DatabaseExceptionFilter } from "./filters/database";
-import { AccountModule } from "./modules/account/account.module";
+import { AuthModule } from "./modules/auth/auth.module";
 import { UserModule } from "./modules/user/user.module";
 import { AuthorModule } from "./modules/author/author.module";
 import { BookModule } from "./modules/book/book.module";
@@ -76,7 +76,7 @@ const envSchema = z.object({
         url: configService.getOrThrow("REDIS_URL"),
       }),
     }),
-    AccountModule,
+    AuthModule,
     UserModule,
     BookModule,
     AuthorModule,

@@ -1,7 +1,7 @@
 import { Controller, Res, UnauthorizedException, HttpCode, Req } from "@nestjs/common";
-import { AccountService } from "./account.service";
+import { AuthService } from "./auth.service";
 import { TypedRoute, TypedBody } from "@nestia/core";
-import { type SignInBody, SignInResponse, SignUpResponse, type SignUpBody } from "./account.dto";
+import { type SignInBody, SignInResponse, SignUpResponse, type SignUpBody } from "./auth.dto";
 import { ApiTags } from "@nestjs/swagger";
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { createHash, randomBytes } from "node:crypto";
@@ -10,18 +10,18 @@ import { ACCESS_TOKEN_TTL, REFRESH_TOKEN_TTL } from "@/constants";
 import { SessionService } from "../session/session.service";
 import { UAParser } from "ua-parser-js";
 
-@Controller("/account")
-@ApiTags("Account")
-export class AccountController {
+@Controller("/auth")
+@ApiTags("Auth")
+export class AuthController {
   constructor(
-    private accountServive: AccountService,
+    private authService: AuthService,
     private jwtService: JwtService,
     private sessionService: SessionService,
   ) {}
 
   @TypedRoute.Post("/signup")
   async signUp(@TypedBody() body: SignUpBody): Promise<SignUpResponse> {
-    const createdAccount = await this.accountServive.signUp(body);
+    const createdAccount = await this.authService.signUp(body);
 
     return {
       message: "Account has been created successfully",
@@ -36,7 +36,7 @@ export class AccountController {
     @Req() request: FastifyRequest,
     @Res({ passthrough: true }) response: FastifyReply,
   ): Promise<SignInResponse> {
-    const result = await this.accountServive.checkCredentials(body);
+    const result = await this.authService.checkCredentials(body);
 
     if (!result) {
       throw new UnauthorizedException("Wrong email or password provided");
@@ -66,7 +66,7 @@ export class AccountController {
 
     response.setCookie("refreshToken", refreshToken, {
       httpOnly: true,
-      path: "/account/refresh",
+      path: "/auth/refresh",
       maxAge: REFRESH_TOKEN_TTL,
       sameSite: "none",
       secure: true,
