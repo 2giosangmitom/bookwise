@@ -1,18 +1,24 @@
 import { NestFactory } from "@nestjs/core";
 import { FastifyAdapter, NestFastifyApplication } from "@nestjs/platform-fastify";
 import { AppModule } from "./app.module";
-import helmet from "@fastify/helmet";
+import { fastifyHelmet } from "@fastify/helmet";
+import { fastifyCookie } from "@fastify/cookie";
+import { fastifyMultipart } from "@fastify/multipart";
 import { ConfigService } from "@nestjs/config";
 import { SwaggerModule } from "@nestjs/swagger";
 import { NestiaSwaggerComposer } from "@nestia/sdk";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter());
-
-  // Register helmet
-  await app.getHttpAdapter().getInstance().register(helmet);
-
   const configService = app.get(ConfigService);
+
+  // Register fastify plugins
+  const fastify = app.getHttpAdapter().getInstance();
+  await fastify.register(fastifyHelmet as never);
+  await fastify.register(fastifyCookie as never, {
+    secret: configService.getOrThrow("COOKIE_SECRET"),
+  });
+  await fastify.register(fastifyMultipart as never);
 
   app.enableCors({
     methods: configService.getOrThrow<string>("CORS_METHODS").split(","),
@@ -32,8 +38,7 @@ async function bootstrap() {
     ],
     beautify: true,
   });
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  SwaggerModule.setup("api", app, document as any);
+  SwaggerModule.setup("api", app, document as never);
 
   await app.listen(PORT);
 }

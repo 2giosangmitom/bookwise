@@ -4,7 +4,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Account } from "@/database/entities/account";
 import { Repository } from "typeorm";
 import { HashingUtils } from "@/utils/hashing";
-import { SignUpBody } from "./account.dto";
+import { SignInBody, SignUpBody } from "./account.dto";
 
 @Injectable()
 export class AccountService {
@@ -27,5 +27,29 @@ export class AccountService {
     const account = await this.accountRepository.save(accountEntity);
 
     return account;
+  }
+
+  async checkCredentials(data: SignInBody) {
+    const existUser = await this.accountRepository.findOne({
+      where: {
+        user: {
+          email: data.email,
+        },
+      },
+      relations: ["user"],
+    });
+
+    if (!existUser) {
+      return null;
+    }
+
+    // Check password
+    const { hash } = await this.hashingUtils.generateHash(data.password, existUser.passwordSalt);
+
+    if (hash !== existUser.passwordHash) {
+      return null;
+    }
+
+    return existUser;
   }
 }

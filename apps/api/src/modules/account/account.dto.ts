@@ -15,3 +15,16 @@ export type SignUpResponse = {
     userId: string & tags.Format<"uuid">;
   };
 };
+
+// Sign in
+export type SignInBody = {
+  email: string & tags.Format<"email">;
+  password: string & tags.Format<"password"> & tags.MinLength<typeof PASSWORD_MIN_LENGTH>;
+};
+
+export type SignInResponse = {
+  message: string;
+  data: {
+    accessToken: string;
+  };
+};

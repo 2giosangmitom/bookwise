@@ -1,19 +1,39 @@
-import { Column, Entity, ManyToOne, PrimaryColumn, type Relation } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, type Relation } from "typeorm";
 import { User } from "./user";
 
 @Entity()
 export class Session {
-  @PrimaryColumn()
-  id!: string; // refresh token id
+  @PrimaryGeneratedColumn("uuid")
+  id!: string;
+
+  @Column({
+    unique: true,
+  })
+  refreshTokenHash!: string;
+
+  @Column({ length: 45 })
+  ipAddress!: string;
 
   @Column()
-  device!: string;
+  userAgent!: string;
+
+  @Column({ nullable: true })
+  deviceName?: string; // "MacBook Pro"
+
+  @Column({ nullable: true })
+  os?: string; // "macOS 14"
+
+  @Column({ nullable: true })
+  browser?: string; // "Chrome 121"
+
+  @Column({ default: false })
+  revoked!: boolean;
 
   @Column()
-  latitude!: string;
+  expiresAt!: Date;
 
-  @Column()
-  longitude!: string;
+  @CreateDateColumn()
+  createdAt!: Date;
 
   @ManyToOne(() => User, (user) => user.id, {
     nullable: false,

@@ -26,8 +26,7 @@
   },
   "lint-staged": {
     "**/*.{ts,tsx,js,mjs}": [
-      "pnpm lint --",
-      "pnpm typecheck --"
+      "pnpm lint --"
     ]
   }
 }

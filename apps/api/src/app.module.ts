@@ -12,8 +12,10 @@ import { CategoryModule } from "./modules/category/category.module";
 import { BookCopyModule } from "./modules/bookCopy/bookCopy.module";
 import { ReservationModule } from "./modules/reservation/reservation.module";
 import { PublisherModule } from "./modules/publisher/publisher.module";
-import z from "zod";
+import { SessionModule } from "./modules/session/session.module";
 import { S3UtilsModule } from "./utils/s3";
+import { RedisUtils } from "./utils/redis";
+import z from "zod";
 
 const envSchema = z.object({
   DATABASE_URL: z.string(),
@@ -23,6 +25,8 @@ const envSchema = z.object({
   S3_URL: z.string(),
   S3_ACCESS_KEY: z.string(),
   S3_SECRET_KEY: z.string(),
+  JWT_SECRET: z.string(),
+  COOKIE_SECRET: z.string(),
 });
 
 @Module({
@@ -65,6 +69,13 @@ const envSchema = z.object({
         forcePathStyle: true, // Must be enabled for RustFS compatibility
       }),
     }),
+    RedisUtils.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        url: configService.getOrThrow("REDIS_URL"),
+      }),
+    }),
     AccountModule,
     UserModule,
     BookModule,
@@ -74,6 +85,7 @@ const envSchema = z.object({
     BookCopyModule,
     ReservationModule,
     PublisherModule,
+    SessionModule,
   ],
   providers: [
     {
