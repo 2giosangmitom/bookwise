@@ -26,4 +26,8 @@ export class SessionService {
   delete(refreshTokenHash: string) {
     return this.sessionRepository.delete({ refreshTokenHash });
   }
+
+  revoke(refreshTokenHash: string) {
+    return this.sessionRepository.update({ refreshTokenHash }, { revoked: true });
+  }
 }

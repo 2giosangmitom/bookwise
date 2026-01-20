@@ -113,8 +113,8 @@ export class AuthController {
       const jwtPayload = this.jwtService.verify(unsignedRefreshTokenCookie.value);
       const refreshTokenHash = createHash("sha256").update(jwtPayload.jti).digest("hex");
 
-      // Delete session
-      await this.sessionService.delete(refreshTokenHash);
+      // Revoke session
+      await this.sessionService.revoke(refreshTokenHash);
     } catch (error) {
       throw new UnauthorizedException(error);
     } finally {
