@@ -64,6 +64,7 @@ export class AuthController {
       },
     );
 
+    // Set cookie
     response.setCookie("refreshToken", refreshToken, {
       httpOnly: true,
       path: "/auth/refresh",
@@ -93,5 +94,38 @@ export class AuthController {
     });
 
     return { message: "User signed in successfully", data: { accessToken } };
+  }
+
+  @TypedRoute.Post("/signout")
+  @HttpCode(204)
+  async signOut(@Req() request: FastifyRequest, @Res({ passthrough: true }) response: FastifyReply): Promise<void> {
+    const refreshTokenCookie = request.cookies.refreshToken;
+    if (!refreshTokenCookie) {
+      throw new UnauthorizedException("Refresh token not found");
+    }
+
+    const unsignedRefreshTokenCookie = request.unsignCookie(refreshTokenCookie);
+    if (!unsignedRefreshTokenCookie.valid) {
+      throw new UnauthorizedException("Invalid refresh token");
+    }
+
+    try {
+      const jwtPayload = this.jwtService.verify(unsignedRefreshTokenCookie.value);
+      const refreshTokenHash = createHash("sha256").update(jwtPayload.jti).digest("hex");
+
+      // Delete session
+      await this.sessionService.delete(refreshTokenHash);
+    } catch (error) {
+      throw new UnauthorizedException(error);
+    } finally {
+      response.clearCookie("refreshToken", {
+        httpOnly: true,
+        path: "/auth/refresh",
+        maxAge: REFRESH_TOKEN_TTL,
+        sameSite: "none",
+        secure: true,
+        signed: true,
+      });
+    }
   }
 }

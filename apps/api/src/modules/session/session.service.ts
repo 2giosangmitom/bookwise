@@ -22,4 +22,8 @@ export class SessionService {
 
     return this.sessionRepository.save(session);
   }
+
+  delete(refreshTokenHash: string) {
+    return this.sessionRepository.delete({ refreshTokenHash });
+  }
 }
