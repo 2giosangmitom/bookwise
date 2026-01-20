@@ -22,7 +22,7 @@
     "@bookwise/shared": "workspace:*",
     "@fastify/cookie": "^11.0.2",
     "@fastify/helmet": "^13.0.2",
-    "@fastify/multipart": "^9.3.0",
+    "@fastify/multipart": "^9.4.0",
     "@fastify/static": "^9.0.0",
     "@nestia/core": "^10.0.1",
     "@nestia/e2e": "^10.0.1",
