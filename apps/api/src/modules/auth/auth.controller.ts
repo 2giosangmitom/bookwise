@@ -128,4 +128,48 @@ export class AuthController {
       });
     }
   }
+
+  @TypedRoute.Post("/refresh")
+  @HttpCode(200)
+  async refresh(@Req() request: FastifyRequest): Promise<SignInResponse> {
+    const refreshTokenCookie = request.cookies.refreshToken;
+    if (!refreshTokenCookie) {
+      throw new UnauthorizedException("Refresh token not found");
+    }
+
+    const unsignedRefreshTokenCookie = request.unsignCookie(refreshTokenCookie);
+    if (!unsignedRefreshTokenCookie.valid) {
+      throw new UnauthorizedException("Invalid refresh token");
+    }
+
+    try {
+      const jwtPayload = this.jwtService.verify(unsignedRefreshTokenCookie.value);
+      const refreshTokenHash = createHash("sha256").update(jwtPayload.jti).digest("hex");
+
+      const session = await this.sessionService.findOne(refreshTokenHash);
+
+      if (!session || session.expiresAt < new Date() || session.revoked) {
+        throw new UnauthorizedException("Session expired or revoked");
+      }
+
+      const accessToken = this.jwtService.sign(
+        {
+          scope: "accessToken",
+        },
+        {
+          subject: jwtPayload.sub,
+          expiresIn: ACCESS_TOKEN_TTL,
+        },
+      );
+
+      return {
+        message: "Refresh token successfulyy",
+        data: {
+          accessToken,
+        },
+      };
+    } catch (error) {
+      throw new UnauthorizedException(error);
+    }
+  }
 }

@@ -30,4 +30,8 @@ export class SessionService {
   revoke(refreshTokenHash: string) {
     return this.sessionRepository.update({ refreshTokenHash }, { revoked: true });
   }
+
+  findOne(refreshTokenHash: string) {
+    return this.sessionRepository.findOne({ where: { refreshTokenHash } });
+  }
 }
