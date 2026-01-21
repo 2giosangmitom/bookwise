@@ -1,6 +1,6 @@
 import { Controller, Res, UnauthorizedException, HttpCode, Req } from "@nestjs/common";
 import { AuthService } from "./auth.service";
-import { TypedRoute, TypedBody } from "@nestia/core";
+import { TypedRoute, TypedBody, TypedException } from "@nestia/core";
 import { type SignInBody, SignInResponse, SignUpResponse, type SignUpBody } from "./auth.dto";
 import { ApiTags } from "@nestjs/swagger";
 import type { FastifyReply, FastifyRequest } from "fastify";
@@ -9,6 +9,7 @@ import { JwtService } from "@nestjs/jwt";
 import { ACCESS_TOKEN_TTL, REFRESH_TOKEN_TTL } from "@/constants";
 import { SessionService } from "../session/session.service";
 import { UAParser } from "ua-parser-js";
+import { HttpExceptionBody } from "@nestjs/common";
 
 @Controller("/auth")
 @ApiTags("Auth")
@@ -20,7 +21,11 @@ export class AuthController {
   ) {}
 
   @TypedRoute.Post("/signup")
-  async signUp(@TypedBody() body: SignUpBody): Promise<SignUpResponse> {
+  @TypedException<HttpExceptionBody>({
+    status: 409,
+    description: "Account with provided email already exists",
+  })
+  async signup(@TypedBody() body: SignUpBody): Promise<SignUpResponse> {
     const createdAccount = await this.authService.signUp(body);
 
     return {
@@ -31,7 +36,7 @@ export class AuthController {
 
   @TypedRoute.Post("/signin")
   @HttpCode(200)
-  async signIn(
+  async signin(
     @TypedBody() body: SignInBody,
     @Req() request: FastifyRequest,
     @Res({ passthrough: true }) response: FastifyReply,
@@ -98,7 +103,7 @@ export class AuthController {
 
   @TypedRoute.Post("/signout")
   @HttpCode(204)
-  async signOut(@Req() request: FastifyRequest, @Res({ passthrough: true }) response: FastifyReply): Promise<void> {
+  async signout(@Req() request: FastifyRequest, @Res({ passthrough: true }) response: FastifyReply): Promise<void> {
     const refreshTokenCookie = request.cookies.refreshToken;
     if (!refreshTokenCookie) {
       throw new UnauthorizedException("Refresh token not found");
