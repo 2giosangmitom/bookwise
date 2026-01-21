@@ -72,7 +72,7 @@ export class AuthController {
     // Set cookie
     response.setCookie("refreshToken", refreshToken, {
       httpOnly: true,
-      path: "/auth/refresh",
+      path: "/",
       maxAge: REFRESH_TOKEN_TTL,
       sameSite: "none",
       secure: true,
@@ -125,7 +125,7 @@ export class AuthController {
     } finally {
       response.clearCookie("refreshToken", {
         httpOnly: true,
-        path: "/auth/refresh",
+        path: "/",
         maxAge: REFRESH_TOKEN_TTL,
         sameSite: "none",
         secure: true,

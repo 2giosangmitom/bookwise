@@ -32,7 +32,10 @@ export default function SignUpForm() {
     },
     onSubmit: async ({ value }) => {
       try {
-        const res = await functional.api.auth.signup(API_CONNECTION, value);
+        const res = await functional.api.auth.signup(API_CONNECTION, {
+          ...value,
+          lastName: value.lastName || null,
+        });
         toast.success("Success", { description: res.message, position: "top-center" });
         form.reset();
       } catch (error) {
@@ -161,17 +164,17 @@ export default function SignUpForm() {
       </CardContent>
       <CardFooter className="flex flex-col gap-4">
         <Field>
-          <Button type="submit" form="signup-form">
-            Sign Up
+          <Button type="submit" form="signup-form" disabled={form.state.isSubmitting}>
+            {form.state.isSubmitting ? "Signing up..." : "Sign Up"}
           </Button>
         </Field>
         <p className="text-muted-foreground text-sm">
           Already have an account?{" "}
           <Link
-            href="/login"
+            href="/signin"
             className="text-primary underline underline-offset-2 hover:text-primary/80 transition-colors"
           >
-            Log in
+            Sign in
           </Link>
         </p>
       </CardFooter>
