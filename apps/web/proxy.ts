@@ -5,7 +5,7 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const cookieStore = await cookies();
 
-  // Require librarian or admin role for /dashboard routes
+  // Require authentication for /dashboard routes
   if (pathname.startsWith("/dashboard")) {
     const refreshToken = cookieStore.get("refreshToken")?.value;
 
