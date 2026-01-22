@@ -13,5 +13,17 @@ const NESTIA_CONFIG: INestiaConfig = {
   },
   output: "../../packages/sdk/src",
   clone: true,
+  swagger: {
+    openapi: "3.1",
+    output: "dist/swagger.json",
+    security: {
+      bearer: {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
+      },
+    },
+    beautify: true,
+  },
 };
 export default NESTIA_CONFIG;

@@ -4,6 +4,8 @@ import { TypedBody, TypedParam, TypedRoute } from "@nestia/core";
 import { CreateAuthorResponse, GetAuthorResponse, type CreateAuthorBody, type UpdateAuthorBody } from "./author.dto";
 import { tags } from "typia";
 import { ApiTags } from "@nestjs/swagger";
+import { Auth } from "@/guards/auth";
+import { Role } from "@bookwise/shared";
 
 @Controller("/author")
 @ApiTags("Author")
@@ -11,6 +13,7 @@ export class AuthorController {
   constructor(private readonly authorService: AuthorService) {}
 
   @TypedRoute.Post()
+  @Auth(Role.ADMIN, Role.LIBRARIAN)
   async createAuthor(@TypedBody() body: CreateAuthorBody): Promise<CreateAuthorResponse> {
     const createdAuthor = await this.authorService.create(body);
 
@@ -48,6 +51,7 @@ export class AuthorController {
 
   @TypedRoute.Patch("/:id")
   @HttpCode(204)
+  @Auth(Role.ADMIN, Role.LIBRARIAN)
   async updateAuthor(
     @TypedParam("id") id: string & tags.Format<"uuid">,
     @TypedBody() body: UpdateAuthorBody,
@@ -57,6 +61,7 @@ export class AuthorController {
 
   @TypedRoute.Delete("/:id")
   @HttpCode(204)
+  @Auth(Role.ADMIN, Role.LIBRARIAN)
   async deleteAuthor(@TypedParam("id") id: string & tags.Format<"uuid">): Promise<void> {
     await this.authorService.delete(id);
   }

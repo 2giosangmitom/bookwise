@@ -15,6 +15,7 @@ import { PublisherModule } from "./modules/publisher/publisher.module";
 import { SessionModule } from "./modules/session/session.module";
 import { S3UtilsModule } from "./utils/s3";
 import { RedisUtils } from "./utils/redis";
+import { JwtModule } from "@nestjs/jwt";
 import z from "zod";
 
 const envSchema = z.object({
@@ -74,6 +75,14 @@ const envSchema = z.object({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         url: configService.getOrThrow("REDIS_URL"),
+      }),
+    }),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      global: true,
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.getOrThrow("JWT_SECRET"),
       }),
     }),
     AuthModule,

@@ -30,6 +30,14 @@ async function bootstrap() {
 
   const PORT = configService.get<number>("PORT") ?? 8080;
   const document = await NestiaSwaggerComposer.document(app, {
+    openapi: "3.1",
+    security: {
+      bearer: {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
+      },
+    },
     servers: [
       {
         url: `http://localhost:${PORT}`,

@@ -9,6 +9,8 @@ import {
 } from "./category.dto";
 import { ApiTags } from "@nestjs/swagger";
 import { tags } from "typia";
+import { Auth } from "@/guards/auth";
+import { Role } from "@bookwise/shared";
 
 @Controller("/category")
 @ApiTags("Category")
@@ -16,6 +18,7 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @TypedRoute.Post()
+  @Auth(Role.ADMIN, Role.LIBRARIAN)
   async createCategory(@TypedBody() body: CreateCategoryBody): Promise<CreateCategoryResponse> {
     const createdCategory = await this.categoryService.create(body);
 
@@ -45,8 +48,9 @@ export class CategoryController {
     };
   }
 
-  @TypedRoute.Patch(":id")
+  @TypedRoute.Patch("/:id")
   @HttpCode(204)
+  @Auth(Role.ADMIN, Role.LIBRARIAN)
   async updateCategory(
     @TypedParam("id") id: string & tags.Format<"uuid">,
     @TypedBody() body: UpdateCategoryBody,
@@ -54,8 +58,9 @@ export class CategoryController {
     await this.categoryService.update(id, body);
   }
 
-  @TypedRoute.Delete(":id")
+  @TypedRoute.Delete("/:id")
   @HttpCode(204)
+  @Auth(Role.ADMIN, Role.LIBRARIAN)
   async deleteCategory(@TypedParam("id") id: string & tags.Format<"uuid">): Promise<void> {
     await this.categoryService.delete(id);
   }

@@ -9,6 +9,8 @@ import {
 } from "./publisher.dto";
 import { tags } from "typia";
 import { ApiTags } from "@nestjs/swagger";
+import { Auth } from "@/guards/auth";
+import { Role } from "@bookwise/shared";
 
 @Controller("/publisher")
 @ApiTags("Publisher")
@@ -16,6 +18,7 @@ export class PublisherController {
   constructor(private readonly publisherService: PublisherService) {}
 
   @TypedRoute.Post()
+  @Auth(Role.ADMIN, Role.LIBRARIAN)
   async createPublisher(@TypedBody() body: CreatePublisherBody): Promise<CreatePublisherResponse> {
     const createdPublisher = await this.publisherService.create(body);
 
@@ -50,6 +53,7 @@ export class PublisherController {
 
   @TypedRoute.Patch("/:id")
   @HttpCode(204)
+  @Auth(Role.ADMIN, Role.LIBRARIAN)
   async updatePublisher(
     @TypedParam("id") id: string & tags.Format<"uuid">,
     @TypedBody() body: UpdatePublisherBody,
@@ -59,6 +63,7 @@ export class PublisherController {
 
   @TypedRoute.Delete("/:id")
   @HttpCode(204)
+  @Auth(Role.ADMIN, Role.LIBRARIAN)
   async deletePublisher(@TypedParam("id") id: string & tags.Format<"uuid">): Promise<void> {
     await this.publisherService.delete(id);
   }

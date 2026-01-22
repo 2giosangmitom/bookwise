@@ -4,6 +4,8 @@ import { TypedBody, TypedRoute, TypedParam } from "@nestia/core";
 import { CreateBookResponse, GetBookResponse, type CreateBookBody, type UpdateBookBody } from "./book.dto";
 import { ApiTags } from "@nestjs/swagger";
 import { tags } from "typia";
+import { Auth } from "@/guards/auth";
+import { Role } from "@bookwise/shared";
 
 @Controller("/book")
 @ApiTags("Book")
@@ -11,6 +13,7 @@ export class BookController {
   constructor(private readonly bookService: BookService) {}
 
   @TypedRoute.Post()
+  @Auth(Role.ADMIN, Role.LIBRARIAN)
   async createBook(@TypedBody() body: CreateBookBody): Promise<CreateBookResponse> {
     const createdBook = await this.bookService.create(body);
 
@@ -55,6 +58,7 @@ export class BookController {
 
   @TypedRoute.Patch("/:id")
   @HttpCode(204)
+  @Auth(Role.ADMIN, Role.LIBRARIAN)
   async updateBook(
     @TypedParam("id") id: string & tags.Format<"uuid">,
     @TypedBody() body: UpdateBookBody,
@@ -64,6 +68,7 @@ export class BookController {
 
   @TypedRoute.Delete("/:id")
   @HttpCode(204)
+  @Auth(Role.ADMIN, Role.LIBRARIAN)
   async deleteBook(@TypedParam("id") id: string & tags.Format<"uuid">): Promise<void> {
     await this.bookService.delete(id);
   }

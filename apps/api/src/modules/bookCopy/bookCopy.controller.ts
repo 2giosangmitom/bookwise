@@ -9,6 +9,8 @@ import {
 } from "./bookCopy.dto";
 import { ApiTags } from "@nestjs/swagger";
 import { tags } from "typia";
+import { Auth } from "@/guards/auth";
+import { Role } from "@bookwise/shared";
 
 @Controller("/book-copy")
 @ApiTags("Book Copy")
@@ -16,6 +18,7 @@ export class BookCopyController {
   constructor(private readonly bookCopyService: BookCopyService) {}
 
   @TypedRoute.Post()
+  @Auth(Role.ADMIN, Role.LIBRARIAN)
   async createBookCopy(@TypedBody() body: CreateBookCopyBody): Promise<CreateBookCopyResponse> {
     const createdBookCopy = await this.bookCopyService.create(body);
 
@@ -48,6 +51,7 @@ export class BookCopyController {
 
   @TypedRoute.Patch("/:id")
   @HttpCode(204)
+  @Auth(Role.ADMIN, Role.LIBRARIAN)
   async updateBookCopy(
     @TypedParam("id") id: string & tags.Format<"uuid">,
     @TypedBody() body: UpdateBookCopyBody,
@@ -57,6 +61,7 @@ export class BookCopyController {
 
   @TypedRoute.Delete("/:id")
   @HttpCode(204)
+  @Auth(Role.ADMIN, Role.LIBRARIAN)
   async deleteBookCopy(@TypedParam("id") id: string & tags.Format<"uuid">): Promise<void> {
     await this.bookCopyService.delete(id);
   }
