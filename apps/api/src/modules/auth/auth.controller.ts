@@ -10,6 +10,7 @@ import { ACCESS_TOKEN_TTL, REFRESH_TOKEN_TTL } from "@/constants";
 import { SessionService } from "../session/session.service";
 import { UAParser } from "ua-parser-js";
 import { HttpExceptionBody } from "@nestjs/common";
+import { RedisService } from "@/utils/redis";
 
 @Controller("/auth")
 @ApiTags("Auth")
@@ -18,6 +19,7 @@ export class AuthController {
     private authService: AuthService,
     private jwtService: JwtService,
     private sessionService: SessionService,
+    private redisService: RedisService,
   ) {}
 
   @TypedRoute.Post("/signup")
@@ -49,35 +51,13 @@ export class AuthController {
 
     const refreshTokenId = randomBytes(32).toString("hex");
     const refreshToken = this.jwtService.sign(
-      {
-        scope: "refreshToken",
-      },
+      {},
       {
         jwtid: refreshTokenId,
         subject: result.user.id,
         expiresIn: REFRESH_TOKEN_TTL,
       },
     );
-
-    const accessToken = this.jwtService.sign(
-      {
-        scope: "accessToken",
-      },
-      {
-        subject: result.user.id,
-        expiresIn: ACCESS_TOKEN_TTL,
-      },
-    );
-
-    // Set cookie
-    response.setCookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      path: "/",
-      maxAge: REFRESH_TOKEN_TTL,
-      sameSite: "none",
-      secure: true,
-      signed: true,
-    });
 
     // Parse ua and create new session
     const refreshTokenHash = createHash("sha256").update(refreshTokenId).digest("hex");
@@ -87,7 +67,7 @@ export class AuthController {
     const os = ua.os.name ? `${ua.os.name} ${ua.os.version ?? ""}`.trim() : undefined;
     const browser = ua.browser.name ? `${ua.browser.name} ${ua.browser.version ?? ""}`.trim() : undefined;
 
-    await this.sessionService.create({
+    const session = await this.sessionService.create({
       refreshTokenHash,
       ipAddress: request.ip,
       userAgent: request.headers["user-agent"] ?? "unknown",
@@ -98,6 +78,29 @@ export class AuthController {
       user: result.user,
     });
 
+    const accessTokenId = randomBytes(32).toString("hex");
+    const accessToken = this.jwtService.sign(
+      {
+        ssid: session.id,
+      },
+      {
+        jwtid: accessTokenId,
+        subject: result.user.id,
+        expiresIn: ACCESS_TOKEN_TTL,
+      },
+    );
+    // Add access token to blacklist but not blacklist it yet
+    await this.redisService.addToBlacklist(accessTokenId, session.id, ACCESS_TOKEN_TTL);
+
+    // Set cookie
+    response.setCookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      path: "/",
+      maxAge: REFRESH_TOKEN_TTL,
+      sameSite: "none",
+      secure: true,
+      signed: true,
+    });
     return { message: "User signed in successfully", data: { accessToken } };
   }
 
@@ -119,7 +122,10 @@ export class AuthController {
       const refreshTokenHash = createHash("sha256").update(jwtPayload.jti).digest("hex");
 
       // Revoke session
-      await this.sessionService.revoke(refreshTokenHash);
+      const session = await this.sessionService.revoke(refreshTokenHash);
+
+      // Blacklist all access tokens related to this session
+      if (session) await this.redisService.blackListAllAccessTokensForSession(session.id);
     } catch (error) {
       throw new UnauthorizedException(error);
     } finally {
@@ -157,15 +163,19 @@ export class AuthController {
         throw new UnauthorizedException("Session expired or revoked");
       }
 
+      const accessTokenId = randomBytes(32).toString("hex");
       const accessToken = this.jwtService.sign(
         {
-          scope: "accessToken",
+          ssid: session.id,
         },
         {
+          jwtid: accessTokenId,
           subject: jwtPayload.sub,
           expiresIn: ACCESS_TOKEN_TTL,
         },
       );
+      // Add access token to blacklist but not blacklist it yet
+      await this.redisService.addToBlacklist(accessTokenId, session.id, ACCESS_TOKEN_TTL);
 
       return {
         message: "Refresh token successfulyy",

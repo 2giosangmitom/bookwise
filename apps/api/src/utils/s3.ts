@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Global, Module } from "@nestjs/common";
 import { ConfigurableModuleBuilder, OnModuleInit, Injectable, Inject, Logger } from "@nestjs/common";
 import {
   CreateBucketCommand,
@@ -72,6 +72,7 @@ export class S3BucketInitializer implements OnModuleInit {
   }
 }
 
+@Global()
 @Module({
   providers: [
     {

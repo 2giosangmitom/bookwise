@@ -27,8 +27,9 @@ export class SessionService {
     return this.sessionRepository.delete({ refreshTokenHash });
   }
 
-  revoke(refreshTokenHash: string) {
-    return this.sessionRepository.update({ refreshTokenHash }, { revoked: true });
+  async revoke(refreshTokenHash: string) {
+    await this.sessionRepository.update({ refreshTokenHash }, { revoked: true });
+    return this.findOne(refreshTokenHash);
   }
 
   findOne(refreshTokenHash: string) {
