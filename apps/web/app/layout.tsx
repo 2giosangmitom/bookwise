@@ -1,6 +1,12 @@
 import "./global.css";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
+import { type Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Bookwise",
+  description: "A library management system for universities and colleges.",
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
