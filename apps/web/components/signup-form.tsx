@@ -11,12 +11,13 @@ import Link from "next/link";
 import { functional, HttpError } from "@bookwise/sdk";
 import { API_CONNECTION } from "@/lib/constants";
 import { toast } from "sonner";
+import { PASSWORD_MIN_LENGTH } from "@bookwise/shared";
 
 const signUpFormSchema = z.object({
   email: z.email("Invalid email address"),
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string(),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  password: z.string().min(PASSWORD_MIN_LENGTH, `Password must be at least ${PASSWORD_MIN_LENGTH} characters`),
 });
 
 export default function SignUpForm() {
