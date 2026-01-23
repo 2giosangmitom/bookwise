@@ -35,4 +35,11 @@ export class SessionService {
   findOne(refreshTokenHash: string) {
     return this.sessionRepository.findOne({ where: { refreshTokenHash } });
   }
+
+  async findByUserId(userId: string) {
+    return this.sessionRepository.find({
+      where: { user: { id: userId } },
+      order: { createdAt: "DESC" },
+    });
+  }
 }
