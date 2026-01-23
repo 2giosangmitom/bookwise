@@ -83,9 +83,12 @@ export class PublisherService {
     });
   }
 
-  async findByIds(...ids: string[]): Promise<Publisher[]> {
-    return this.publisherRepository.findBy({
-      id: In(ids),
+  async findByIds(ids: string[], select?: (keyof Publisher)[]): Promise<Publisher[]> {
+    return this.publisherRepository.find({
+      select: select ? Object.fromEntries(select.map((key) => [key, true])) : undefined,
+      where: {
+        id: In(ids),
+      },
     });
   }
 

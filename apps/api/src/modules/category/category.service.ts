@@ -72,9 +72,12 @@ export class CategoryService {
     });
   }
 
-  async findByIds(...ids: string[]): Promise<Category[]> {
-    return this.categoryRepository.findBy({
-      id: In(ids),
+  async findByIds(ids: string[], select?: (keyof Category)[]): Promise<Category[]> {
+    return this.categoryRepository.find({
+      select: select ? Object.fromEntries(select.map((key) => [key, true])) : undefined,
+      where: {
+        id: In(ids),
+      },
     });
   }
 

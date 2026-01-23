@@ -111,15 +111,15 @@ export class BookService {
       updateData.publishedDate = new Date(data.publishedDate);
     }
     if (data.authorIds !== undefined) {
-      const authors = await this.authorService.findByIds(...data.authorIds);
+      const authors = await this.authorService.findByIds(data.authorIds);
       updateData.authors = authors;
     }
     if (data.categoryIds !== undefined) {
-      const categories = await this.categoryService.findByIds(...data.categoryIds);
+      const categories = await this.categoryService.findByIds(data.categoryIds);
       updateData.categories = categories;
     }
     if (data.publisherIds !== undefined) {
-      const publishers = await this.publisherService.findByIds(...data.publisherIds);
+      const publishers = await this.publisherService.findByIds(data.publisherIds);
       updateData.publishers = publishers;
     }
 

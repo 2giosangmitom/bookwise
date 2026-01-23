@@ -87,9 +87,12 @@ export class AuthorService {
     });
   }
 
-  async findByIds(...ids: string[]): Promise<Author[]> {
-    return this.authorRepository.findBy({
-      id: In(ids),
+  async findByIds(ids: string[], select?: (keyof Author)[]): Promise<Author[]> {
+    return this.authorRepository.find({
+      select: select ? Object.fromEntries(select.map((key) => [key, true])) : undefined,
+      where: {
+        id: In(ids),
+      },
     });
   }
 
