@@ -1,4 +1,3 @@
-import { Reservation } from "@/database/entities/reservation";
 import { tags } from "typia";
 
 export type CreateReservationBody = {
@@ -9,5 +8,7 @@ export type CreateReservationBody = {
 
 export type CreateReservationResponse = {
   message: string;
-  data: Reservation;
+  data: {
+    id: string & tags.Format<"uuid">;
+  };
 };

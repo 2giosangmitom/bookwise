@@ -6,7 +6,7 @@ import { CreateReservationResponse, type CreateReservationBody } from "./reserva
 import { ApiTags } from "@nestjs/swagger";
 import { Role } from "@bookwise/shared";
 
-@Controller()
+@Controller("reservation")
 @ApiTags("Reservation")
 @Auth()
 export class ReservationController {
@@ -19,7 +19,7 @@ export class ReservationController {
 
     return {
       message: "Reservation created successfully",
-      data: reservation,
+      data: { id: reservation.id },
     };
   }
 }

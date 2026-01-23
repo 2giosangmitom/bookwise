@@ -36,17 +36,19 @@ export class AuthGuard implements CanActivate {
 
       // Check role
       const roles = this.reflector.get(Roles, context.getHandler());
-      if (roles.length !== 0) {
-        const user = await this.userService.findById(payload.sub);
-        if (!user) {
-          return false;
-        }
+      const user = await this.userService.findById(payload.sub);
+      if (!user) {
+        return false;
+      }
 
+      if (roles.length !== 0) {
         if (roles && !roles.includes(user.role)) {
           return false;
         }
       }
 
+      // Attach user to request
+      request.setDecorator("user", user);
       return true;
     } catch {
       return false;
