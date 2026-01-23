@@ -3,6 +3,7 @@ import { Test } from "@nestjs/testing";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { SessionService } from "../session.service";
 import { Session } from "@/database/entities/session";
+import type { SessionDto } from "../session.dto";
 
 describe("SessionService", () => {
   let sessionService: SessionService;
@@ -33,9 +34,23 @@ describe("SessionService", () => {
 
   describe("findByUserId", () => {
     it("should return sessions for given user id", async () => {
-      const mockSessions = [
-        { id: "s1", user: { id: "u1" } },
-        { id: "s2", user: { id: "u1" } },
+      const mockSessions: Partial<SessionDto>[] = [
+        {
+          id: "s1",
+          ipAddress: "127.0.0.1",
+          userAgent: "ua",
+          revoked: false,
+          expiresAt: new Date().toISOString(),
+          createdAt: new Date().toISOString(),
+        },
+        {
+          id: "s2",
+          ipAddress: "127.0.0.1",
+          userAgent: "ua",
+          revoked: false,
+          expiresAt: new Date().toISOString(),
+          createdAt: new Date().toISOString(),
+        },
       ];
       mockSessionRepo.find.mockImplementationOnce(async () => mockSessions);
 
