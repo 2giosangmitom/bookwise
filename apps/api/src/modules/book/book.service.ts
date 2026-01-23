@@ -1,12 +1,13 @@
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { In, Repository } from "typeorm";
 import { Book } from "@/database/entities/book";
 
 import { CreateBookBody, UpdateBookBody } from "./book.dto";
 import { AuthorService } from "../author/author.service";
 import { CategoryService } from "../category/category.service";
 import { PublisherService } from "../publisher/publisher.service";
+import { Reservation } from "@/database/entities/reservation";
 
 @Injectable()
 export class BookService {
@@ -142,6 +143,15 @@ export class BookService {
     return this.bookRepository.findOne({
       where: { id },
       relations: ["authors", "categories", "publishers"],
+    });
+  }
+
+  findByIds(ids: string[], select?: (keyof Reservation)[]) {
+    return this.bookRepository.find({
+      select: select ? Object.fromEntries(select.map((key) => [key, true])) : undefined,
+      where: {
+        id: In(ids),
+      },
     });
   }
 }
