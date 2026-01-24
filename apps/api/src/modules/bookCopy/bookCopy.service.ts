@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, ConflictException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { In, Repository } from "typeorm";
 import { BookCopy } from "@/database/entities/bookCopy";
 import { CreateBookCopyBody, UpdateBookCopyBody } from "./bookCopy.dto";
 import { BookStatus, BookCondition } from "@bookwise/shared";
@@ -101,6 +101,12 @@ export class BookCopyService {
     return this.bookCopyRepository.findOne({
       where: { id },
       relations: ["book"],
+    });
+  }
+
+  findByIds(ids: string[]) {
+    return this.bookCopyRepository.findBy({
+      id: In(ids),
     });
   }
 }
