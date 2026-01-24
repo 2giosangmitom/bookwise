@@ -1,4 +1,4 @@
-import { Injectable, CanActivate, ExecutionContext, Inject, applyDecorators, UseGuards } from "@nestjs/common";
+import { Injectable, CanActivate, ExecutionContext, applyDecorators, UseGuards } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { FastifyRequest } from "fastify";
 import { RedisService } from "@/utils/redis";
@@ -10,7 +10,7 @@ import { ApiBearerAuth } from "@nestjs/swagger";
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
-    @Inject(JwtService) private jwtService: JwtService,
+    private jwtService: JwtService,
     private redisService: RedisService,
     private reflector: Reflector,
     private userService: UserService,
