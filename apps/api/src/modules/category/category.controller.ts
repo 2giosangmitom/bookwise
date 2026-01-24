@@ -1,4 +1,4 @@
-import { Controller, HttpCode, NotFoundException } from "@nestjs/common";
+import { Controller, HttpCode, NotFoundException, Query } from "@nestjs/common";
 import { CategoryService } from "./category.service";
 import { TypedBody, TypedParam, TypedRoute } from "@nestia/core";
 import {
@@ -6,6 +6,7 @@ import {
   GetCategoryResponse,
   type CreateCategoryBody,
   type UpdateCategoryBody,
+  type GetCategoriesResponse,
 } from "./category.dto";
 import { ApiTags } from "@nestjs/swagger";
 import { tags } from "typia";
@@ -63,5 +64,26 @@ export class CategoryController {
   @Auth(Role.ADMIN, Role.LIBRARIAN)
   async deleteCategory(@TypedParam("id") id: string & tags.Format<"uuid">): Promise<void> {
     await this.categoryService.delete(id);
+  }
+
+  @TypedRoute.Get("/")
+  async getAllCategories(
+    @Query("search") search?: string,
+    @Query("page") page?: number,
+    @Query("limit") limit?: number,
+  ): Promise<GetCategoriesResponse> {
+    const [categories, total] = await this.categoryService.search({ page, limit, search }, ["id", "name", "slug"]);
+
+    return {
+      message: "Categories fetched successfully",
+      meta: {
+        total,
+      },
+      data: categories.map((cat) => ({
+        id: cat.id,
+        name: cat.name,
+        slug: cat.slug,
+      })),
+    };
   }
 }

@@ -22,3 +22,15 @@ export type GetCategoryResponse = {
     isbn: string;
   }>;
 };
+
+export type GetCategoriesResponse = {
+  message: string;
+  meta: {
+    total: number;
+  };
+  data: Array<{
+    id: string;
+    name: string;
+    slug: string;
+  }>;
+};

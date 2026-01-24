@@ -1,6 +1,6 @@
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, In } from "typeorm";
+import { Repository, In, ILike } from "typeorm";
 import { Category } from "@/database/entities/category";
 import { CreateCategoryBody, UpdateCategoryBody } from "./category.dto";
 
@@ -85,6 +85,19 @@ export class CategoryService {
     return this.categoryRepository.findOne({
       where: { id },
       relations: ["books"],
+    });
+  }
+
+  async search(options: { page?: number; limit?: number; search?: string | null }, select?: (keyof Category)[]) {
+    const page = options.page && options.page > 0 ? options.page : 1;
+    const limit = options.limit && options.limit > 0 ? options.limit : 10;
+    const search = ILike(`%${options.search}%`);
+
+    return this.categoryRepository.findAndCount({
+      select: select ? Object.fromEntries(select.map((field) => [field, true])) : undefined,
+      where: [{ name: search }, { slug: search }],
+      take: limit,
+      skip: (page - 1) * limit,
     });
   }
 }
