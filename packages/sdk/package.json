@@ -17,8 +17,8 @@
   },
   "dependencies": {
     "@bookwise/shared": "workspace:*",
-    "@nestia/fetcher": "^10.0.1",
-    "typia": "^11.0.0"
+    "@nestia/fetcher": "^10.0.2",
+    "typia": "^11.0.2"
   },
   "devDependencies": {
     "tsdown": "0.20.0-beta.1",
