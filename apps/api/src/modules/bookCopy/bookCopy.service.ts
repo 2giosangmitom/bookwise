@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, ConflictException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { In, Repository } from "typeorm";
+import { In, Repository, ILike } from "typeorm";
 import { BookCopy } from "@/database/entities/bookCopy";
 import { CreateBookCopyBody, UpdateBookCopyBody } from "./bookCopy.dto";
 import { BookStatus, BookCondition } from "@bookwise/shared";
@@ -108,5 +108,32 @@ export class BookCopyService {
     return this.bookCopyRepository.findBy({
       id: In(ids),
     });
+  }
+
+  async search(options: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    status?: BookStatus;
+    condition?: BookCondition;
+  }) {
+    const page = options.page && options.page > 0 ? options.page : 1;
+    const limit = options.limit && options.limit > 0 ? options.limit : 10;
+
+    const search = options.search ? ILike(`%${options.search}%`) : undefined;
+    const condition = options.condition;
+    const status = options.status;
+
+    const [items, total] = await this.bookCopyRepository.findAndCount({
+      where: [
+        { book: { title: search }, condition, status },
+        { barcode: search, condition, status },
+      ],
+      relations: ["book"],
+      take: limit,
+      skip: (page - 1) * limit,
+    });
+
+    return [items, total] as const;
   }
 }

@@ -99,10 +99,10 @@ export class PublisherService {
     });
   }
 
-  async search(options: { page?: number; limit?: number; search?: string | null }, select?: (keyof Publisher)[]) {
+  async search(options: { page?: number; limit?: number; search?: string }, select?: (keyof Publisher)[]) {
     const page = options.page && options.page > 0 ? options.page : 1;
     const limit = options.limit && options.limit > 0 ? options.limit : 10;
-    const search = ILike(`%${options.search}%`);
+    const search = options.search ? ILike(`%${options.search}%`) : undefined;
 
     return this.publisherRepository.findAndCount({
       select: select ? Object.fromEntries(select.map((field) => [field, true])) : undefined,

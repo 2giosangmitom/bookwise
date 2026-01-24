@@ -28,3 +28,9 @@ export type GetBookCopyResponse = {
     isbn: string;
   };
 };
+
+export type GetBookCopiesResponse = {
+  message: string;
+  meta: { total: number };
+  data: Array<GetBookCopyResponse>;
+};

@@ -103,7 +103,7 @@ export class AuthorService {
     });
   }
 
-  async search(options: { page?: number; limit?: number; search?: string | null }, select?: (keyof Author)[]) {
+  async search(options: { page?: number; limit?: number; search?: string }, select?: (keyof Author)[]) {
     const page = options.page && options.page > 0 ? options.page : 1;
     const limit = options.limit && options.limit > 0 ? options.limit : 10;
     const search = ILike(`%${options.search}%`);
