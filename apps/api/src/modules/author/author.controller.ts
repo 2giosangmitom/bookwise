@@ -1,7 +1,13 @@
-import { Controller, HttpCode, NotFoundException } from "@nestjs/common";
+import { Controller, HttpCode, NotFoundException, Query } from "@nestjs/common";
 import { AuthorService } from "./author.service";
 import { TypedBody, TypedParam, TypedRoute } from "@nestia/core";
-import { CreateAuthorResponse, GetAuthorResponse, type CreateAuthorBody, type UpdateAuthorBody } from "./author.dto";
+import {
+  CreateAuthorResponse,
+  GetAuthorResponse,
+  type CreateAuthorBody,
+  type UpdateAuthorBody,
+  type GetAuthorsResponse,
+} from "./author.dto";
 import { tags } from "typia";
 import { ApiTags } from "@nestjs/swagger";
 import { Auth } from "@/guards/auth";
@@ -64,5 +70,38 @@ export class AuthorController {
   @Auth(Role.ADMIN, Role.LIBRARIAN)
   async deleteAuthor(@TypedParam("id") id: string & tags.Format<"uuid">): Promise<void> {
     await this.authorService.delete(id);
+  }
+
+  @TypedRoute.Get("/")
+  async getAllAuthors(
+    @Query("search") search?: string,
+    @Query("page") page?: number,
+    @Query("limit") limit?: number,
+  ): Promise<GetAuthorsResponse> {
+    const [authors, total] = await this.authorService.search({ page, limit, search }, [
+      "id",
+      "name",
+      "biography",
+      "slug",
+      "dateOfBirth",
+      "dateOfDeath",
+      "photoFileName",
+    ]);
+
+    return {
+      message: "Authors fetched successfully",
+      meta: {
+        total,
+      },
+      data: authors.map((author) => ({
+        id: author.id,
+        biography: author.biography,
+        dateOfBirth: author.dateOfBirth.toISOString(),
+        dateOfDeath: author.dateOfDeath?.toISOString() ?? null,
+        name: author.name,
+        photoFileName: author.photoFileName,
+        slug: author.slug,
+      })),
+    };
   }
 }

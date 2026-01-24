@@ -31,3 +31,19 @@ export type GetAuthorResponse = {
     isbn: string;
   }>;
 };
+
+export type GetAuthorsResponse = {
+  message: string;
+  meta: {
+    total: number;
+  };
+  data: Array<{
+    id: string & tags.Format<"uuid">;
+    name: string;
+    slug: string;
+    biography: string;
+    photoFileName: string | null;
+    dateOfBirth: string & tags.Format<"date">;
+    dateOfDeath: (string & tags.Format<"date">) | null;
+  }>;
+};
