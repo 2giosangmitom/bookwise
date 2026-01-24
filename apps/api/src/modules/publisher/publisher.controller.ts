@@ -1,4 +1,4 @@
-import { Controller, HttpCode, NotFoundException } from "@nestjs/common";
+import { Controller, HttpCode, NotFoundException, Query } from "@nestjs/common";
 import { PublisherService } from "./publisher.service";
 import { TypedRoute, TypedBody, TypedParam } from "@nestia/core";
 import {
@@ -6,6 +6,7 @@ import {
   CreatePublisherResponse,
   GetPublisherResponse,
   type UpdatePublisherBody,
+  type GetPublishersResponse,
 } from "./publisher.dto";
 import { tags } from "typia";
 import { ApiTags } from "@nestjs/swagger";
@@ -66,5 +67,34 @@ export class PublisherController {
   @Auth(Role.ADMIN, Role.LIBRARIAN)
   async deletePublisher(@TypedParam("id") id: string & tags.Format<"uuid">): Promise<void> {
     await this.publisherService.delete(id);
+  }
+
+  @TypedRoute.Get("/")
+  async getAllPublishers(
+    @Query("search") search?: string,
+    @Query("page") page?: number,
+    @Query("limit") limit?: number,
+  ): Promise<GetPublishersResponse> {
+    const [publishers, total] = await this.publisherService.search({ page, limit, search }, [
+      "id",
+      "name",
+      "description",
+      "website",
+      "slug",
+      "photoFileName",
+    ]);
+
+    return {
+      message: "Publishers fetched successfully",
+      meta: { total },
+      data: publishers.map((p) => ({
+        id: p.id,
+        name: p.name,
+        description: p.description,
+        website: p.website,
+        slug: p.slug,
+        photoFileName: p.photoFileName,
+      })),
+    };
   }
 }

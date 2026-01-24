@@ -27,3 +27,18 @@ export type GetPublisherResponse = {
     isbn: string;
   }>;
 };
+
+export type GetPublishersResponse = {
+  message: string;
+  meta: {
+    total: number;
+  };
+  data: Array<{
+    id: string;
+    name: string;
+    description: string;
+    website: string;
+    slug: string;
+    photoFileName: string | null;
+  }>;
+};
