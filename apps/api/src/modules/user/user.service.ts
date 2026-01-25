@@ -2,7 +2,7 @@ import { ConflictException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { User } from "@/database/entities/user";
-import { CreateUserBody } from "./user.dto";
+import { CreateUserBody, UpdateUserBody } from "./user.dto";
 
 @Injectable()
 export class UserService {
@@ -27,5 +27,17 @@ export class UserService {
 
   findById(id: string) {
     return this.userRepository.findOneBy({ id });
+  }
+
+  update(id: string, data: UpdateUserBody) {
+    return this.userRepository.update(
+      {
+        id,
+      },
+      {
+        firstName: data.firstName,
+        lastName: data.lastName,
+      },
+    );
   }
 }

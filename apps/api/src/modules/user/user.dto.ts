@@ -15,3 +15,8 @@ export type GetMeResponse = {
     role: string;
   };
 };
+
+export type UpdateUserBody = {
+  firstName?: string;
+  lastName?: string | null;
+};
