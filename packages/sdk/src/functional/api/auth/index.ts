@@ -12,6 +12,8 @@ import type { SignInResponse } from "../../../structures/SignInResponse";
 import type { SignUpBody } from "../../../structures/SignUpBody";
 import type { SignUpResponse } from "../../../structures/SignUpResponse";
 
+export * as password from "./password/index";
+
 /**
  * @throws 409 Account with provided email already exists
  * @controller AuthController.signup

@@ -1,7 +1,14 @@
-import { Controller, HttpCode, NotFoundException } from "@nestjs/common";
+import { Controller, HttpCode, NotFoundException, Query } from "@nestjs/common";
 import { BookService } from "./book.service";
 import { TypedBody, TypedRoute, TypedParam } from "@nestia/core";
-import { CreateBookResponse, GetBookResponse, type CreateBookBody, type UpdateBookBody } from "./book.dto";
+import type {
+  CreateBookBody,
+  UpdateBookBody,
+  CreateBookResponse,
+  GetBookResponse,
+  SearchBooksQuery,
+  SearchBooksResponse,
+} from "./book.dto";
 import { ApiTags } from "@nestjs/swagger";
 import { tags } from "typia";
 import { Auth } from "@/guards/auth";
@@ -54,6 +61,11 @@ export class BookController {
         slug: publisher.slug,
       })),
     };
+  }
+
+  @TypedRoute.Get("/")
+  async searchBooks(@Query() query: SearchBooksQuery): Promise<SearchBooksResponse> {
+    return this.bookService.searchBooks(query);
   }
 
   @TypedRoute.Patch("/:id")

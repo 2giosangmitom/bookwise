@@ -10,6 +10,22 @@ export type CreateBookBody = {
   publisherIds: (string & tags.Format<"uuid">)[] & tags.MinItems<1>;
 };
 
+export type SearchBooksQuery = {
+  title?: string;
+  authors?: string[];
+  categories?: string[];
+  publishers?: string[];
+  limit?: number & tags.Minimum<1> & tags.Maximum<100>;
+  offset?: number & tags.Minimum<0>;
+};
+
+export type SearchBooksResponse = {
+  books: Array<GetBookResponse>;
+  total: number;
+  limit: number;
+  offset: number;
+};
+
 export type CreateBookResponse = {
   message: string;
   data: {

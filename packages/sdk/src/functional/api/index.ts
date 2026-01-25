@@ -5,8 +5,12 @@
  */
 //================================================================
 export * as auth from "./auth/index";
+export * as session from "./session/index";
+export * as user from "./user/index";
 export * as book from "./book/index";
 export * as author from "./author/index";
 export * as category from "./category/index";
 export * as publisher from "./publisher/index";
+export * as loan from "./loan/index";
 export * as book_copy from "./book_copy/index";
+export * as reservation from "./reservation/index";
