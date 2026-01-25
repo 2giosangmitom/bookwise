@@ -86,4 +86,45 @@ export class LoanService {
       await manager.delete(Loan, id);
     });
   }
+
+  // Cursor pagination for user's loans. cursor is loan.loanDate ISO string.
+  async findByUserWithCursor(
+    userId: string,
+    cursor?: string,
+    limit?: number,
+    state?: string,
+  ): Promise<{ items: Loan[]; nextCursor: string | null }> {
+    const take = limit && limit > 0 ? limit : 10;
+
+    const qb = this.loanRepository
+      .createQueryBuilder("loan")
+      .leftJoinAndSelect("loan.bookCopies", "bookCopy")
+      .leftJoinAndSelect("bookCopy.book", "book")
+      .where("loan.userId = :userId", { userId })
+      .orderBy("loan.loanDate", "DESC")
+      .take(take + 1);
+
+    if (cursor) {
+      qb.andWhere("loan.loanDate < :cursor", { cursor: new Date(cursor) });
+    }
+
+    // filter by state: borrowed (not returned), returned, overdue
+    if (state) {
+      if (state === "BORROWED") {
+        qb.andWhere("loan.returnDate IS NULL");
+      } else if (state === "RETURNED") {
+        qb.andWhere("loan.returnDate IS NOT NULL");
+      } else if (state === "OVERDUE") {
+        qb.andWhere("loan.returnDate IS NULL AND loan.dueDate < :now", { now: new Date() });
+      }
+    }
+
+    const results = await qb.getMany();
+
+    const hasMore = results.length > take;
+    const items = hasMore ? results.slice(0, take) : results;
+    const nextCursor = hasMore ? items[items.length - 1].loanDate.toISOString() : null;
+
+    return { items, nextCursor };
+  }
 }

@@ -1,11 +1,13 @@
-import { Controller, HttpCode } from "@nestjs/common";
+import { Controller, HttpCode, Req, Query } from "@nestjs/common";
 import { Auth, Roles } from "@/guards/auth";
 import { LoanService } from "./loan.service";
+import { User } from "@/database/entities/user";
 import { TypedRoute, TypedParam } from "@nestia/core";
 import { tags } from "typia";
-import { CreateLoanResponse, type CreateLoanBody } from "./loan.dto";
+import { CreateLoanResponse, type CreateLoanBody, type GetLoansResponse } from "./loan.dto";
 import { ApiTags } from "@nestjs/swagger";
 import { Role } from "@bookwise/shared";
+import { type FastifyRequest } from "fastify";
 
 @Controller("loan")
 @ApiTags("Loan")
@@ -21,6 +23,36 @@ export class LoanController {
     return {
       message: "Loan created successfully",
       data: { id: loan.id },
+    };
+  }
+
+  @TypedRoute.Get("/")
+  async getLoans(
+    @Req() request: FastifyRequest,
+    @Query("cursor") cursor?: string,
+    @Query("limit") limit?: number,
+    @Query("state") state?: string,
+  ): Promise<GetLoansResponse> {
+    const user = request.getDecorator("user") as User;
+
+    const { items, nextCursor } = await this.loanService.findByUserWithCursor(user.id, cursor, limit, state);
+
+    return {
+      message: "Loans fetched successfully",
+      meta: { nextCursor: nextCursor },
+      data: {
+        loans: items.map((l) => ({
+          id: l.id,
+          loanDate: l.loanDate.toISOString(),
+          dueDate: l.dueDate.toISOString(),
+          returnDate: l.returnDate ? l.returnDate.toISOString() : undefined,
+          bookCopies: l.bookCopies.map((b) => ({
+            id: b.id,
+            barcode: b.barcode,
+            book: { id: b.book.id, title: b.book.title, isbn: b.book.isbn },
+          })),
+        })),
+      },
     };
   }
 
