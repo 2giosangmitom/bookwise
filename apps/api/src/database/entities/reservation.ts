@@ -1,4 +1,13 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, ManyToMany, JoinTable, type Relation } from "typeorm";
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  ManyToMany,
+  JoinTable,
+  CreateDateColumn,
+  type Relation,
+} from "typeorm";
 import { User } from "./user";
 import { Book } from "./book";
 
@@ -17,6 +26,9 @@ export class Reservation {
     type: "timestamp",
   })
   time!: Date;
+
+  @CreateDateColumn()
+  createdAt!: Date;
 
   @ManyToMany(() => Book, (book) => book.id, {
     nullable: false,
