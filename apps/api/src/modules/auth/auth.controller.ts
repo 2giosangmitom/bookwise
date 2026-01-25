@@ -1,7 +1,7 @@
 import { Controller, Res, UnauthorizedException, HttpCode, Req } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { TypedRoute, TypedBody, TypedException } from "@nestia/core";
-import { type SignInBody, SignInResponse, SignUpResponse, type SignUpBody } from "./auth.dto";
+import { type SignInBody, SignInResponse, SignUpResponse, type SignUpBody, type ChangePasswordBody } from "./auth.dto";
 import { ApiTags } from "@nestjs/swagger";
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { createHash, randomBytes } from "node:crypto";
@@ -11,6 +11,8 @@ import { SessionService } from "../session/session.service";
 import { UAParser } from "ua-parser-js";
 import { HttpExceptionBody } from "@nestjs/common";
 import { RedisService } from "@/utils/redis";
+import { Auth } from "@/guards/auth";
+import { User } from "@/database/entities/user";
 
 @Controller("/auth")
 @ApiTags("Auth")
@@ -173,5 +175,13 @@ export class AuthController {
     } catch (error) {
       throw new UnauthorizedException(error);
     }
+  }
+
+  @Auth()
+  @HttpCode(204)
+  @TypedRoute.Put("/password")
+  async changePassword(@TypedBody() body: ChangePasswordBody, @Req() request: FastifyRequest) {
+    const user = request.getDecorator("user") as User;
+    await this.authService.changePassword(user, body.newPassword);
   }
 }

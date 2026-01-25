@@ -28,3 +28,8 @@ export type SignInResponse = {
     accessToken: string;
   };
 };
+
+// Change password body
+export type ChangePasswordBody = {
+  newPassword: string & tags.Format<"password"> & tags.MinLength<typeof PASSWORD_MIN_LENGTH>;
+};

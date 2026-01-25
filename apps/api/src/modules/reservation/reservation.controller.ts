@@ -1,7 +1,7 @@
-import { Body, Controller, Req, Query } from "@nestjs/common";
+import { Controller, Req, Query } from "@nestjs/common";
 import { Auth } from "@/guards/auth";
 import { ReservationService } from "./reservation.service";
-import { TypedRoute } from "@nestia/core";
+import { TypedBody, TypedRoute } from "@nestia/core";
 import { CreateReservationResponse, type CreateReservationBody, type GetReservationsResponse } from "./reservation.dto";
 import { ApiTags } from "@nestjs/swagger";
 import { type FastifyRequest } from "fastify";
@@ -16,7 +16,7 @@ export class ReservationController {
   @TypedRoute.Post()
   async createReservation(
     @Req() request: FastifyRequest,
-    @Body() data: CreateReservationBody,
+    @TypedBody() data: CreateReservationBody,
   ): Promise<CreateReservationResponse> {
     const user = request.getDecorator("user") as User;
     const reservation = await this.reservationService.create(data, user);

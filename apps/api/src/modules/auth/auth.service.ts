@@ -5,6 +5,7 @@ import { Account } from "@/database/entities/account";
 import { Repository } from "typeorm";
 import { HashingUtils } from "@/utils/hashing";
 import { SignInBody, SignUpBody } from "./auth.dto";
+import { User } from "@/database/entities/user";
 
 @Injectable()
 export class AuthService {
@@ -49,5 +50,19 @@ export class AuthService {
     }
 
     return existUser;
+  }
+
+  async changePassword(user: User, newPassword: string) {
+    const { hash, salt } = await this.hashingUtils.generateHash(newPassword);
+
+    await this.accountRepository.update(
+      {
+        user,
+      },
+      {
+        passwordHash: hash,
+        passwordSalt: salt,
+      },
+    );
   }
 }
