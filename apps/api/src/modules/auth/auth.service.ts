@@ -24,9 +24,7 @@ export class AuthService {
       passwordHash: hash,
       passwordSalt: salt,
     });
-    const account = await this.accountRepository.save(accountEntity);
-
-    return account;
+    return this.accountRepository.save(accountEntity);
   }
 
   async checkCredentials(data: SignInBody) {

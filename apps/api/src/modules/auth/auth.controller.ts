@@ -22,6 +22,58 @@ export class AuthController {
     private redisService: RedisService,
   ) {}
 
+  private readonly refreshCookieOptions = {
+    httpOnly: true,
+    path: "/",
+    maxAge: REFRESH_TOKEN_TTL,
+    sameSite: "none",
+    secure: true,
+    signed: true,
+  } as const;
+
+  private createRefreshTokenForUser(userId: string) {
+    const refreshTokenId = randomBytes(32).toString("hex");
+    const refreshToken = this.jwtService.sign(
+      {},
+      {
+        jwtid: refreshTokenId,
+        subject: userId,
+        expiresIn: REFRESH_TOKEN_TTL,
+      },
+    );
+
+    return { refreshToken, refreshTokenId };
+  }
+
+  private async createAccessTokenForUser(userId: string, sessionId: string) {
+    const accessTokenId = randomBytes(32).toString("hex");
+    const accessToken = this.jwtService.sign(
+      {
+        ssid: sessionId,
+      },
+      {
+        jwtid: accessTokenId,
+        subject: userId,
+        expiresIn: ACCESS_TOKEN_TTL,
+      },
+    );
+
+    // Add access token to blacklist but not blacklist it yet
+    await this.redisService.addToBlacklist(accessTokenId, sessionId, ACCESS_TOKEN_TTL);
+
+    return { accessToken, accessTokenId };
+  }
+
+  private parseUnsignedRefreshToken(request: FastifyRequest) {
+    const refreshTokenCookie = request.cookies.refreshToken;
+    if (!refreshTokenCookie) throw new UnauthorizedException("Refresh token not found");
+
+    const unsigned = request.unsignCookie(refreshTokenCookie);
+    if (!unsigned.valid) throw new UnauthorizedException("Invalid refresh token");
+
+    return unsigned.value;
+  }
+
   @TypedRoute.Post("/signup")
   @TypedException<HttpExceptionBody>({
     status: 409,
@@ -48,16 +100,7 @@ export class AuthController {
     if (!result) {
       throw new UnauthorizedException("Wrong email or password provided");
     }
-
-    const refreshTokenId = randomBytes(32).toString("hex");
-    const refreshToken = this.jwtService.sign(
-      {},
-      {
-        jwtid: refreshTokenId,
-        subject: result.user.id,
-        expiresIn: REFRESH_TOKEN_TTL,
-      },
-    );
+    const { refreshToken, refreshTokenId } = this.createRefreshTokenForUser(result.user.id);
 
     // Parse ua and create new session
     const refreshTokenHash = createHash("sha256").update(refreshTokenId).digest("hex");
@@ -78,47 +121,19 @@ export class AuthController {
       user: result.user,
     });
 
-    const accessTokenId = randomBytes(32).toString("hex");
-    const accessToken = this.jwtService.sign(
-      {
-        ssid: session.id,
-      },
-      {
-        jwtid: accessTokenId,
-        subject: result.user.id,
-        expiresIn: ACCESS_TOKEN_TTL,
-      },
-    );
-    // Add access token to blacklist but not blacklist it yet
-    await this.redisService.addToBlacklist(accessTokenId, session.id, ACCESS_TOKEN_TTL);
+    const { accessToken } = await this.createAccessTokenForUser(result.user.id, session.id);
 
     // Set cookie
-    response.setCookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      path: "/",
-      maxAge: REFRESH_TOKEN_TTL,
-      sameSite: "none",
-      secure: true,
-      signed: true,
-    });
+    response.setCookie("refreshToken", refreshToken, this.refreshCookieOptions);
     return { message: "User signed in successfully", data: { accessToken } };
   }
 
   @TypedRoute.Post("/signout")
   @HttpCode(204)
   async signout(@Req() request: FastifyRequest, @Res({ passthrough: true }) response: FastifyReply): Promise<void> {
-    const refreshTokenCookie = request.cookies.refreshToken;
-    if (!refreshTokenCookie) {
-      throw new UnauthorizedException("Refresh token not found");
-    }
-
-    const unsignedRefreshTokenCookie = request.unsignCookie(refreshTokenCookie);
-    if (!unsignedRefreshTokenCookie.valid) {
-      throw new UnauthorizedException("Invalid refresh token");
-    }
-
     try {
-      const jwtPayload = this.jwtService.verify(unsignedRefreshTokenCookie.value);
+      const unsignedValue = this.parseUnsignedRefreshToken(request);
+      const jwtPayload = this.jwtService.verify(unsignedValue);
       const refreshTokenHash = createHash("sha256").update(jwtPayload.jti).digest("hex");
 
       // Revoke session
@@ -129,32 +144,16 @@ export class AuthController {
     } catch (error) {
       throw new UnauthorizedException(error);
     } finally {
-      response.clearCookie("refreshToken", {
-        httpOnly: true,
-        path: "/",
-        maxAge: REFRESH_TOKEN_TTL,
-        sameSite: "none",
-        secure: true,
-        signed: true,
-      });
+      response.clearCookie("refreshToken", this.refreshCookieOptions);
     }
   }
 
   @TypedRoute.Post("/refresh")
   @HttpCode(200)
   async refresh(@Req() request: FastifyRequest): Promise<SignInResponse> {
-    const refreshTokenCookie = request.cookies.refreshToken;
-    if (!refreshTokenCookie) {
-      throw new UnauthorizedException("Refresh token not found");
-    }
-
-    const unsignedRefreshTokenCookie = request.unsignCookie(refreshTokenCookie);
-    if (!unsignedRefreshTokenCookie.valid) {
-      throw new UnauthorizedException("Invalid refresh token");
-    }
-
     try {
-      const jwtPayload = this.jwtService.verify(unsignedRefreshTokenCookie.value);
+      const unsignedValue = this.parseUnsignedRefreshToken(request);
+      const jwtPayload = this.jwtService.verify(unsignedValue);
       const refreshTokenHash = createHash("sha256").update(jwtPayload.jti).digest("hex");
 
       const session = await this.sessionService.findOne(refreshTokenHash);
@@ -163,22 +162,10 @@ export class AuthController {
         throw new UnauthorizedException("Session expired or revoked");
       }
 
-      const accessTokenId = randomBytes(32).toString("hex");
-      const accessToken = this.jwtService.sign(
-        {
-          ssid: session.id,
-        },
-        {
-          jwtid: accessTokenId,
-          subject: jwtPayload.sub,
-          expiresIn: ACCESS_TOKEN_TTL,
-        },
-      );
-      // Add access token to blacklist but not blacklist it yet
-      await this.redisService.addToBlacklist(accessTokenId, session.id, ACCESS_TOKEN_TTL);
+      const { accessToken } = await this.createAccessTokenForUser(String(jwtPayload.sub), session.id);
 
       return {
-        message: "Refresh token successfulyy",
+        message: "Refresh token successful",
         data: {
           accessToken,
         },
