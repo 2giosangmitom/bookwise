@@ -57,4 +57,33 @@ export class LoanService {
       return createdLoan;
     });
   }
+
+  async delete(id: string): Promise<void> {
+    const loan = await this.loanRepository.findOne({
+      where: { id },
+      relations: ["bookCopies"],
+    });
+
+    if (!loan) {
+      throw new NotFoundException("Loan not found");
+    }
+
+    const bookCopyIds = (loan.bookCopies || []).map((b) => b.id);
+
+    await this.dataSource.transaction(async (manager) => {
+      if (bookCopyIds.length > 0) {
+        await manager.update(
+          BookCopy,
+          {
+            id: In(bookCopyIds),
+          },
+          {
+            status: BookStatus.AVAILABLE,
+          },
+        );
+      }
+
+      await manager.delete(Loan, id);
+    });
+  }
 }
