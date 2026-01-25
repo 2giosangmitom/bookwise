@@ -36,6 +36,15 @@ export class SessionService {
     return this.sessionRepository.findOne({ where: { refreshTokenHash } });
   }
 
+  findById(id: string) {
+    return this.sessionRepository.findOne({ where: { id } });
+  }
+
+  async revokeById(id: string) {
+    await this.sessionRepository.update({ id }, { revoked: true });
+    return this.findById(id);
+  }
+
   async findByUserId(userId: string) {
     return this.sessionRepository.find({
       where: { user: { id: userId } },
