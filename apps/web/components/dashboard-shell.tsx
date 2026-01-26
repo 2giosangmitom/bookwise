@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/theme-toggle";
 import Link from "next/link";
 import {
@@ -15,11 +14,12 @@ import {
   CalendarIcon,
   NotebookPen,
 } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { useAuthContext } from "@/contexts/auth";
 
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupLabel,
   SidebarHeader,
@@ -29,17 +29,72 @@ import {
   SidebarMenuButton,
   SidebarProvider,
   SidebarTrigger,
-  SidebarSeparator,
 } from "@/components/ui/sidebar";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { useAuthContext } from "@/contexts/auth";
+import { useMemo } from "react";
+import { Separator } from "@radix-ui/react-separator";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function DashboardShell({ children }: React.PropsWithChildren) {
   const { auth } = useAuthContext();
 
-  const user = auth?.user;
-  const displayName = user ? `${user.firstName}${user.lastName ? ` ${user.lastName}` : ""}` : "Admin";
-  const initials = user ? `${user.firstName?.[0] ?? ""}${user.lastName?.[0] ?? ""}`.toUpperCase() : "AD";
+  const displayName = useMemo(
+    () => auth && `${auth.user.firstName}${auth.user.lastName && ` ${auth.user.lastName}`}`,
+    [auth],
+  );
+
+  const sidebarItems = [
+    {
+      href: "/dashboard",
+      label: "Overview",
+      icon: HomeIcon,
+    },
+    {
+      href: "/dashboard/users",
+      label: "Users",
+      icon: UsersIcon,
+    },
+    {
+      href: "/dashboard/books",
+      label: "Books",
+      icon: BookOpenIcon,
+    },
+    {
+      href: "/dashboard/authors",
+      label: "Authors",
+      icon: UserIcon,
+    },
+    {
+      href: "/dashboard/categories",
+      label: "Categories",
+      icon: TagIcon,
+    },
+    {
+      href: "/dashboard/publishers",
+      label: "Publishers",
+      icon: ArchiveIcon,
+    },
+    {
+      href: "/dashboard/loans",
+      label: "Loans",
+      icon: ClipboardListIcon,
+    },
+    {
+      href: "/dashboard/book-copies",
+      label: "Book Copies",
+      icon: CopyIcon,
+    },
+    {
+      href: "/dashboard/reservations",
+      label: "Reservations",
+      icon: CalendarIcon,
+    },
+  ];
 
   return (
     <SidebarProvider defaultOpen>
@@ -60,133 +115,63 @@ export default function DashboardShell({ children }: React.PropsWithChildren) {
               <SidebarGroup>
                 <SidebarGroupLabel>Navigation</SidebarGroupLabel>
                 <SidebarMenu>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link href="/dashboard">
-                        <HomeIcon className="size-4" />
-                        <span>Overview</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link href="/dashboard/users">
-                        <UsersIcon className="size-4" />
-                        <span>Users</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link href="/dashboard/books">
-                        <BookOpenIcon className="size-4" />
-                        <span>Books</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link href="/dashboard/authors">
-                        <UserIcon className="size-4" />
-                        <span>Authors</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link href="/dashboard/categories">
-                        <TagIcon className="size-4" />
-                        <span>Categories</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link href="/dashboard/publishers">
-                        <ArchiveIcon className="size-4" />
-                        <span>Publishers</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link href="/dashboard/loans">
-                        <ClipboardListIcon className="size-4" />
-                        <span>Loans</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link href="/dashboard/book-copies">
-                        <CopyIcon className="size-4" />
-                        <span>Book Copies</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <Link href="/dashboard/reservations">
-                        <CalendarIcon className="size-4" />
-                        <span>Reservations</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-
-                  {/* Sessions route removed */}
+                  {sidebarItems.map(({ href, label, icon: Icon }) => (
+                    <SidebarMenuItem key={href}>
+                      <SidebarMenuButton asChild>
+                        <Link href={href}>
+                          <Icon className="size-4" />
+                          <span>{label}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
                 </SidebarMenu>
               </SidebarGroup>
             </SidebarContent>
-
-            <SidebarFooter>
-              <SidebarSeparator />
-              <div className="flex items-center justify-between gap-2 px-2">
-                <div className="flex items-center gap-2">
-                  <Avatar className="size-6">
-                    {user?.photoFileName ? (
-                      <AvatarImage src={`/uploads/${user.photoFileName}`} alt={displayName} />
-                    ) : (
-                      <AvatarFallback>{initials}</AvatarFallback>
-                    )}
-                  </Avatar>
-                  <div className="flex flex-col">
-                    <span className="text-sm">{displayName}</span>
-                    <span className="text-xs text-muted-foreground">{user?.email ?? "—"}</span>
-                  </div>
-                </div>
-                <div>
-                  <Button variant="ghost" size="icon" aria-label="Logout">
-                    ⎋
-                  </Button>
-                </div>
-              </div>
-            </SidebarFooter>
           </div>
         </Sidebar>
 
-        <SidebarInset className="flex-1 p-6">
+        <SidebarInset className="flex-1 p-6 flex">
           <header className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <SidebarTrigger />
               <h1 className="text-2xl font-semibold">Dashboard</h1>
             </div>
 
-            <div className="flex items-center gap-2">
-              <Button variant="outline">New</Button>
+            <div className="flex items-center gap-x-4">
               <ModeToggle />
-              <Avatar className="size-8">AD</Avatar>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Avatar className="cursor-pointer">
+                    <AvatarImage src={auth?.user.photoFileName ?? undefined} alt="User avatar" />
+                    <AvatarFallback>BW</AvatarFallback>
+                  </Avatar>
+                </DropdownMenuTrigger>
+
+                <DropdownMenuContent align="start">
+                  <div className="flex gap-4 py-2 px-3 justify-start items-center">
+                    <Avatar className="cursor-pointer">
+                      <AvatarImage src={auth?.user.photoFileName ?? undefined} alt="User avatar" />
+                      <AvatarFallback>BW</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="text-base font-medium">{displayName}</p>
+                      <p className="text-sm text-muted-foreground">{auth?.user.email}</p>
+                    </div>
+                  </div>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>Profile</DropdownMenuItem>
+                  <DropdownMenuItem>Settings</DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem variant="destructive">Logout</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </header>
 
-          <main className="min-h-[60vh]">{children}</main>
+          <Separator className="h-px bg-accent" />
+
+          <main className="min-h-[60vh] mt-10">{children}</main>
         </SidebarInset>
       </div>
     </SidebarProvider>
