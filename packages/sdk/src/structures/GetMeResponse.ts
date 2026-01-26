@@ -6,6 +6,6 @@ export type GetMeResponse = {
     firstName: string;
     lastName: null | string;
     photoFileName: null | string;
-    role: string;
+    role: "ADMIN" | "LIBRARIAN" | "MEMBER";
   };
 };
