@@ -1,10 +1,11 @@
-import { Controller, Req, Get, Patch, Body, HttpCode } from "@nestjs/common";
+import { Controller, Req, Get, Patch, Body, HttpCode, Query } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { Auth } from "@/guards/auth";
 import { type FastifyRequest } from "fastify";
 import { User } from "@/database/entities/user";
 import { UserService } from "./user.service";
 import type { GetMeResponse, UpdateUserBody } from "./user.dto";
+import { Role } from "@bookwise/shared";
 
 @Controller("/user")
 @ApiTags("User")
@@ -35,5 +36,33 @@ export class UserController {
     const user = request.getDecorator("user") as User;
 
     await this.userService.update(user.id, body);
+  }
+
+  @Get("/")
+  @Auth(Role.ADMIN)
+  async getAllUsers(@Query("search") search?: string, @Query("page") page?: number, @Query("limit") limit?: number) {
+    const [users, total] = await this.userService.search({ page, limit, search }, [
+      "id",
+      "email",
+      "firstName",
+      "lastName",
+      "photoFileName",
+      "role",
+    ]);
+
+    return {
+      message: "Users fetched successfully",
+      meta: {
+        total,
+      },
+      data: users.map((u) => ({
+        id: u.id,
+        email: u.email,
+        firstName: u.firstName,
+        lastName: u.lastName ?? null,
+        photoFileName: u.photoFileName ?? null,
+        role: u.role,
+      })),
+    };
   }
 }

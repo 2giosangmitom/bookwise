@@ -1,6 +1,6 @@
 import { ConflictException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Repository, ILike } from "typeorm";
 import { User } from "@/database/entities/user";
 import { CreateUserBody, UpdateUserBody } from "./user.dto";
 
@@ -39,5 +39,18 @@ export class UserService {
         lastName: data.lastName,
       },
     );
+  }
+
+  async search(options: { page?: number; limit?: number; search?: string }, select?: (keyof User)[]) {
+    const page = options.page && options.page > 0 ? options.page : 1;
+    const limit = options.limit && options.limit > 0 ? options.limit : 10;
+    const search = ILike(`%${options.search}%`);
+
+    return this.userRepository.findAndCount({
+      select: select ? Object.fromEntries(select.map((field) => [field, true])) : undefined,
+      where: [{ firstName: search }, { lastName: search }, { email: search }],
+      take: limit,
+      skip: (page - 1) * limit,
+    });
   }
 }

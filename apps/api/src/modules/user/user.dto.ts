@@ -1,3 +1,5 @@
+import { Role } from "@bookwise/shared";
+
 export type CreateUserBody = {
   email: string;
   firstName: string;
@@ -12,7 +14,7 @@ export type GetMeResponse = {
     firstName: string;
     lastName: string | null;
     photoFileName: string | null;
-    role: string;
+    role: Role;
   };
 };
 
