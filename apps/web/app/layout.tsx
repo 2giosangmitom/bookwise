@@ -7,6 +7,7 @@ import { functional } from "@bookwise/sdk";
 import { API_CONNECTION } from "@/lib/constants";
 import AuthProvider from "@/providers/auth";
 import { cookies } from "next/headers";
+import FetchApiProvider from "@/providers/fetchApi";
 
 export const metadata: Metadata = {
   title: "Bookwise",
@@ -46,10 +47,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="en" suppressHydrationWarning>
       <body>
         <AuthProvider value={contextData}>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-            {children} Root layout
-            <Toaster />
-          </ThemeProvider>
+          <FetchApiProvider>
+            <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+              {children}
+              <Toaster />
+            </ThemeProvider>
+          </FetchApiProvider>
         </AuthProvider>
       </body>
     </html>

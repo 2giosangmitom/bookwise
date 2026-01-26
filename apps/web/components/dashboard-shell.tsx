@@ -49,7 +49,7 @@ export default function DashboardShell({ children }: React.PropsWithChildren) {
             <SidebarHeader>
               <div className="flex items-center gap-2 px-2">
                 <NotebookPen className="size-7 text-primary" aria-hidden />
-                <div className="flex flex-col">
+                <div className="flex flex-col group-data-[collapsible=icon]:hidden">
                   <span className="text-sm font-semibold">Bookwise</span>
                   <span className="text-xs text-muted-foreground">Admin</span>
                 </div>
