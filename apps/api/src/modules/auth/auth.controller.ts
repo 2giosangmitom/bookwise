@@ -143,8 +143,8 @@ export class AuthController {
 
       // Blacklist all access tokens related to this session
       if (session) await this.redisService.blackListAllAccessTokensForSession(session.id);
-    } catch (error) {
-      throw new UnauthorizedException(error);
+    } catch {
+      // Ignore error
     } finally {
       response.clearCookie("refreshToken", this.refreshCookieOptions);
     }

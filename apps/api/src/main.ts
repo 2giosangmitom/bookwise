@@ -20,6 +20,8 @@ async function bootstrap() {
   });
   await fastify.register(fastifyMultipart as never);
 
+  fastify.decorateRequest("user", null);
+
   app.enableCors({
     methods: configService.getOrThrow<string>("CORS_METHODS").split(","),
     origin: configService.getOrThrow<string>("CORS_ORIGIN").split(","),
