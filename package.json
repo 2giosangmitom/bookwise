@@ -8,7 +8,7 @@
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "prepare": "husky",
-    "format": "prettier --write"
+    "format": "prettier --write ."
   },
   "packageManager": "pnpm@10.27.0",
   "devDependencies": {
