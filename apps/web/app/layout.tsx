@@ -8,6 +8,7 @@ import { API_CONNECTION } from "@/lib/constants";
 import AuthProvider from "@/providers/auth";
 import { cookies } from "next/headers";
 import FetchApiProvider from "@/providers/fetchApi";
+import QueryProvider from "@/providers/query";
 
 export const metadata: Metadata = {
   title: "Bookwise",
@@ -47,12 +48,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="en" suppressHydrationWarning>
       <body>
         <AuthProvider value={contextData}>
-          <FetchApiProvider>
-            <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-              {children}
-              <Toaster />
-            </ThemeProvider>
-          </FetchApiProvider>
+          <QueryProvider>
+            <FetchApiProvider>
+              <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+                {children}
+                <Toaster />
+              </ThemeProvider>
+            </FetchApiProvider>
+          </QueryProvider>
         </AuthProvider>
       </body>
     </html>

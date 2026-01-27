@@ -79,7 +79,7 @@ describe("AuthorService", () => {
       expect(mockAuthorRepository.create).toHaveBeenCalledWith({
         name: "Author Name",
         biography: "Bio",
-        dateOfBirth: new Date("1990-01-01"),
+        dateOfBirth: "1990-01-01",
         dateOfDeath: null,
         slug: "author-name",
       });

@@ -11,7 +11,7 @@ export type GetAuthorsResponse = {
     slug: string;
     biography: string;
     photoFileName: null | string;
-    dateOfBirth: string & Format<"date">;
-    dateOfDeath: null | (string & Format<"date">);
+    dateOfBirth: string & Format<"date-time">;
+    dateOfDeath: null | (string & Format<"date-time">);
   }[];
 };

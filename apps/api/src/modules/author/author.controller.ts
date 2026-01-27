@@ -41,10 +41,8 @@ export class AuthorController {
       id: author.id,
       name: author.name,
       biography: author.biography,
-      dateOfBirth: author.dateOfBirth.toISOString().split("T")[0] as string & tags.Format<"date">,
-      dateOfDeath: author.dateOfDeath
-        ? (author.dateOfDeath.toISOString().split("T")[0] as string & tags.Format<"date">)
-        : null,
+      dateOfBirth: new Date(author.dateOfBirth).toISOString(),
+      dateOfDeath: author.dateOfDeath ? new Date(author.dateOfDeath).toISOString() : null,
       slug: author.slug,
       photoFileName: author.photoFileName,
       books: author.books.map((book) => ({
@@ -96,8 +94,8 @@ export class AuthorController {
       data: authors.map((author) => ({
         id: author.id,
         biography: author.biography,
-        dateOfBirth: author.dateOfBirth.toISOString(),
-        dateOfDeath: author.dateOfDeath?.toISOString() ?? null,
+        dateOfBirth: new Date(author.dateOfBirth).toISOString(),
+        dateOfDeath: author.dateOfDeath ? new Date(author.dateOfDeath).toISOString() : null,
         name: author.name,
         photoFileName: author.photoFileName,
         slug: author.slug,

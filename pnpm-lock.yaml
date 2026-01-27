@@ -283,6 +283,9 @@ importers:
       '@eslint/js':
         specifier: ^9.39.2
         version: 9.39.2
+      '@tanstack/eslint-plugin-query':
+        specifier: ^5.91.3
+        version: 5.91.3(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3)
       '@types/node':
         specifier: ^22.19.7
         version: 22.19.7
@@ -2705,6 +2708,11 @@ packages:
   '@tanstack/devtools-event-client@0.4.0':
     resolution: {integrity: sha512-RPfGuk2bDZgcu9bAJodvO2lnZeHuz4/71HjZ0bGb/SPg8+lyTA+RLSKQvo7fSmPSi8/vcH3aKQ8EM9ywf1olaw==}
     engines: {node: '>=18'}
+
+  '@tanstack/eslint-plugin-query@5.91.3':
+    resolution: {integrity: sha512-5GMGZMYFK9dOvjpdedjJs4hU40EdPuO2AjzObQzP7eOSsikunCfrXaU3oNGXSsvoU9ve1Z1xQZZuDyPi0C1M7Q==}
+    peerDependencies:
+      eslint: ^8.57.0 || ^9.0.0
 
   '@tanstack/form-core@1.27.7':
     resolution: {integrity: sha512-nvogpyE98fhb0NDw1Bf2YaCH+L7ZIUgEpqO9TkHucDn6zg3ni521boUpv0i8HKIrmmFwDYjWZoCnrgY4HYWTkw==}
@@ -9467,6 +9475,14 @@ snapshots:
       tailwindcss: 4.1.18
 
   '@tanstack/devtools-event-client@0.4.0': {}
+
+  '@tanstack/eslint-plugin-query@5.91.3(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3)':
+    dependencies:
+      '@typescript-eslint/utils': 8.53.1(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3)
+      eslint: 9.39.2(jiti@2.6.1)
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
 
   '@tanstack/form-core@1.27.7':
     dependencies:

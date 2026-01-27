@@ -106,7 +106,7 @@ export default function DashboardShell({ children }: React.PropsWithChildren) {
                 <NotebookPen className="size-7 text-primary" aria-hidden />
                 <div className="flex flex-col group-data-[collapsible=icon]:hidden">
                   <span className="text-sm font-semibold">Bookwise</span>
-                  <span className="text-xs text-muted-foreground">Admin</span>
+                  <span className="text-xs text-muted-foreground capitalize">{auth?.user.role.toLowerCase()}</span>
                 </div>
               </div>
             </SidebarHeader>

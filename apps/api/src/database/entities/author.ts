@@ -13,12 +13,12 @@ export class Author {
   biography!: string;
 
   @Column("date")
-  dateOfBirth!: Date;
+  dateOfBirth!: string;
 
   @Column("date", {
     nullable: true,
   })
-  dateOfDeath!: Date | null;
+  dateOfDeath!: string | null;
 
   @Column({
     unique: true,

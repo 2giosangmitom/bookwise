@@ -3,8 +3,8 @@ import { tags } from "typia";
 export type CreateAuthorBody = {
   name: string;
   biography: string;
-  dateOfBirth: string & tags.Format<"date">;
-  dateOfDeath?: (string & tags.Format<"date">) | null;
+  dateOfBirth: string & tags.Format<"date-time">;
+  dateOfDeath?: (string & tags.Format<"date-time">) | null;
   slug: string & tags.MinLength<1>;
 };
 
@@ -21,8 +21,8 @@ export type GetAuthorResponse = {
   id: string & tags.Format<"uuid">;
   name: string;
   biography: string;
-  dateOfBirth: string & tags.Format<"date">;
-  dateOfDeath: (string & tags.Format<"date">) | null;
+  dateOfBirth: string & tags.Format<"date-time">;
+  dateOfDeath: (string & tags.Format<"date-time">) | null;
   slug: string;
   photoFileName: string | null;
   books: Array<{
@@ -43,7 +43,7 @@ export type GetAuthorsResponse = {
     slug: string;
     biography: string;
     photoFileName: string | null;
-    dateOfBirth: string & tags.Format<"date">;
-    dateOfDeath: (string & tags.Format<"date">) | null;
+    dateOfBirth: string & tags.Format<"date-time">;
+    dateOfDeath: (string & tags.Format<"date-time">) | null;
   }>;
 };

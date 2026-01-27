@@ -4,8 +4,8 @@ export type GetAuthorResponse = {
   id: string & Format<"uuid">;
   name: string;
   biography: string;
-  dateOfBirth: string & Format<"date">;
-  dateOfDeath: null | (string & Format<"date">);
+  dateOfBirth: string & Format<"date-time">;
+  dateOfDeath: null | (string & Format<"date-time">);
   slug: string;
   photoFileName: null | string;
   books: {

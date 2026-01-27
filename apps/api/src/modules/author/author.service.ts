@@ -23,8 +23,8 @@ export class AuthorService {
     const author = this.authorRepository.create({
       name: data.name,
       biography: data.biography,
-      dateOfBirth: new Date(data.dateOfBirth),
-      dateOfDeath: data.dateOfDeath ? new Date(data.dateOfDeath) : null,
+      dateOfBirth: data.dateOfBirth,
+      dateOfDeath: data.dateOfDeath ?? null,
       slug: data.slug,
     });
 
@@ -57,10 +57,10 @@ export class AuthorService {
       updateData.biography = data.biography;
     }
     if (data.dateOfBirth !== undefined) {
-      updateData.dateOfBirth = new Date(data.dateOfBirth);
+      updateData.dateOfBirth = data.dateOfBirth;
     }
     if (data.dateOfDeath !== undefined) {
-      updateData.dateOfDeath = data.dateOfDeath ? new Date(data.dateOfDeath) : null;
+      updateData.dateOfDeath = data.dateOfDeath ?? null;
     }
     if (data.slug !== undefined) {
       updateData.slug = data.slug;
@@ -106,7 +106,7 @@ export class AuthorService {
   async search(options: { page?: number; limit?: number; search?: string }, select?: (keyof Author)[]) {
     const page = options.page && options.page > 0 ? options.page : 1;
     const limit = options.limit && options.limit > 0 ? options.limit : 10;
-    const search = ILike(`%${options.search}%`);
+    const search = options.search ? ILike(`%${options.search}%`) : undefined;
 
     return this.authorRepository.findAndCount({
       select: select ? Object.fromEntries(select.map((field) => [field, true])) : undefined,
