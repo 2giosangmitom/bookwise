@@ -1,6 +1,6 @@
-import { Repository } from "typeorm";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Injectable } from "@nestjs/common";
+import { Repository, In } from "typeorm";
 import { Session } from "@/database/entities/session";
 import { User } from "@/database/entities/user";
 
@@ -8,7 +8,7 @@ import { User } from "@/database/entities/user";
 export class SessionService {
   constructor(@InjectRepository(Session) private sessionRepository: Repository<Session>) {}
 
-  create(data: {
+  async create(data: {
     refreshTokenHash: string;
     userAgent: string;
     deviceName: string;
@@ -18,21 +18,36 @@ export class SessionService {
     expiresAt: Date;
     user: User;
   }) {
-    const session = this.sessionRepository.create(data);
+    const result = await this.sessionRepository
+      .createQueryBuilder()
+      .insert()
+      .into(Session)
+      .values({
+        refreshTokenHash: data.refreshTokenHash,
+        userAgent: data.userAgent,
+        deviceName: data.deviceName,
+        os: data.os,
+        browser: data.browser,
+        ipAddress: data.ipAddress,
+        expiresAt: data.expiresAt,
+        user: data.user,
+      })
+      .returning("id")
+      .execute();
 
-    return this.sessionRepository.save(session);
+    return { id: result.raw?.[0]?.id };
   }
 
   delete(refreshTokenHash: string) {
     return this.sessionRepository.delete({ refreshTokenHash });
   }
 
-  async revoke(refreshTokenHash: string) {
+  async revokeByHash(refreshTokenHash: string) {
     await this.sessionRepository.update({ refreshTokenHash }, { revoked: true });
-    return this.findOne(refreshTokenHash);
+    return this.findByRefreshTokenHash(refreshTokenHash);
   }
 
-  findOne(refreshTokenHash: string) {
+  findByRefreshTokenHash(refreshTokenHash: string) {
     return this.sessionRepository.findOne({ where: { refreshTokenHash } });
   }
 
@@ -40,8 +55,11 @@ export class SessionService {
     return this.sessionRepository.findOne({ where: { id } });
   }
 
-  async revokeById(id: string) {
-    await this.sessionRepository.update({ id }, { revoked: true });
+  async revokeBySessionId(id: string) {
+    const existed = await this.sessionRepository.existsBy({ id });
+    if (!existed) throw new NotFoundException("Session not found");
+
+    await this.sessionRepository.update(id, { revoked: true });
     return this.findById(id);
   }
 
@@ -50,5 +68,9 @@ export class SessionService {
       where: { user: { id: userId } },
       order: { createdAt: "DESC" },
     });
+  }
+
+  async checkExistence(...ids: string[]) {
+    return this.sessionRepository.existsBy({ id: In(ids) });
   }
 }

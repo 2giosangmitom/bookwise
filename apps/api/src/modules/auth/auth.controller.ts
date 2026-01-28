@@ -139,7 +139,7 @@ export class AuthController {
       const refreshTokenHash = createHash("sha256").update(jwtPayload.jti).digest("hex");
 
       // Revoke session
-      const session = await this.sessionService.revoke(refreshTokenHash);
+      const session = await this.sessionService.revokeByHash(refreshTokenHash);
 
       // Blacklist all access tokens related to this session
       if (session) await this.redisService.blackListAllAccessTokensForSession(session.id);
@@ -158,7 +158,7 @@ export class AuthController {
       const jwtPayload = this.jwtService.verify(unsignedValue);
       const refreshTokenHash = createHash("sha256").update(jwtPayload.jti).digest("hex");
 
-      const session = await this.sessionService.findOne(refreshTokenHash);
+      const session = await this.sessionService.findByRefreshTokenHash(refreshTokenHash);
 
       if (!session || session.expiresAt < new Date() || session.revoked) {
         throw new UnauthorizedException("Session expired or revoked");

@@ -53,7 +53,7 @@ export class SessionController {
       throw new NotFoundException("Session not found");
     }
 
-    await this.sessionService.revokeById(id);
+    await this.sessionService.revokeBySessionId(id);
     await this.redisService.blackListAllAccessTokensForSession(id);
   }
 }
