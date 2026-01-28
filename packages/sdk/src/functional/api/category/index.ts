@@ -12,6 +12,7 @@ import type { CreateCategoryBody } from "../../../structures/CreateCategoryBody"
 import type { CreateCategoryResponse } from "../../../structures/CreateCategoryResponse";
 import type { GetCategoriesResponse } from "../../../structures/GetCategoriesResponse";
 import type { GetCategoryResponse } from "../../../structures/GetCategoryResponse";
+import type { Partial__type } from "../../../structures/Partial__type";
 import type { PartialCreateCategoryBody } from "../../../structures/PartialCreateCategoryBody";
 
 /**
@@ -183,17 +184,16 @@ export namespace deleteCategory {
  */
 export async function getAllCategories(
   connection: IConnection,
-  search?: undefined | string,
-  page?: undefined | number,
-  limit?: undefined | number,
+  query: getAllCategories.Query,
 ): Promise<getAllCategories.Output> {
   return PlainFetcher.fetch(connection, {
     ...getAllCategories.METADATA,
     template: getAllCategories.METADATA.path,
-    path: getAllCategories.path(search, page, limit),
+    path: getAllCategories.path(query),
   });
 }
 export namespace getAllCategories {
+  export type Query = Partial__type.o1;
   export type Output = GetCategoriesResponse;
 
   export const METADATA = {
@@ -207,17 +207,9 @@ export namespace getAllCategories {
     status: 200,
   } as const;
 
-  export const path = (
-    search?: undefined | string,
-    page?: undefined | number,
-    limit?: undefined | number,
-  ) => {
+  export const path = (query: Query) => {
     const variables: URLSearchParams = new URLSearchParams();
-    for (const [key, value] of Object.entries({
-      search: search,
-      page: page,
-      limit: limit,
-    } as any))
+    for (const [key, value] of Object.entries(query as any))
       if (undefined === value) continue;
       else if (Array.isArray(value))
         value.forEach((elem: any) => variables.append(key, String(elem)));

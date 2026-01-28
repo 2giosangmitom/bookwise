@@ -12,6 +12,7 @@ import type { CreatePublisherBody } from "../../../structures/CreatePublisherBod
 import type { CreatePublisherResponse } from "../../../structures/CreatePublisherResponse";
 import type { GetPublisherResponse } from "../../../structures/GetPublisherResponse";
 import type { GetPublishersResponse } from "../../../structures/GetPublishersResponse";
+import type { Partial__type } from "../../../structures/Partial__type";
 import type { PartialCreatePublisherBody } from "../../../structures/PartialCreatePublisherBody";
 
 /**
@@ -183,17 +184,16 @@ export namespace deletePublisher {
  */
 export async function getAllPublishers(
   connection: IConnection,
-  search?: undefined | string,
-  page?: undefined | number,
-  limit?: undefined | number,
+  query: getAllPublishers.Query,
 ): Promise<getAllPublishers.Output> {
   return PlainFetcher.fetch(connection, {
     ...getAllPublishers.METADATA,
     template: getAllPublishers.METADATA.path,
-    path: getAllPublishers.path(search, page, limit),
+    path: getAllPublishers.path(query),
   });
 }
 export namespace getAllPublishers {
+  export type Query = Partial__type.o2;
   export type Output = GetPublishersResponse;
 
   export const METADATA = {
@@ -207,17 +207,9 @@ export namespace getAllPublishers {
     status: 200,
   } as const;
 
-  export const path = (
-    search?: undefined | string,
-    page?: undefined | number,
-    limit?: undefined | number,
-  ) => {
+  export const path = (query: Query) => {
     const variables: URLSearchParams = new URLSearchParams();
-    for (const [key, value] of Object.entries({
-      search: search,
-      page: page,
-      limit: limit,
-    } as any))
+    for (const [key, value] of Object.entries(query as any))
       if (undefined === value) continue;
       else if (Array.isArray(value))
         value.forEach((elem: any) => variables.append(key, String(elem)));
