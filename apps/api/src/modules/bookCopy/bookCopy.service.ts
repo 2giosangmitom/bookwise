@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, ConflictException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { In, Repository, ILike } from "typeorm";
+import { Repository, ILike, Not, FindOptionsSelect, In } from "typeorm";
 import { BookCopy } from "@/database/entities/bookCopy";
 import { CreateBookCopyBody, UpdateBookCopyBody } from "./bookCopy.dto";
 import { BookStatus, BookCondition } from "@bookwise/shared";
@@ -14,109 +14,61 @@ export class BookCopyService {
     private readonly bookService: BookService,
   ) {}
 
-  async create(data: CreateBookCopyBody): Promise<BookCopy> {
-    const book = await this.bookService.findById(data.bookId);
+  async create(data: CreateBookCopyBody) {
+    // validate book existence
+    const book = await this.bookService.checkExistence(data.bookId);
+    if (!book) throw new NotFoundException("Book not found");
 
-    if (!book) {
-      throw new NotFoundException("Book not found");
-    }
+    // check barcode conflict
+    const existed = await this.bookCopyRepository.existsBy({ barcode: data.barcode });
+    if (existed) throw new ConflictException("Barcode already exists");
 
-    const existingBookCopy = await this.bookCopyRepository.existsBy({
-      barcode: data.barcode,
-    });
-
-    if (existingBookCopy) {
-      throw new ConflictException("Barcode already exists");
-    }
-
-    const bookCopy = this.bookCopyRepository.create({
-      book,
-      barcode: data.barcode,
-      status: data.status || BookStatus.AVAILABLE,
-      condition: data.condition || BookCondition.NEW,
-    });
-
-    return this.bookCopyRepository.save(bookCopy);
+    // insert and return inserted id
+    return this.bookCopyRepository
+      .createQueryBuilder()
+      .insert()
+      .into(BookCopy)
+      .values({
+        book: { id: data.bookId },
+        barcode: data.barcode,
+        status: data.status || BookStatus.AVAILABLE,
+        condition: data.condition || BookCondition.NEW,
+      })
+      .returning("id")
+      .execute();
   }
 
   async update(id: string, data: UpdateBookCopyBody): Promise<number> {
-    const bookCopy = await this.bookCopyRepository.findOneBy({ id });
+    // ensure book copy exists
+    const existed = await this.bookCopyRepository.existsBy({ id });
+    if (!existed) throw new NotFoundException("Book copy not found");
 
-    if (!bookCopy) {
-      throw new NotFoundException("Book copy not found");
+    // check barcode uniqueness when provided
+    if (data.barcode) {
+      const conflict = await this.bookCopyRepository.existsBy({ barcode: data.barcode, id: Not(id) });
+      if (conflict) throw new ConflictException("Barcode already exists");
     }
 
-    if (data.bookId && data.bookId !== bookCopy.book.id) {
-      const book = await this.bookService.findById(data.bookId);
-      if (!book) {
-        throw new NotFoundException("Book not found");
-      }
-    }
-
-    if (data.barcode && data.barcode !== bookCopy.barcode) {
-      const existingBookCopy = await this.bookCopyRepository.existsBy({
-        barcode: data.barcode,
-      });
-
-      if (existingBookCopy) {
-        throw new ConflictException("Barcode already exists");
-      }
-    }
-
-    const updateData: Partial<BookCopy> = {};
-
-    if (data.bookId !== undefined) {
-      const book = await this.bookService.findById(data.bookId);
-      if (!book) {
-        throw new NotFoundException("Book not found");
-      }
-      updateData.book = book;
-    }
-    if (data.barcode !== undefined) {
-      updateData.barcode = data.barcode;
-    }
-    if (data.status !== undefined) {
-      updateData.status = data.status;
-    }
-    if (data.condition !== undefined) {
-      updateData.condition = data.condition;
-    }
-
-    const updateResult = await this.bookCopyRepository.update(id, updateData);
-
+    const updateResult = await this.bookCopyRepository.update(id, data);
     return updateResult.affected!;
   }
 
   async delete(id: string): Promise<void> {
-    const bookCopy = await this.bookCopyRepository.findOneBy({ id });
-
-    if (!bookCopy) {
-      throw new NotFoundException("Book copy not found");
-    }
-
+    const existed = await this.bookCopyRepository.existsBy({ id });
+    if (!existed) throw new NotFoundException("Book copy not found");
     await this.bookCopyRepository.delete(id);
   }
 
   async findById(id: string): Promise<BookCopy | null> {
     return this.bookCopyRepository.findOne({
       where: { id },
-      relations: ["book"],
     });
   }
 
-  findByIds(ids: string[]) {
-    return this.bookCopyRepository.findBy({
-      id: In(ids),
-    });
-  }
-
-  async search(options: {
-    page?: number;
-    limit?: number;
-    search?: string;
-    status?: BookStatus;
-    condition?: BookCondition;
-  }) {
+  search(
+    options: { page?: number; limit?: number; search?: string; status?: BookStatus; condition?: BookCondition },
+    select?: FindOptionsSelect<BookCopy>,
+  ) {
     const page = options.page && options.page > 0 ? options.page : 1;
     const limit = options.limit && options.limit > 0 ? options.limit : 10;
 
@@ -124,16 +76,22 @@ export class BookCopyService {
     const condition = options.condition;
     const status = options.status;
 
-    const [items, total] = await this.bookCopyRepository.findAndCount({
+    return this.bookCopyRepository.findAndCount({
+      select,
       where: [
         { book: { title: search }, condition, status },
         { barcode: search, condition, status },
       ],
-      relations: ["book"],
       take: limit,
       skip: (page - 1) * limit,
     });
+  }
 
-    return [items, total] as const;
+  checkAvailability(...id: string[]) {
+    return this.bookCopyRepository.existsBy({
+      id: In(id),
+      status: BookStatus.AVAILABLE,
+      condition: In([BookCondition.NEW, BookCondition.GOOD]),
+    });
   }
 }

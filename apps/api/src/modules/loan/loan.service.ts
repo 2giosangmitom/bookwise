@@ -5,7 +5,7 @@ import { Loan } from "@/database/entities/loan";
 import { CreateLoanBody } from "./loan.dto";
 import { UserService } from "../user/user.service";
 import { BookCopyService } from "../bookCopy/bookCopy.service";
-import { BookCondition, BookStatus } from "@bookwise/shared";
+import { BookStatus } from "@bookwise/shared";
 import { BookCopy } from "@/database/entities/bookCopy";
 
 @Injectable()
@@ -20,26 +20,16 @@ export class LoanService {
 
   async create(data: CreateLoanBody) {
     const user = await this.userService.findById(data.user);
-    const bookCopies = await this.bookCopyService.findByIds(data.bookCopies);
+    if (!user) throw new NotFoundException("User not found");
 
-    for (const bookCopy of bookCopies) {
-      if (
-        bookCopy.status !== BookStatus.AVAILABLE ||
-        (bookCopy.condition !== BookCondition.GOOD && bookCopy.condition !== BookCondition.NEW)
-      ) {
-        throw new NotFoundException(`Book copy with ID ${bookCopy.id} is not available for loan`);
-      }
-    }
-
-    if (!user) {
-      throw new NotFoundException("User not found");
-    }
+    const isAvailable = await this.bookCopyService.checkAvailability(...data.bookCopies);
+    if (!isAvailable) throw new NotFoundException("One or more book copies are not available for loan");
 
     const loan = this.loanRepository.create({
       user,
       loanDate: data.loanDate,
       dueDate: data.dueDate,
-      bookCopies,
+      bookCopies: data.bookCopies.map((id) => ({ id })),
     });
 
     return this.dataSource.transaction(async (manager) => {
