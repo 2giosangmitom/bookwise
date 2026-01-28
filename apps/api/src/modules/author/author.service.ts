@@ -1,116 +1,78 @@
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, In, ILike } from "typeorm";
+import { Repository, In, ILike, FindOptionsSelect, Not } from "typeorm";
 import { Author } from "@/database/entities/author";
 import { CreateAuthorBody, UpdateAuthorBody } from "./author.dto";
 
 @Injectable()
 export class AuthorService {
-  constructor(
-    @InjectRepository(Author)
-    private readonly authorRepository: Repository<Author>,
-  ) {}
+  constructor(@InjectRepository(Author) private readonly authorRepository: Repository<Author>) {}
 
-  async create(data: CreateAuthorBody): Promise<Author> {
-    const existed = await this.authorRepository.existsBy({
-      slug: data.slug,
-    });
+  async create(data: CreateAuthorBody) {
+    // Check conflict slug
+    const existed = await this.authorRepository.existsBy({ slug: data.slug });
+    if (existed) throw new ConflictException("Slug already exists");
 
-    if (existed) {
-      throw new ConflictException("Slug already in use");
-    }
-
-    const author = this.authorRepository.create({
-      name: data.name,
-      biography: data.biography,
-      dateOfBirth: data.dateOfBirth,
-      dateOfDeath: data.dateOfDeath ?? null,
-      slug: data.slug,
-    });
-
-    return this.authorRepository.save(author);
+    // Create author
+    return this.authorRepository
+      .createQueryBuilder()
+      .insert()
+      .into(Author)
+      .values({
+        name: data.name,
+        biography: data.biography,
+        dateOfBirth: data.dateOfBirth,
+        dateOfDeath: data.dateOfDeath,
+        slug: data.slug,
+      })
+      .returning("id")
+      .execute();
   }
 
-  async update(id: string, data: UpdateAuthorBody): Promise<number> {
-    const author = await this.authorRepository.findOneBy({ id });
+  async update(id: string, data: UpdateAuthorBody) {
+    // Check author existence
+    const author = await this.authorRepository.existsBy({ id });
+    if (!author) throw new NotFoundException("Author not found");
 
-    if (!author) {
-      throw new NotFoundException("Author not found");
-    }
-
-    if (data.slug && data.slug !== author.slug) {
-      const existed = await this.authorRepository.existsBy({
-        slug: data.slug,
-      });
-
+    // Check conflict slug
+    if (data.slug) {
+      const existed = await this.authorRepository.existsBy({ slug: data.slug, id: Not(id) });
       if (existed) {
-        throw new ConflictException("Slug already in use");
+        throw new ConflictException("Slug already exists");
       }
     }
 
-    const updateData: Partial<Author> = {};
-
-    if (data.name !== undefined) {
-      updateData.name = data.name;
-    }
-    if (data.biography !== undefined) {
-      updateData.biography = data.biography;
-    }
-    if (data.dateOfBirth !== undefined) {
-      updateData.dateOfBirth = data.dateOfBirth;
-    }
-    if (data.dateOfDeath !== undefined) {
-      updateData.dateOfDeath = data.dateOfDeath ?? null;
-    }
-    if (data.slug !== undefined) {
-      updateData.slug = data.slug;
-    }
-
-    const updateResult = await this.authorRepository.update(id, updateData);
-
-    return updateResult.affected!;
+    // Update author
+    await this.authorRepository.update(id, data);
   }
 
-  async delete(id: string): Promise<void> {
-    const author = await this.authorRepository.findOneBy({ id });
+  async delete(id: string) {
+    // Check author existence
+    const author = await this.authorRepository.existsBy({ id });
+    if (!author) throw new NotFoundException("Author not found");
 
-    if (!author) {
-      throw new NotFoundException("Author not found");
-    }
-
+    // Delete author
     await this.authorRepository.delete(id);
   }
 
-  async existsById(...ids: string[]): Promise<boolean> {
+  async checkExistence(...ids: string[]) {
     return this.authorRepository.existsBy({
       id: In(ids),
     });
   }
 
-  async findByIds(ids: string[], select?: (keyof Author)[]): Promise<Author[]> {
-    return this.authorRepository.find({
-      select: select ? Object.fromEntries(select.map((key) => [key, true])) : undefined,
-      where: {
-        id: In(ids),
-      },
-    });
+  findById(id: string) {
+    return this.authorRepository.findOneBy({ id });
   }
 
-  async findById(id: string): Promise<Author | null> {
-    return this.authorRepository.findOne({
-      where: { id },
-      relations: ["books"],
-    });
-  }
-
-  async search(options: { page?: number; limit?: number; search?: string }, select?: (keyof Author)[]) {
-    const page = options.page && options.page > 0 ? options.page : 1;
-    const limit = options.limit && options.limit > 0 ? options.limit : 10;
+  async search(options: { page?: number; limit?: number; search?: string }, select?: FindOptionsSelect<Author>) {
+    const page = options.page || 1;
+    const limit = options.limit || 10;
     const search = options.search ? ILike(`%${options.search}%`) : undefined;
 
     return this.authorRepository.findAndCount({
-      select: select ? Object.fromEntries(select.map((field) => [field, true])) : undefined,
-      where: [{ name: search }, { slug: search }],
+      select: select,
+      where: [{ name: search }, { slug: search }, { biography: search }],
       take: limit,
       skip: (page - 1) * limit,
     });

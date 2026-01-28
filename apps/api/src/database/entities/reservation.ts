@@ -22,9 +22,7 @@ export class Reservation {
   })
   user!: Relation<User>;
 
-  @Column({
-    type: "timestamp",
-  })
+  @Column("timestamptz")
   time!: Date;
 
   @CreateDateColumn()

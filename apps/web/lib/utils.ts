@@ -63,13 +63,3 @@ export function createAutoRefreshClient() {
     }
   };
 }
-
-const formattedDate = new Intl.DateTimeFormat("en-US", {
-  day: "numeric",
-  month: "short",
-  year: "numeric",
-});
-
-export function formatDate(date: Date) {
-  return formattedDate.format(date);
-}

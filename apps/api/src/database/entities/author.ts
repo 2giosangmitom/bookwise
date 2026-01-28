@@ -6,7 +6,7 @@ export class Author {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
-  @Column()
+  @Column("varchar", { length: 100 })
   name!: string;
 
   @Column("text")
@@ -20,15 +20,10 @@ export class Author {
   })
   dateOfDeath!: string | null;
 
-  @Column({
-    unique: true,
-  })
+  @Column("varchar", { unique: true, length: 10 })
   slug!: string;
 
-  @Column({
-    type: String,
-    nullable: true,
-  })
+  @Column("varchar", { nullable: true })
   photoFileName!: string | null;
 
   @ManyToMany(() => Book, (book) => book.id, {

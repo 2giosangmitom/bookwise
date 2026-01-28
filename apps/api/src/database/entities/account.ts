@@ -19,10 +19,6 @@ export class Account {
   @Column()
   passwordSalt!: string;
 
-  @Column({
-    type: "enum",
-    enum: AccountStatus,
-    default: AccountStatus.ACTIVE,
-  })
+  @Column({ type: "enum", enum: AccountStatus, default: AccountStatus.ACTIVE })
   status!: AccountStatus;
 }

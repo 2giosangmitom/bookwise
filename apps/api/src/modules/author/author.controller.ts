@@ -1,6 +1,6 @@
-import { Controller, HttpCode, NotFoundException, Query } from "@nestjs/common";
+import { Controller, HttpCode, NotFoundException } from "@nestjs/common";
 import { AuthorService } from "./author.service";
-import { TypedBody, TypedParam, TypedRoute } from "@nestia/core";
+import { TypedBody, TypedParam, TypedQuery, TypedRoute } from "@nestia/core";
 import {
   CreateAuthorResponse,
   GetAuthorResponse,
@@ -18,6 +18,7 @@ import { Role } from "@bookwise/shared";
 export class AuthorController {
   constructor(private readonly authorService: AuthorService) {}
 
+  // Internal routes
   @TypedRoute.Post()
   @Auth(Role.ADMIN, Role.LIBRARIAN)
   async createAuthor(@TypedBody() body: CreateAuthorBody): Promise<CreateAuthorResponse> {
@@ -25,31 +26,9 @@ export class AuthorController {
 
     return {
       message: "Author has been created successfully",
-      data: { authorId: createdAuthor.id },
-    };
-  }
-
-  @TypedRoute.Get("/:id")
-  async getAuthor(@TypedParam("id") id: string & tags.Format<"uuid">): Promise<GetAuthorResponse> {
-    const author = await this.authorService.findById(id);
-
-    if (!author) {
-      throw new NotFoundException("Author not found");
-    }
-
-    return {
-      id: author.id,
-      name: author.name,
-      biography: author.biography,
-      dateOfBirth: new Date(author.dateOfBirth).toISOString(),
-      dateOfDeath: author.dateOfDeath ? new Date(author.dateOfDeath).toISOString() : null,
-      slug: author.slug,
-      photoFileName: author.photoFileName,
-      books: author.books.map((book) => ({
-        id: book.id,
-        title: book.title,
-        isbn: book.isbn,
-      })),
+      data: {
+        authorId: createdAuthor.raw[0].id,
+      },
     };
   }
 
@@ -71,35 +50,31 @@ export class AuthorController {
   }
 
   @TypedRoute.Get("/")
+  @Auth(Role.ADMIN, Role.LIBRARIAN)
   async getAllAuthors(
-    @Query("search") search?: string,
-    @Query("page") page?: number,
-    @Query("limit") limit?: number,
+    @TypedQuery()
+    query: Partial<{ page: number & tags.Type<"uint32">; limit: number & tags.Type<"uint32">; search: string }>,
   ): Promise<GetAuthorsResponse> {
-    const [authors, total] = await this.authorService.search({ page, limit, search }, [
-      "id",
-      "name",
-      "biography",
-      "slug",
-      "dateOfBirth",
-      "dateOfDeath",
-      "photoFileName",
-    ]);
+    const [authors, total] = await this.authorService.search(query);
 
     return {
       message: "Authors fetched successfully",
       meta: {
         total,
       },
-      data: authors.map((author) => ({
-        id: author.id,
-        biography: author.biography,
-        dateOfBirth: new Date(author.dateOfBirth).toISOString(),
-        dateOfDeath: author.dateOfDeath ? new Date(author.dateOfDeath).toISOString() : null,
-        name: author.name,
-        photoFileName: author.photoFileName,
-        slug: author.slug,
-      })),
+      data: authors,
     };
+  }
+
+  // Public routes
+  @TypedRoute.Get("/:id")
+  async findAuthorById(@TypedParam("id") id: string & tags.Format<"uuid">): Promise<GetAuthorResponse> {
+    // Check author existence
+    const author = await this.authorService.findById(id);
+    if (!author) {
+      throw new NotFoundException("Author not found");
+    }
+
+    return author;
   }
 }

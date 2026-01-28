@@ -29,7 +29,7 @@ export class BookService {
     }
 
     const [authorsExist, categoriesExist, publishersExist] = await Promise.all([
-      this.authorService.existsById(...data.authorIds),
+      this.authorService.checkExistence(...data.authorIds),
       this.categoryService.existsById(...data.categoryIds),
       this.publisherService.existsById(...data.publisherIds),
     ]);
@@ -50,7 +50,7 @@ export class BookService {
       title: data.title,
       description: data.description,
       isbn: data.isbn,
-      publishedDate: new Date(data.publishedDate),
+      publishedDate: data.publishedDate,
       authors: data.authorIds.map((id) => ({ id })),
       categories: data.categoryIds.map((id) => ({ id })),
       publishers: data.publisherIds.map((id) => ({ id })),
@@ -59,7 +59,7 @@ export class BookService {
     return this.bookRepository.save(book);
   }
 
-  async update(id: string, data: UpdateBookBody): Promise<number> {
+  async update(id: string, data: UpdateBookBody) {
     const book = await this.bookRepository.findOneBy({ id });
 
     if (!book) {
@@ -77,7 +77,7 @@ export class BookService {
     }
 
     if (data.authorIds) {
-      const authorsExist = await this.authorService.existsById(...data.authorIds);
+      const authorsExist = await this.authorService.checkExistence(...data.authorIds);
       if (!authorsExist) {
         throw new NotFoundException("One or more authors not found");
       }
@@ -97,36 +97,7 @@ export class BookService {
       }
     }
 
-    const updateData: Partial<Book> = {};
-
-    if (data.title !== undefined) {
-      updateData.title = data.title;
-    }
-    if (data.description !== undefined) {
-      updateData.description = data.description;
-    }
-    if (data.isbn !== undefined) {
-      updateData.isbn = data.isbn;
-    }
-    if (data.publishedDate !== undefined) {
-      updateData.publishedDate = new Date(data.publishedDate);
-    }
-    if (data.authorIds !== undefined) {
-      const authors = await this.authorService.findByIds(data.authorIds);
-      updateData.authors = authors;
-    }
-    if (data.categoryIds !== undefined) {
-      const categories = await this.categoryService.findByIds(data.categoryIds);
-      updateData.categories = categories;
-    }
-    if (data.publisherIds !== undefined) {
-      const publishers = await this.publisherService.findByIds(data.publisherIds);
-      updateData.publishers = publishers;
-    }
-
-    const updateResult = await this.bookRepository.update(id, updateData);
-
-    return updateResult.affected!;
+    await this.bookRepository.update(id, data);
   }
 
   async delete(id: string): Promise<void> {
@@ -208,7 +179,7 @@ export class BookService {
         description: book.description,
         photoFileName: book.photoFileName,
         isbn: book.isbn,
-        publishedDate: book.publishedDate.toISOString().split("T")[0],
+        publishedDate: book.publishedDate,
         authors: book.authors.map((author) => ({
           id: author.id,
           name: author.name,

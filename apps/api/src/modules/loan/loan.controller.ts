@@ -43,9 +43,9 @@ export class LoanController {
       data: {
         loans: items.map((l) => ({
           id: l.id,
-          loanDate: l.loanDate.toISOString(),
-          dueDate: l.dueDate.toISOString(),
-          returnDate: l.returnDate ? l.returnDate.toISOString() : undefined,
+          loanDate: l.loanDate,
+          dueDate: l.dueDate,
+          returnDate: l.returnDate ? l.returnDate : undefined,
           bookCopies: l.bookCopies.map((b) => ({
             id: b.id,
             barcode: b.barcode,

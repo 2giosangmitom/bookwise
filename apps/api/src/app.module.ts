@@ -55,6 +55,7 @@ const envSchema = z.object({
         synchronize: false,
         migrationsRun: false,
         autoLoadEntities: true,
+        logging: process.env.NODE_ENV === "development",
       }),
     }),
     S3UtilsModule.registerAsync({

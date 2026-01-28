@@ -6,12 +6,10 @@ export class Session {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
-  @Column({
-    unique: true,
-  })
+  @Column({ unique: true })
   refreshTokenHash!: string;
 
-  @Column({ length: 45 })
+  @Column("varchar", { length: 45 })
   ipAddress!: string;
 
   @Column()
@@ -29,7 +27,7 @@ export class Session {
   @Column({ default: false })
   revoked!: boolean;
 
-  @Column()
+  @Column("timestamptz")
   expiresAt!: Date;
 
   @CreateDateColumn()

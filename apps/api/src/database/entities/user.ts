@@ -6,24 +6,16 @@ export class User {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
-  @Column()
+  @Column({ length: 100 })
   firstName!: string;
 
-  @Column({
-    type: String,
-    nullable: true,
-  })
+  @Column("varchar", { length: 100, nullable: true })
   lastName!: string | null;
 
-  @Column({
-    unique: true,
-  })
+  @Column({ unique: true })
   email!: string;
 
-  @Column({
-    type: String,
-    nullable: true,
-  })
+  @Column("varchar", { nullable: true })
   photoFileName!: string | null;
 
   @Column({

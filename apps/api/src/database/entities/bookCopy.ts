@@ -14,9 +14,7 @@ export class BookCopy {
   })
   book!: Relation<Book>;
 
-  @Column({
-    unique: true,
-  })
+  @Column({ unique: true })
   barcode!: string;
 
   @Column("enum", { enum: BookStatus, default: BookStatus.AVAILABLE })

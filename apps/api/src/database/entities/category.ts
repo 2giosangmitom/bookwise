@@ -6,12 +6,10 @@ export class Category {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
-  @Column()
+  @Column("varchar", { length: 100 })
   name!: string;
 
-  @Column({
-    unique: true,
-  })
+  @Column({ unique: true })
   slug!: string;
 
   @ManyToMany(() => Book, (book) => book.id, {

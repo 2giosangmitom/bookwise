@@ -4,7 +4,7 @@
   "description": "API server for the Bookwise project",
   "scripts": {
     "build": "nest build",
-    "dev": "nest start --watch",
+    "dev": "NODE_ENV=development nest start --watch",
     "typecheck": "tsc --noEmit",
     "lint": "eslint",
     "test": "jest",

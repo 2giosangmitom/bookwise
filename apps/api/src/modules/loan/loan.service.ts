@@ -37,8 +37,8 @@ export class LoanService {
 
     const loan = this.loanRepository.create({
       user,
-      loanDate: new Date(data.loanDate),
-      dueDate: new Date(data.dueDate),
+      loanDate: data.loanDate,
+      dueDate: data.dueDate,
       bookCopies,
     });
 
@@ -123,7 +123,7 @@ export class LoanService {
 
     const hasMore = results.length > take;
     const items = hasMore ? results.slice(0, take) : results;
-    const nextCursor = hasMore ? items[items.length - 1].loanDate.toISOString() : null;
+    const nextCursor = hasMore ? items[items.length - 1].loanDate : null;
 
     return { items, nextCursor };
   }

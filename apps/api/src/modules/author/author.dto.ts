@@ -1,10 +1,11 @@
 import { tags } from "typia";
 
+// Create author
 export type CreateAuthorBody = {
   name: string;
   biography: string;
-  dateOfBirth: string & tags.Format<"date-time">;
-  dateOfDeath?: (string & tags.Format<"date-time">) | null;
+  dateOfBirth: string & tags.Format<"date">;
+  dateOfDeath?: (string & tags.Format<"date">) | null;
   slug: string & tags.MinLength<1>;
 };
 
@@ -15,35 +16,25 @@ export type CreateAuthorResponse = {
   };
 };
 
+// Update author
 export type UpdateAuthorBody = Partial<CreateAuthorBody>;
 
-export type GetAuthorResponse = {
+// Get author
+export type GetAuthorResponse = Required<CreateAuthorBody> & {
   id: string & tags.Format<"uuid">;
-  name: string;
-  biography: string;
-  dateOfBirth: string & tags.Format<"date-time">;
-  dateOfDeath: (string & tags.Format<"date-time">) | null;
-  slug: string;
   photoFileName: string | null;
-  books: Array<{
-    id: string & tags.Format<"uuid">;
-    title: string;
-    isbn: string;
-  }>;
 };
 
+// Get authors
 export type GetAuthorsResponse = {
   message: string;
   meta: {
     total: number;
   };
-  data: Array<{
-    id: string & tags.Format<"uuid">;
-    name: string;
-    slug: string;
-    biography: string;
-    photoFileName: string | null;
-    dateOfBirth: string & tags.Format<"date-time">;
-    dateOfDeath: (string & tags.Format<"date-time">) | null;
-  }>;
+  data: Array<
+    Required<CreateAuthorBody> & {
+      id: string & tags.Format<"uuid">;
+      photoFileName: string | null;
+    }
+  >;
 };

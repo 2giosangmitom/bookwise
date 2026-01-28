@@ -7,21 +7,14 @@ export class Loan {
   @PrimaryGeneratedColumn()
   id!: string;
 
-  @Column({
-    type: "date",
-  })
-  loanDate!: Date;
+  @Column({ type: "date" })
+  loanDate!: string;
 
-  @Column({
-    type: "date",
-  })
-  dueDate!: Date;
+  @Column({ type: "date" })
+  dueDate!: string;
 
-  @Column({
-    nullable: true,
-    type: "date",
-  })
-  returnDate!: Date;
+  @Column("date", { nullable: true })
+  returnDate!: string;
 
   @ManyToMany(() => BookCopy, (bookCopy) => bookCopy.id, {
     nullable: false,

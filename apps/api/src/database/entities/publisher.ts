@@ -9,23 +9,16 @@ export class Publisher {
   @Column()
   name!: string;
 
-  @Column({
-    type: "text",
-  })
+  @Column("text")
   description!: string;
 
   @Column()
   website!: string;
 
-  @Column({
-    unique: true,
-  })
+  @Column({ unique: true })
   slug!: string;
 
-  @Column({
-    type: String,
-    nullable: true,
-  })
+  @Column("varchar", { nullable: true })
   photoFileName!: string | null;
 
   @ManyToMany(() => Book, (book) => book.id, {

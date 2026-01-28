@@ -44,7 +44,7 @@ export class BookController {
       description: book.description,
       photoFileName: book.photoFileName,
       isbn: book.isbn,
-      publishedDate: book.publishedDate.toISOString().split("T")[0] as string & tags.Format<"date">,
+      publishedDate: book.publishedDate,
       authors: book.authors.map((author) => ({
         id: author.id,
         name: author.name,

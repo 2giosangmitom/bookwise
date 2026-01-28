@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class Final1768212590520 implements MigrationInterface {
-  name = "Final1768212590520";
+export class Init1769517961462 implements MigrationInterface {
+  name = "Init1769517961462";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
@@ -10,10 +10,10 @@ export class Final1768212590520 implements MigrationInterface {
     await queryRunner.query(`
             CREATE TABLE "user" (
                 "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
-                "firstName" character varying NOT NULL,
-                "lastName" character varying,
+                "firstName" character varying(100) NOT NULL,
+                "lastName" character varying(100),
                 "email" character varying NOT NULL,
-                "photoFileName" character varying NOT NULL,
+                "photoFileName" character varying,
                 "role" "public"."user_role_enum" NOT NULL DEFAULT 'MEMBER',
                 CONSTRAINT "UQ_e12875dfb3b1d92d7d7c5377e22" UNIQUE ("email"),
                 CONSTRAINT "PK_cace4a159ff9f2512dd42373760" PRIMARY KEY ("id")
@@ -21,23 +21,30 @@ export class Final1768212590520 implements MigrationInterface {
         `);
     await queryRunner.query(`
             CREATE TABLE "session" (
-                "id" character varying NOT NULL,
-                "device" character varying NOT NULL,
-                "latitude" character varying NOT NULL,
-                "longitude" character varying NOT NULL,
+                "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
+                "refreshTokenHash" character varying NOT NULL,
+                "ipAddress" character varying(45) NOT NULL,
+                "userAgent" character varying NOT NULL,
+                "deviceName" character varying,
+                "os" character varying,
+                "browser" character varying,
+                "revoked" boolean NOT NULL DEFAULT false,
+                "expiresAt" TIMESTAMP WITH TIME ZONE NOT NULL,
+                "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
                 "userId" uuid NOT NULL,
+                CONSTRAINT "UQ_ff3907da35cc76361715c820ca3" UNIQUE ("refreshTokenHash"),
                 CONSTRAINT "PK_f55da76ac1c3ac420f444d2ff11" PRIMARY KEY ("id")
             )
         `);
     await queryRunner.query(`
             CREATE TABLE "author" (
                 "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
-                "name" character varying NOT NULL,
+                "name" character varying(100) NOT NULL,
                 "biography" text NOT NULL,
                 "dateOfBirth" date NOT NULL,
                 "dateOfDeath" date,
-                "slug" character varying NOT NULL,
-                "photoFileName" character varying NOT NULL,
+                "slug" character varying(10) NOT NULL,
+                "photoFileName" character varying,
                 CONSTRAINT "UQ_6ee7ef69a7694fea87382052fed" UNIQUE ("slug"),
                 CONSTRAINT "PK_5a0e79799d372fe56f2f3fa6871" PRIMARY KEY ("id")
             )
@@ -45,17 +52,20 @@ export class Final1768212590520 implements MigrationInterface {
     await queryRunner.query(`
             CREATE TABLE "category" (
                 "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
-                "name" character varying NOT NULL,
+                "name" character varying(100) NOT NULL,
+                "slug" character varying NOT NULL,
+                CONSTRAINT "UQ_cb73208f151aa71cdd78f662d70" UNIQUE ("slug"),
                 CONSTRAINT "PK_9c4e4a89e3674fc9f382d733f03" PRIMARY KEY ("id")
             )
         `);
     await queryRunner.query(`
             CREATE TABLE "publisher" (
                 "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
+                "name" character varying NOT NULL,
                 "description" text NOT NULL,
                 "website" character varying NOT NULL,
                 "slug" character varying NOT NULL,
-                "photoFileName" character varying NOT NULL,
+                "photoFileName" character varying,
                 CONSTRAINT "UQ_e8e355d9e8852db144b49d5914e" UNIQUE ("slug"),
                 CONSTRAINT "PK_70a5936b43177f76161724da3e6" PRIMARY KEY ("id")
             )
@@ -65,7 +75,7 @@ export class Final1768212590520 implements MigrationInterface {
                 "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
                 "title" character varying NOT NULL,
                 "description" text NOT NULL,
-                "photoFileName" character varying NOT NULL,
+                "photoFileName" character varying,
                 "isbn" character varying NOT NULL,
                 "publishedDate" date NOT NULL,
                 CONSTRAINT "UQ_bd183604b9c828c0bdd92cafab7" UNIQUE ("isbn"),
@@ -75,9 +85,27 @@ export class Final1768212590520 implements MigrationInterface {
     await queryRunner.query(`
             CREATE TABLE "reservation" (
                 "id" SERIAL NOT NULL,
-                "time" TIMESTAMP NOT NULL,
+                "time" TIMESTAMP WITH TIME ZONE NOT NULL,
+                "createdAt" TIMESTAMP NOT NULL DEFAULT now(),
                 "userId" uuid NOT NULL,
                 CONSTRAINT "PK_48b1f9922368359ab88e8bfa525" PRIMARY KEY ("id")
+            )
+        `);
+    await queryRunner.query(`
+            CREATE TYPE "public"."book_copy_status_enum" AS ENUM('AVAILABLE', 'BORROWED')
+        `);
+    await queryRunner.query(`
+            CREATE TYPE "public"."book_copy_condition_enum" AS ENUM('NEW', 'GOOD', 'WORN', 'DAMAGED', 'LOST')
+        `);
+    await queryRunner.query(`
+            CREATE TABLE "book_copy" (
+                "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
+                "barcode" character varying NOT NULL,
+                "status" "public"."book_copy_status_enum" NOT NULL DEFAULT 'AVAILABLE',
+                "condition" "public"."book_copy_condition_enum" NOT NULL DEFAULT 'NEW',
+                "bookId" uuid NOT NULL,
+                CONSTRAINT "UQ_cae499666e06981a66a420f7d93" UNIQUE ("barcode"),
+                CONSTRAINT "PK_ef16f7a75bc656c5486264959bb" PRIMARY KEY ("id")
             )
         `);
     await queryRunner.query(`
@@ -88,19 +116,6 @@ export class Final1768212590520 implements MigrationInterface {
                 "returnDate" date,
                 "userId" uuid NOT NULL,
                 CONSTRAINT "PK_4ceda725a323d254a5fd48bf95f" PRIMARY KEY ("id")
-            )
-        `);
-    await queryRunner.query(`
-            CREATE TYPE "public"."book_copy_condition_enum" AS ENUM('NEW', 'GOOD', 'WORN', 'DAMAGED', 'LOST')
-        `);
-    await queryRunner.query(`
-            CREATE TABLE "book_copy" (
-                "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
-                "barcode" character varying NOT NULL,
-                "condition" "public"."book_copy_condition_enum" NOT NULL DEFAULT 'NEW',
-                "bookId" uuid NOT NULL,
-                CONSTRAINT "UQ_cae499666e06981a66a420f7d93" UNIQUE ("barcode"),
-                CONSTRAINT "PK_ef16f7a75bc656c5486264959bb" PRIMARY KEY ("id")
             )
         `);
     await queryRunner.query(`
@@ -190,12 +205,12 @@ export class Final1768212590520 implements MigrationInterface {
             ADD CONSTRAINT "FK_529dceb01ef681127fef04d755d" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE NO ACTION
         `);
     await queryRunner.query(`
-            ALTER TABLE "loan"
-            ADD CONSTRAINT "FK_ef7a63b4c4f0edd90e389edb103" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
-        `);
-    await queryRunner.query(`
             ALTER TABLE "book_copy"
             ADD CONSTRAINT "FK_8639f9a7d3293fad88c8fd3c43d" FOREIGN KEY ("bookId") REFERENCES "book"("id") ON DELETE CASCADE ON UPDATE NO ACTION
+        `);
+    await queryRunner.query(`
+            ALTER TABLE "loan"
+            ADD CONSTRAINT "FK_ef7a63b4c4f0edd90e389edb103" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
     await queryRunner.query(`
             ALTER TABLE "account"
@@ -278,10 +293,10 @@ export class Final1768212590520 implements MigrationInterface {
             ALTER TABLE "account" DROP CONSTRAINT "FK_60328bf27019ff5498c4b977421"
         `);
     await queryRunner.query(`
-            ALTER TABLE "book_copy" DROP CONSTRAINT "FK_8639f9a7d3293fad88c8fd3c43d"
+            ALTER TABLE "loan" DROP CONSTRAINT "FK_ef7a63b4c4f0edd90e389edb103"
         `);
     await queryRunner.query(`
-            ALTER TABLE "loan" DROP CONSTRAINT "FK_ef7a63b4c4f0edd90e389edb103"
+            ALTER TABLE "book_copy" DROP CONSTRAINT "FK_8639f9a7d3293fad88c8fd3c43d"
         `);
     await queryRunner.query(`
             ALTER TABLE "reservation" DROP CONSTRAINT "FK_529dceb01ef681127fef04d755d"
@@ -341,13 +356,16 @@ export class Final1768212590520 implements MigrationInterface {
             DROP TYPE "public"."account_status_enum"
         `);
     await queryRunner.query(`
+            DROP TABLE "loan"
+        `);
+    await queryRunner.query(`
             DROP TABLE "book_copy"
         `);
     await queryRunner.query(`
             DROP TYPE "public"."book_copy_condition_enum"
         `);
     await queryRunner.query(`
-            DROP TABLE "loan"
+            DROP TYPE "public"."book_copy_status_enum"
         `);
     await queryRunner.query(`
             DROP TABLE "reservation"

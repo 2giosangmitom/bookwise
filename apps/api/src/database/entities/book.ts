@@ -12,26 +12,17 @@ export class Book {
   @Column()
   title!: string;
 
-  @Column({
-    type: "text",
-  })
+  @Column("text")
   description!: string;
 
-  @Column({
-    type: String,
-    nullable: true,
-  })
+  @Column("varchar", { nullable: true })
   photoFileName!: string | null;
 
-  @Column({
-    unique: true,
-  })
+  @Column({ unique: true })
   isbn!: string;
 
-  @Column({
-    type: "date",
-  })
-  publishedDate!: Date;
+  @Column({ type: "date" })
+  publishedDate!: string;
 
   @ManyToMany(() => Reservation, (reservation) => reservation.id, {
     nullable: false,
