@@ -30,8 +30,8 @@ export class BookService {
 
     const [authorsExist, categoriesExist, publishersExist] = await Promise.all([
       this.authorService.checkExistence(...data.authorIds),
-      this.categoryService.existsById(...data.categoryIds),
-      this.publisherService.existsById(...data.publisherIds),
+      this.categoryService.checkExistence(...data.categoryIds),
+      this.publisherService.checkExistence(...data.publisherIds),
     ]);
 
     if (!authorsExist) {
@@ -84,14 +84,14 @@ export class BookService {
     }
 
     if (data.categoryIds) {
-      const categoriesExist = await this.categoryService.existsById(...data.categoryIds);
+      const categoriesExist = await this.categoryService.checkExistence(...data.categoryIds);
       if (!categoriesExist) {
         throw new NotFoundException("One or more categories not found");
       }
     }
 
     if (data.publisherIds) {
-      const publishersExist = await this.publisherService.existsById(...data.publisherIds);
+      const publishersExist = await this.publisherService.checkExistence(...data.publisherIds);
       if (!publishersExist) {
         throw new NotFoundException("One or more publishers not found");
       }

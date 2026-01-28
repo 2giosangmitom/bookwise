@@ -1,6 +1,6 @@
-import { Controller, HttpCode, NotFoundException, Query } from "@nestjs/common";
+import { Controller, HttpCode, NotFoundException } from "@nestjs/common";
 import { CategoryService } from "./category.service";
-import { TypedBody, TypedParam, TypedRoute } from "@nestia/core";
+import { TypedBody, TypedParam, TypedRoute, TypedQuery } from "@nestia/core";
 import {
   CreateCategoryResponse,
   GetCategoryResponse,
@@ -25,7 +25,7 @@ export class CategoryController {
 
     return {
       message: "Category has been created successfully",
-      data: { categoryId: createdCategory.id },
+      data: { categoryId: createdCategory.raw[0].id },
     };
   }
 
@@ -67,12 +67,12 @@ export class CategoryController {
   }
 
   @TypedRoute.Get("/")
+  @Auth(Role.ADMIN, Role.LIBRARIAN)
   async getAllCategories(
-    @Query("search") search?: string,
-    @Query("page") page?: number,
-    @Query("limit") limit?: number,
+    @TypedQuery()
+    query: Partial<{ page: number & tags.Type<"uint32">; limit: number & tags.Type<"uint32">; search: string }>,
   ): Promise<GetCategoriesResponse> {
-    const [categories, total] = await this.categoryService.search({ page, limit, search }, ["id", "name", "slug"]);
+    const [categories, total] = await this.categoryService.search(query);
 
     return {
       message: "Categories fetched successfully",

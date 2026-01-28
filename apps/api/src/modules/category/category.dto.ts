@@ -1,23 +1,23 @@
+import { tags } from "typia";
+
 export type CreateCategoryBody = {
   name: string;
-  slug: string;
+  slug: string & tags.MinLength<1>;
 };
 
 export type CreateCategoryResponse = {
   message: string;
   data: {
-    categoryId: string;
+    categoryId: string & tags.Format<"uuid">;
   };
 };
 
 export type UpdateCategoryBody = Partial<CreateCategoryBody>;
 
-export type GetCategoryResponse = {
-  id: string;
-  name: string;
-  slug: string;
+export type GetCategoryResponse = Required<CreateCategoryBody> & {
+  id: string & tags.Format<"uuid">;
   books: Array<{
-    id: string;
+    id: string & tags.Format<"uuid">;
     title: string;
     isbn: string;
   }>;
@@ -28,9 +28,5 @@ export type GetCategoriesResponse = {
   meta: {
     total: number;
   };
-  data: Array<{
-    id: string;
-    name: string;
-    slug: string;
-  }>;
+  data: Array<Required<CreateCategoryBody> & { id: string & tags.Format<"uuid"> }>;
 };

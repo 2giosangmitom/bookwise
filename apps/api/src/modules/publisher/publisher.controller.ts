@@ -1,6 +1,6 @@
-import { Controller, HttpCode, NotFoundException, Query } from "@nestjs/common";
+import { Controller, HttpCode, NotFoundException } from "@nestjs/common";
 import { PublisherService } from "./publisher.service";
-import { TypedRoute, TypedBody, TypedParam } from "@nestia/core";
+import { TypedRoute, TypedBody, TypedParam, TypedQuery } from "@nestia/core";
 import {
   type CreatePublisherBody,
   CreatePublisherResponse,
@@ -25,7 +25,7 @@ export class PublisherController {
 
     return {
       message: "Publisher has been created successfully",
-      data: { publisherId: createdPublisher.id },
+      data: { publisherId: createdPublisher.raw[0].id },
     };
   }
 
@@ -70,19 +70,12 @@ export class PublisherController {
   }
 
   @TypedRoute.Get("/")
+  @Auth(Role.ADMIN, Role.LIBRARIAN)
   async getAllPublishers(
-    @Query("search") search?: string,
-    @Query("page") page?: number,
-    @Query("limit") limit?: number,
+    @TypedQuery()
+    query: Partial<{ page: number & tags.Type<"uint32">; limit: number & tags.Type<"uint32">; search: string }>,
   ): Promise<GetPublishersResponse> {
-    const [publishers, total] = await this.publisherService.search({ page, limit, search }, [
-      "id",
-      "name",
-      "description",
-      "website",
-      "slug",
-      "photoFileName",
-    ]);
+    const [publishers, total] = await this.publisherService.search(query);
 
     return {
       message: "Publishers fetched successfully",

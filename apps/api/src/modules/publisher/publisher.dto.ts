@@ -1,28 +1,26 @@
+import { tags } from "typia";
+
 export type CreatePublisherBody = {
   name: string;
   description: string;
   website: string;
-  slug: string;
+  slug: string & tags.MinLength<1>;
 };
 
 export type CreatePublisherResponse = {
   message: string;
   data: {
-    publisherId: string;
+    publisherId: string & tags.Format<"uuid">;
   };
 };
 
 export type UpdatePublisherBody = Partial<CreatePublisherBody>;
 
-export type GetPublisherResponse = {
-  id: string;
-  name: string;
-  description: string;
-  website: string;
-  slug: string;
+export type GetPublisherResponse = Required<CreatePublisherBody> & {
+  id: string & tags.Format<"uuid">;
   photoFileName: string | null;
   books: Array<{
-    id: string;
+    id: string & tags.Format<"uuid">;
     title: string;
     isbn: string;
   }>;
@@ -33,12 +31,5 @@ export type GetPublishersResponse = {
   meta: {
     total: number;
   };
-  data: Array<{
-    id: string;
-    name: string;
-    description: string;
-    website: string;
-    slug: string;
-    photoFileName: string | null;
-  }>;
+  data: Array<Required<CreatePublisherBody> & { id: string & tags.Format<"uuid">; photoFileName: string | null }>;
 };
