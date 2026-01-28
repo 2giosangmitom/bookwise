@@ -26,7 +26,7 @@ export class BookController {
 
     return {
       message: "Book has been created successfully",
-      data: { bookId: createdBook.id },
+      data: { bookId: createdBook.raw?.[0]?.id },
     };
   }
 

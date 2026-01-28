@@ -1,13 +1,11 @@
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { In, Repository } from "typeorm";
+import { In, Repository, Not, FindOptionsSelect } from "typeorm";
 import { Book } from "@/database/entities/book";
-
 import { CreateBookBody, UpdateBookBody, SearchBooksQuery, SearchBooksResponse } from "./book.dto";
 import { AuthorService } from "../author/author.service";
 import { CategoryService } from "../category/category.service";
 import { PublisherService } from "../publisher/publisher.service";
-import { Reservation } from "@/database/entities/reservation";
 
 @Injectable()
 export class BookService {
@@ -19,93 +17,73 @@ export class BookService {
     private readonly publisherService: PublisherService,
   ) {}
 
-  async create(data: CreateBookBody): Promise<Book> {
-    const existingBook = await this.bookRepository.existsBy({
-      isbn: data.isbn,
-    });
+  async create(data: CreateBookBody) {
+    // Check ISBN conflict
+    const existed = await this.bookRepository.existsBy({ isbn: data.isbn });
+    if (existed) throw new ConflictException("ISBN already in use");
 
-    if (existingBook) {
-      throw new ConflictException("ISBN already in use");
-    }
-
+    // Validate related entities in parallel
     const [authorsExist, categoriesExist, publishersExist] = await Promise.all([
       this.authorService.checkExistence(...data.authorIds),
       this.categoryService.checkExistence(...data.categoryIds),
       this.publisherService.checkExistence(...data.publisherIds),
     ]);
 
-    if (!authorsExist) {
-      throw new NotFoundException("One or more authors not found");
-    }
+    if (!authorsExist) throw new NotFoundException("One or more authors not found");
+    if (!categoriesExist) throw new NotFoundException("One or more categories not found");
+    if (!publishersExist) throw new NotFoundException("One or more publishers not found");
 
-    if (!categoriesExist) {
-      throw new NotFoundException("One or more categories not found");
-    }
-
-    if (!publishersExist) {
-      throw new NotFoundException("One or more publishers not found");
-    }
-
-    const book = this.bookRepository.create({
-      title: data.title,
-      description: data.description,
-      isbn: data.isbn,
-      publishedDate: data.publishedDate,
-      authors: data.authorIds.map((id) => ({ id })),
-      categories: data.categoryIds.map((id) => ({ id })),
-      publishers: data.publisherIds.map((id) => ({ id })),
-    });
-
-    return this.bookRepository.save(book);
+    // Insert with query builder to avoid extra roundtrip
+    return this.bookRepository
+      .createQueryBuilder()
+      .insert()
+      .into(Book)
+      .values({
+        title: data.title,
+        description: data.description,
+        isbn: data.isbn,
+        publishedDate: data.publishedDate,
+        authors: data.authorIds.map((id) => ({ id })),
+        categories: data.categoryIds.map((id) => ({ id })),
+        publishers: data.publisherIds.map((id) => ({ id })),
+      })
+      .returning("id")
+      .execute();
   }
 
   async update(id: string, data: UpdateBookBody) {
-    const book = await this.bookRepository.findOneBy({ id });
+    // Check book existence
+    const existed = await this.bookRepository.existsBy({ id });
+    if (!existed) throw new NotFoundException("Book not found");
 
-    if (!book) {
-      throw new NotFoundException("Book not found");
+    // Check ISBN conflict
+    if (data.isbn) {
+      const isbnTaken = await this.bookRepository.existsBy({ isbn: data.isbn, id: Not(id) });
+      if (isbnTaken) throw new ConflictException("ISBN already in use");
     }
 
-    if (data.isbn && data.isbn !== book.isbn) {
-      const existingBook = await this.bookRepository.existsBy({
-        isbn: data.isbn,
-      });
-
-      if (existingBook) {
-        throw new ConflictException("ISBN already in use");
-      }
-    }
-
+    // Validate related entities if provided
     if (data.authorIds) {
       const authorsExist = await this.authorService.checkExistence(...data.authorIds);
-      if (!authorsExist) {
-        throw new NotFoundException("One or more authors not found");
-      }
+      if (!authorsExist) throw new NotFoundException("One or more authors not found");
     }
 
     if (data.categoryIds) {
       const categoriesExist = await this.categoryService.checkExistence(...data.categoryIds);
-      if (!categoriesExist) {
-        throw new NotFoundException("One or more categories not found");
-      }
+      if (!categoriesExist) throw new NotFoundException("One or more categories not found");
     }
 
     if (data.publisherIds) {
       const publishersExist = await this.publisherService.checkExistence(...data.publisherIds);
-      if (!publishersExist) {
-        throw new NotFoundException("One or more publishers not found");
-      }
+      if (!publishersExist) throw new NotFoundException("One or more publishers not found");
     }
 
     await this.bookRepository.update(id, data);
   }
 
   async delete(id: string): Promise<void> {
-    const book = await this.bookRepository.findOneBy({ id });
-
-    if (!book) {
-      throw new NotFoundException("Book not found");
-    }
+    const existed = await this.bookRepository.existsBy({ id });
+    if (!existed) throw new NotFoundException("Book not found");
 
     await this.bookRepository.delete(id);
   }
@@ -117,12 +95,10 @@ export class BookService {
     });
   }
 
-  findByIds(ids: string[], select?: (keyof Reservation)[]) {
+  findByIds(ids: string[], select?: (keyof Book)[]) {
     return this.bookRepository.find({
-      select: select ? Object.fromEntries(select.map((key) => [key, true])) : undefined,
-      where: {
-        id: In(ids),
-      },
+      select: select ? (Object.fromEntries(select.map((key) => [key, true])) as FindOptionsSelect<Book>) : undefined,
+      where: { id: In(ids) },
     });
   }
 
@@ -200,5 +176,9 @@ export class BookService {
       limit,
       offset,
     };
+  }
+
+  async checkExistence(...ids: string[]) {
+    return this.bookRepository.existsBy({ id: In(ids) });
   }
 }
