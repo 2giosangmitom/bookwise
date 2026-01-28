@@ -7,12 +7,12 @@
 import type { IConnection } from "@nestia/fetcher";
 import { PlainFetcher } from "@nestia/fetcher/lib/PlainFetcher";
 import type { Format } from "typia/lib/tags/Format";
-import type { Type } from "typia/lib/tags/Type";
 
 import type { CreateAuthorBody } from "../../../structures/CreateAuthorBody";
 import type { CreateAuthorResponse } from "../../../structures/CreateAuthorResponse";
 import type { GetAuthorResponse } from "../../../structures/GetAuthorResponse";
 import type { GetAuthorsResponse } from "../../../structures/GetAuthorsResponse";
+import type { Partial__type } from "../../../structures/Partial__type";
 import type { PartialCreateAuthorBody } from "../../../structures/PartialCreateAuthorBody";
 
 /**
@@ -159,11 +159,7 @@ export async function getAllAuthors(
   });
 }
 export namespace getAllAuthors {
-  export type Query = {
-    page?: undefined | (number & Type<"uint32">);
-    limit?: undefined | (number & Type<"uint32">);
-    search?: undefined | string;
-  };
+  export type Query = Partial__type;
   export type Output = GetAuthorsResponse;
 
   export const METADATA = {
