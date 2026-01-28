@@ -18,10 +18,13 @@ export class AuthService {
   async signUp(data: SignUpBody) {
     const createdUser = await this.userService.create(data);
 
+    // createdUser is insertion result with returning id
+    const user = await this.userService.findById(createdUser.raw[0].id);
+
     const { hash, salt } = await this.hashingUtils.generateHash(data.password);
 
     const accountEntity = this.accountRepository.create({
-      user: createdUser,
+      user: user!,
       passwordHash: hash,
       passwordSalt: salt,
     });

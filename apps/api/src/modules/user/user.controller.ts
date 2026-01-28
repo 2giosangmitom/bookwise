@@ -1,10 +1,12 @@
-import { Controller, Req, Get, Patch, Body, HttpCode, Query } from "@nestjs/common";
+import { Controller, Req, HttpCode } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { Auth } from "@/guards/auth";
 import { type FastifyRequest } from "fastify";
 import { User } from "@/database/entities/user";
 import { UserService } from "./user.service";
-import type { GetMeResponse, UpdateUserBody } from "./user.dto";
+import type { GetMeResponse, UpdateUserBody, GetUsersResponse } from "./user.dto";
+import { TypedBody, TypedQuery, TypedRoute } from "@nestia/core";
+import { tags } from "typia";
 import { Role } from "@bookwise/shared";
 
 @Controller("/user")
@@ -13,7 +15,7 @@ import { Role } from "@bookwise/shared";
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Get("/me")
+  @TypedRoute.Get("/me")
   async me(@Req() request: FastifyRequest): Promise<GetMeResponse> {
     const user = request.getDecorator("user") as User;
 
@@ -30,31 +32,25 @@ export class UserController {
     };
   }
 
-  @Patch("/me")
+  @TypedRoute.Patch("/me")
   @HttpCode(204)
-  async updateMe(@Req() request: FastifyRequest, @Body() body: UpdateUserBody): Promise<void> {
+  async updateMe(@Req() request: FastifyRequest, @TypedBody() body: UpdateUserBody): Promise<void> {
     const user = request.getDecorator("user") as User;
 
     await this.userService.update(user.id, body);
   }
 
-  @Get("/")
+  @TypedRoute.Get("/")
   @Auth(Role.ADMIN)
-  async getAllUsers(@Query("search") search?: string, @Query("page") page?: number, @Query("limit") limit?: number) {
-    const [users, total] = await this.userService.search({ page, limit, search }, [
-      "id",
-      "email",
-      "firstName",
-      "lastName",
-      "photoFileName",
-      "role",
-    ]);
+  async getAllUsers(
+    @TypedQuery()
+    query: Partial<{ page: number & tags.Type<"uint32">; limit: number & tags.Type<"uint32">; search: string }>,
+  ): Promise<GetUsersResponse> {
+    const [users, total] = await this.userService.search(query);
 
     return {
       message: "Users fetched successfully",
-      meta: {
-        total,
-      },
+      meta: { total },
       data: users.map((u) => ({
         id: u.id,
         email: u.email,
