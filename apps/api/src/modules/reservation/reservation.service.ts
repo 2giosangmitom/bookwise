@@ -13,16 +13,20 @@ export class ReservationService {
     private bookService: BookService,
   ) {}
 
-  async create(data: CreateReservationBody, user: User): Promise<Reservation> {
-    const books = await this.bookService.findByIds(data.books);
+  async create(data: CreateReservationBody, user: User) {
+    const isExist = await this.bookService.checkExistence(...data.books);
+    if (!isExist) throw new Error("One or more books do not exist");
 
-    const reservation = this.reservationRepository.create({
-      books,
-      time: data.time,
-      user,
-    });
-
-    return this.reservationRepository.save(reservation);
+    return this.reservationRepository
+      .createQueryBuilder()
+      .insert()
+      .into(Reservation)
+      .values({
+        user,
+        books: data.books.map((bookId) => ({ id: bookId })),
+      })
+      .returning("id")
+      .execute();
   }
 
   // Cursor pagination: cursor is reservation.createdAt ISO string, limit is number of items to fetch
@@ -49,7 +53,7 @@ export class ReservationService {
 
     const hasMore = results.length > take;
     const items = hasMore ? results.slice(0, take) : results;
-    const nextCursor = hasMore ? items[items.length - 1].time.toISOString() : null;
+    const nextCursor = hasMore ? items[items.length - 1].createdAt.toISOString() : null;
 
     return { items, nextCursor };
   }

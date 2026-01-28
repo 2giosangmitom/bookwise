@@ -23,7 +23,7 @@ export class ReservationController {
 
     return {
       message: "Reservation created successfully",
-      data: { id: reservation.id },
+      data: { id: reservation.raw?.[0]?.id },
     };
   }
 
@@ -43,7 +43,6 @@ export class ReservationController {
       data: {
         reservations: items.map((r) => ({
           id: r.id,
-          time: r.time.toISOString(),
           books: r.books.map((b) => ({ id: b.id, title: b.title, isbn: b.isbn })),
           createdAt: r.createdAt.toISOString(),
         })),

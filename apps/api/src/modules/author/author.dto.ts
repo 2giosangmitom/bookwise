@@ -38,3 +38,9 @@ export type GetAuthorsResponse = {
     }
   >;
 };
+
+export type SearchAuthorsQuery = {
+  page?: number & tags.Type<"uint32"> & tags.Minimum<1>;
+  limit?: number & tags.Type<"uint32"> & tags.Minimum<1> & tags.Maximum<100>;
+  search?: string;
+};

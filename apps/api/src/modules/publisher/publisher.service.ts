@@ -66,7 +66,7 @@ export class PublisherService {
     const search = options.search ? ILike(`%${options.search}%`) : undefined;
 
     return this.publisherRepository.findAndCount({
-      select: select,
+      select,
       where: [{ name: search }, { slug: search }, { description: search }],
       take: limit,
       skip: (page - 1) * limit,

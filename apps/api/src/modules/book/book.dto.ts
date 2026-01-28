@@ -11,19 +11,16 @@ export type CreateBookBody = {
 };
 
 export type SearchBooksQuery = {
-  title?: string;
-  authors?: string[];
-  categories?: string[];
-  publishers?: string[];
-  limit?: number & tags.Minimum<1> & tags.Maximum<100>;
-  offset?: number & tags.Minimum<0>;
+  search?: string;
+  page?: number & tags.Type<"uint32"> & tags.Minimum<1>;
+  limit?: number & tags.Type<"uint32"> & tags.Minimum<1> & tags.Maximum<100>;
 };
 
 export type SearchBooksResponse = {
+  meta: {
+    total: number & tags.Type<"uint32">;
+  };
   books: Array<GetBookResponse>;
-  total: number;
-  limit: number;
-  offset: number;
 };
 
 export type CreateBookResponse = {

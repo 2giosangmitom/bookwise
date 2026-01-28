@@ -7,6 +7,7 @@ import {
   type CreateAuthorBody,
   type UpdateAuthorBody,
   type GetAuthorsResponse,
+  type SearchAuthorsQuery,
 } from "./author.dto";
 import { tags } from "typia";
 import { ApiTags } from "@nestjs/swagger";
@@ -51,10 +52,7 @@ export class AuthorController {
 
   @TypedRoute.Get("/")
   @Auth(Role.ADMIN, Role.LIBRARIAN)
-  async getAllAuthors(
-    @TypedQuery()
-    query: Partial<{ page: number & tags.Type<"uint32">; limit: number & tags.Type<"uint32">; search: string }>,
-  ): Promise<GetAuthorsResponse> {
+  async getAllAuthors(@TypedQuery() query: SearchAuthorsQuery): Promise<GetAuthorsResponse> {
     const [authors, total] = await this.authorService.search(query);
 
     return {

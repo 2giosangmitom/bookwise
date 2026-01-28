@@ -1,8 +1,8 @@
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { In, Repository, Not, FindOptionsSelect } from "typeorm";
+import { In, Repository, Not, ILike, FindOptionsSelect } from "typeorm";
 import { Book } from "@/database/entities/book";
-import { CreateBookBody, UpdateBookBody, SearchBooksQuery, SearchBooksResponse } from "./book.dto";
+import { CreateBookBody, UpdateBookBody, SearchBooksQuery } from "./book.dto";
 import { AuthorService } from "../author/author.service";
 import { CategoryService } from "../category/category.service";
 import { PublisherService } from "../publisher/publisher.service";
@@ -88,94 +88,55 @@ export class BookService {
     await this.bookRepository.delete(id);
   }
 
-  async findById(id: string): Promise<Book | null> {
+  findById(id: string): Promise<Book | null> {
     return this.bookRepository.findOne({
-      where: { id },
-      relations: ["authors", "categories", "publishers"],
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        photoFileName: true,
+        isbn: true,
+        publishedDate: true,
+        authors: {
+          id: true,
+          name: true,
+          slug: true,
+        },
+        categories: {
+          id: true,
+          name: true,
+          slug: true,
+        },
+        publishers: {
+          id: true,
+          name: true,
+          slug: true,
+        },
+      },
+      where: {
+        id,
+      },
     });
   }
 
-  findByIds(ids: string[], select?: (keyof Book)[]) {
-    return this.bookRepository.find({
-      select: select ? (Object.fromEntries(select.map((key) => [key, true])) as FindOptionsSelect<Book>) : undefined,
-      where: { id: In(ids) },
+  async searchBooks(query: SearchBooksQuery, select?: FindOptionsSelect<Book>) {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 10;
+    const search = query.search ? ILike(`%${query.search}%`) : undefined;
+
+    return this.bookRepository.findAndCount({
+      select,
+      take: limit,
+      skip: (page - 1) * limit,
+      where: [
+        { title: search },
+        { description: search },
+        { isbn: search },
+        { authors: { name: search } },
+        { categories: { name: search } },
+        { publishers: { name: search } },
+      ],
     });
-  }
-
-  async searchBooks(query: SearchBooksQuery): Promise<SearchBooksResponse> {
-    const qb = this.bookRepository
-      .createQueryBuilder("book")
-      .leftJoinAndSelect("book.authors", "author")
-      .leftJoinAndSelect("book.categories", "category")
-      .leftJoinAndSelect("book.publishers", "publisher");
-
-    // Search by title
-    if (query.title) {
-      qb.andWhere("book.title ILIKE :title", { title: `%${query.title}%` });
-    }
-
-    // Search by authors (array of names)
-    if (query.authors && query.authors.length > 0) {
-      qb.andWhere("author.name ILIKE ANY(ARRAY[:authors])", {
-        authors: query.authors.map((author) => `%${author}%`),
-      });
-    }
-
-    // Search by categories (array of names)
-    if (query.categories && query.categories.length > 0) {
-      qb.andWhere("category.name ILIKE ANY(ARRAY[:categories])", {
-        categories: query.categories.map((category) => `%${category}%`),
-      });
-    }
-
-    // Search by publishers (array of names)
-    if (query.publishers && query.publishers.length > 0) {
-      qb.andWhere("publisher.name ILIKE ANY(ARRAY[:publishers])", {
-        publishers: query.publishers.map((publisher) => `%${publisher}%`),
-      });
-    }
-
-    // Get total count before pagination
-    const total = await qb.getCount();
-
-    // Apply pagination
-    const limit = query.limit || 20;
-    const offset = query.offset || 0;
-    qb.limit(limit).offset(offset);
-
-    // Order by title for consistent results
-    qb.orderBy("book.title", "ASC");
-
-    const books = await qb.getMany();
-
-    return {
-      books: books.map((book) => ({
-        id: book.id,
-        title: book.title,
-        description: book.description,
-        photoFileName: book.photoFileName,
-        isbn: book.isbn,
-        publishedDate: book.publishedDate,
-        authors: book.authors.map((author) => ({
-          id: author.id,
-          name: author.name,
-          slug: author.slug,
-        })),
-        categories: book.categories.map((category) => ({
-          id: category.id,
-          name: category.name,
-          slug: category.slug,
-        })),
-        publishers: book.publishers.map((publisher) => ({
-          id: publisher.id,
-          name: publisher.name,
-          slug: publisher.slug,
-        })),
-      })),
-      total,
-      limit,
-      offset,
-    };
   }
 
   async checkExistence(...ids: string[]) {

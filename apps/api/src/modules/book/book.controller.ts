@@ -65,7 +65,36 @@ export class BookController {
 
   @TypedRoute.Get("/")
   async searchBooks(@Query() query: SearchBooksQuery): Promise<SearchBooksResponse> {
-    return this.bookService.searchBooks(query);
+    const [books, total] = await this.bookService.searchBooks(query, {
+      id: true,
+      title: true,
+      description: true,
+      photoFileName: true,
+      isbn: true,
+      publishedDate: true,
+      authors: {
+        id: true,
+        name: true,
+        slug: true,
+      },
+      categories: {
+        id: true,
+        name: true,
+        slug: true,
+      },
+      publishers: {
+        id: true,
+        name: true,
+        slug: true,
+      },
+    });
+
+    return {
+      meta: {
+        total,
+      },
+      books,
+    };
   }
 
   @TypedRoute.Patch("/:id")

@@ -1,6 +1,5 @@
 import {
   Entity,
-  Column,
   PrimaryGeneratedColumn,
   ManyToOne,
   ManyToMany,
@@ -21,9 +20,6 @@ export class Reservation {
     onDelete: "CASCADE",
   })
   user!: Relation<User>;
-
-  @Column("timestamptz")
-  time!: Date;
 
   @CreateDateColumn()
   createdAt!: Date;
